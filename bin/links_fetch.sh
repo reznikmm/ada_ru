@@ -65,7 +65,7 @@ rm -rf $CD/*
 xsltproc -o $BUILD/links.tmp $LINKS/copy.xsl $LIST
 if [ .$1. != .nofetch. ] 
 then
-  FETCH $BUILD/links.tmp $NEW
+  $FETCH $BUILD/links.tmp $NEW
 
   if [ $? != 0 ]
   then

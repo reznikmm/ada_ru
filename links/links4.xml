@@ -260,7 +260,7 @@ test suite used for Ada processor conformity testing.
      regexp=".*/mod_(2_5[a-z])\.tar\.Z"/>
     </file>
     <file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
-     <download type="regexp" url="http://perso.wanadoo.fr/guerby/" 
+     <download type="regexp" url="http://www.guerby.org/" 
      regexp=".*/acats4gnat-([0-9.]+).tgz"/>
     </file>
   </link>

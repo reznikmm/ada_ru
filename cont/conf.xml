@@ -22,22 +22,33 @@
   В секции были представленны следующие доклады:
   <itemizedlist mark='opencircle'>
     <listitem><para>
-   Виктор Мищенко, Харьковский национальный университет им. В.Н.Каразина,
-
-"Язык Ада в спецификации, моделировании и проведении распределённых
-вычислений, характерных для реализации методов дискретных особенностей"
+    <ulink url="files/17_27.pdf">
+Ada95 Language in Programming for Cluster Systems.
+Alexandr  Korochkin,
+Imad  Salah,
+Vikash  Rovto
+    </ulink>
     </para></listitem>
     <listitem><para>
-   Korochkin Alexander, Vikash Rovto, Imad Salah,  National University
-of Ukraine "Kiev Polytechnical Institute",
-
-"Ada 95 Language in Programming for Cluster Systems"
+    <ulink url="files/23_25.pdf">
+Ada programming language and specifying, modeling and 
+distributed computing for the implementation of the 
+discrete singularities methods.
+Victor Mishchenko
+    </ulink>
     </para></listitem>
 
     <listitem><para>
-   Юрий Ковалёв,
+    <ulink url="files/25_30.pdf">
+Testing a new approach to the analysis of projects development 
+using generalization parameters offered by software science.
+Andrey Gahov
+    </ulink>
+    </para></listitem>
 
-"Scalable Architecture of Server Application based on Ada Web Server"
+    <listitem><para>
+Scalable Architecture of Server Application based on Ada Web Server.
+Юрий Королев
     </para></listitem>
   </itemizedlist>
 </para>

@@ -30,11 +30,12 @@
 <!-- put your customizations here -->
 
 <xsl:template name="allpages.banner">
-<!--begin of Rambler's Top100 code - ->
+<!--begin of Rambler's Top100 code -->
 <a href="http://top100.rambler.ru/top100/">
-<img src="http://counter.rambler.ru/top100.cnt?402456" alt="" width='1' height='1' border='0'/>
+<img src="http://counter.rambler.ru/top100.cnt?633267" alt="" width='1' height='1' border='0'/>
 </a>
-<!- -end of Top100 code-->
+<!--end of Top100 code-->
+
 </xsl:template>
 
 <xsl:template name="hspacer">
@@ -49,6 +50,15 @@
 
 <xsl:template name="webpage.toc.footer">
 &last_ver;
+
+<p align="center">
+<!--begin of Top100 logo-->
+<a href="http://top100.rambler.ru/top100/">
+<img src="http://top100-images.rambler.ru/top100/w7.gif" 
+ alt="Rambler's Top100" width='88' height='31' border='0'/></a>
+<!--end of Top100 logo -->
+</p>
+
 </xsl:template>
 
 </xsl:stylesheet>
