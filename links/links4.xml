@@ -205,6 +205,58 @@ tg is a simple test driver generator for Ada programs
    </file>
   </link>
 
+  <link id="acats" home="http://www.ada-auth.org/acats.html">
+   <descr lang="ru">
+Набор тестов для проверки компиляторов языка Ада на
+соответствие стандарту. acats4gnat - набор скриптов
+для автоматизации тестирования компилятора gnat.
+   </descr>
+   <descr lang="en">
+The Ada Conformity Assessment Test Suite (ACATS) is the 
+test suite used for Ada processor conformity testing.
+   </descr>
+   <file id="acats-251"><descr lang="ru">Исходные тексты 1</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats251.tar.Z"/>
+   </file>
+   <file id="acats-252"><descr lang="ru">Исходные тексты 2</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats252.tar.Z"/>
+   </file>
+   <file id="acats-253"><descr lang="ru">Исходные тексты 3</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats253.tar.Z"/>
+   </file>
+   <file id="acats-254"><descr lang="ru">Исходные тексты 4</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats254.tar.Z"/>
+   </file>
+   <file id="acats-255"><descr lang="ru">Исходные тексты 5</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats255.tar.Z"/>
+   </file>
+   <file id="acats-256"><descr lang="ru">Исходные тексты 6</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats256.tar.Z"/>
+   </file>
+   <file id="acats-257"><descr lang="ru">Исходные тексты 7</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats257.tar.Z"/>
+   </file>
+   <file id="acats-258"><descr lang="ru">Исходные тексты 8</descr>
+      <download type="file"
+        url="http://www.adaic.org/compilers/acats/2.5/tars/acats258.tar.Z"/>
+   </file>
+    <file id="acats-25-mod"><descr lang="ru">Дополнения</descr>
+     <download type="regexp" url="http://www.ada-auth.org/acats.html" 
+     regexp=".*/mod_(2_5[a-z])\.tar\.Z"/>
+    </file>
+    <file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
+     <download type="regexp" url="http://perso.wanadoo.fr/guerby/" 
+     regexp=".*/acats4gnat-([0-9.]+).tgz"/>
+    </file>
+  </link>
+
  </folder>
 
    <folder name="app">
