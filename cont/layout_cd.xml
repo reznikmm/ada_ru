@@ -16,7 +16,7 @@
       <holder><ulink url="mailto:reznikmm@front.ru">Maxim Reznik</ulink>
       </holder>
   </copyright>
-	    
+
   <toc page="../cont/homepage.xml" filename="www.ada-ru.org/index.html">
     <tocentry page="../cont/projects.xml" filename="www.ada-ru.org/projects.html"
               tocskip="0" >
@@ -25,15 +25,16 @@
        <tocentry page="../cont/prj_ora.xml"   filename="www.ada-ru.org/prj_ora.html"/>
     </tocentry>
     <tocentry page="../cont/tutorial.xml"
-       filename="www.ada-ru.org/Lovelace/lovelace.htm" />
+       filename="www.ada-ru.org/Lovelace/lovelace.htm"  revisionflag="changed"/>
     <tocentry page="../cont/docs.xml" filename="www.ada-ru.org/docs.html">
        <tocentry page="../cont/asis.xml"  filename="www.ada-ru.org/asis.html"/>
+       <tocentry page="../cont/comp_gnat.xml"  filename="www.ada-ru.org/comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="www.ada-ru.org/ada83.html"/>
        <tocentry page="../cont/dict_ru.xml" filename="www.ada-ru.org/dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="www.ada-ru.org/fnotes.html"/>
     </tocentry>
-    <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html" revisionflag="added"/>
-    <!--  revisionflag="changed" -->
+    <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html"/>
+    <!--   revisionflag="added" -->
     <tocentry page="../cont/src.xml" filename="www.ada-ru.org/src.html">
        <tocentry page="../cont/src_asissq.xml"  filename="www.ada-ru.org/src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="www.ada-ru.org/src_ais.html"/>
@@ -44,7 +45,7 @@
     <tocentry page="../cont/search.xml" filename="www.ada-ru.org/search.html"/>
     <tocentry page="../cont/download.xml" filename="www.ada-ru.org/download.html"/>
   </toc>
-  
+
   <notoc page="../build/soft.xml" filename="www.ada-ru.org/soft.html"/>
   <notoc page="../build/old_news.xml" filename="www.ada-ru.org/old_news.html"/>
 

@@ -3,6 +3,7 @@
 <!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
 <!ENTITY ada83 SYSTEM "ada83.xml" NDATA XML>
 <!ENTITY asis  SYSTEM "asis.xml"  NDATA XML>
+<!ENTITY comp_gnat  SYSTEM "comp_gnat.xml"  NDATA XML>
 %last_mod;
 ]>
 <webpage id="docs" lang="ru">
@@ -99,6 +100,37 @@
 
 <row>
  <entry>
+  <anchor id="opentoken"/>
+  <ulink url="files/OpenTokenUG-RU.html"
+  >OpenToken - Руководство пользователя
+  </ulink>
+ </entry>
+ <entry>
+Пакет OpenToken позволяет легко создавать программы лексического и
+синтаксического анализа на языке Ада. Особенность пакета в
+отсутствии препроцессора подобного aflex/ayacc. Благодоря
+использованию наследования и перегрузки операций, входной
+синтаксис описывается прямо на языке Ада.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="files/aflex-ayacc_doc_ru.zip"
+  >Aflex, Ayacc - Руководства пользователя
+  </ulink>
+ </entry>
+ <entry>
+Программы aflex и ayacc являются генераторами лексических и
+синтаксических анализаторов и представляют собой
+аналоги известных программ flex и yacc.
+В архиве содержатся руководства пользователя
+в форматах PS и PDF.
+ </entry>
+</row>
+
+<row>
+ <entry>
   <anchor id="acats"/>
   <ulink url="acats/acats_RU.html"
   >ACATS - комплект тестов для сертификации Ада-компиляторов</ulink>
@@ -114,6 +146,18 @@
    является переводом руководства пользователя на русский язык.
     <ulink url="files/acats_RU.zip"
     >Можно скачать ZIP архив.</ulink>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <olink targetdocent="comp_gnat"
+  >Построение компилятора GNAT</olink>
+ </entry>
+ <entry>
+   Краткая инструкция и практические советы
+   по построению компилятора GNAT из
+   исходных текстов.
  </entry>
 </row>
 
@@ -327,9 +371,9 @@ Ada и Zonnon. Автор обещает, что данная статья будет началом
   >Язык Ада</ulink>
  </entry>
  <entry>
-   Пример поверхностного и неквалифицированного суждения об
-   Ада-технологии на страницах
-   журнала PC Week за 1996 год. Автор Сергей Бобровский.
+   Пример суждения о языке Ада, которое в большей степени основано
+   на мифах, на страницах журнала PC Week за 1996 год. Автор Сергей
+   Бобровский.
  </entry>
 </row>
 </tbody></tgroup>

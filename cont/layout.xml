@@ -16,7 +16,7 @@
       <holder><ulink url="mailto:reznikmm&lt;at>front.ru">Maxim Reznik</ulink>
       </holder>
   </copyright>
-	    
+
   <toc page="../cont/homepage.xml" filename="index.html">
     <tocentry page="../cont/projects.xml" filename="projects.html"
               tocskip="0" >
@@ -26,13 +26,14 @@
     </tocentry>
     <tocentry page="../cont/tutorial.xml" filename="lovelace.htm"
          dir="Lovelace"   />
-    <tocentry page="../cont/docs.xml" filename="docs.html">
+    <tocentry page="../cont/docs.xml" filename="docs.html" revisionflag="changed">
        <tocentry page="../cont/asis.xml"  filename="asis.html"/>
+       <tocentry page="../cont/comp_gnat.xml"  filename="comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="ada83.html"/>
        <tocentry page="../cont/dict_ru.xml" filename="dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="fnotes.html"/>
     </tocentry>
-    <tocentry page="../cont/conf.xml" filename="conf.html" revisionflag="changed"/>
+    <tocentry page="../cont/conf.xml" filename="conf.html"/>
     <!--  revisionflag="changed" revisionflag="added" -->
     <tocentry page="../cont/src.xml" filename="src.html">
        <tocentry page="../cont/src_asissq.xml"  filename="src_asissq.html"/>
@@ -44,7 +45,7 @@
     <tocentry page="../cont/search.xml" filename="search.html"/>
     <tocentry page="../cont/download.xml" filename="download.html"/>
   </toc>
-  
+
   <notoc page="../build/old_news.xml" filename="old_news.html"/>
   <notoc page="../build/soft.xml" filename="soft.html"/>
 

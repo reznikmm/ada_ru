@@ -36,11 +36,11 @@ An Ada 95 compiler.
      <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-i686-pc-redhat71-gnu-bin.tar.gz"/>
     </file>
     <file id="gnat-linux-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     
+
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-([0-9.p-]+)\.i386\.rpm"/>
     </file>
     <file id="gnat-linux-rtl-rpm"><descr lang="ru">runtime RPM</descr>
-     
+
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-[0-9.p-]+runtime-([0-9-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -53,7 +53,7 @@ An Ada 95 compiler.
    <descr lang="en">
 A# is a port of Ada to the Microsoft .NET Platform.
    </descr>
-   
+
     <file id="mgnat"><descr lang="ru">mgnat</descr>
      <download type="file" url="ftp://ftp.usafa.af.mil/pub/dfcs/carlisle/asharp/mgnat.zip"/>
     </file>
@@ -70,18 +70,18 @@ A# is a port of Ada to the Microsoft .NET Platform.
      </descr>
 
      <link home="http://home.tiscalinet.ch/t_wolf/tw/ada95/adabrowse/" id="AdaBrowse">
-           
+
    <descr lang="ru">
-AdaBrowse это генератор HTML документации для спецификаций 
+AdaBrowse это генератор HTML документации для спецификаций
 библиотечных модулей похожий на javadoc. Может также
 получать XML описания (DTD прилагается).
    </descr>
    <descr lang="en">
-AdaBrowse is a javadoc-like HTML generator for Ada 95 
+AdaBrowse is a javadoc-like HTML generator for Ada 95
 library unit specifications. It can also generate XML output;
-a DTD is included in the distribution. 
-It is free software; distributed under the terms of 
-the GNU General Public License. 
+a DTD is included in the distribution.
+It is free software; distributed under the terms of
+the GNU General Public License.
    </descr>
    <file id="adabrowse"><descr lang="ru">Исходные тексты</descr>
      <download type="regexp" url="http://home.tiscalinet.ch/t_wolf/tw/ada95/adabrowse/" regexp="adabrowse_([0-9.]+)_src\.tar\.gz"/>
@@ -89,7 +89,7 @@ the GNU General Public License.
     <file id="adabrowse-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabrowse-([0-9-.]+)\.i386\.rpm"/>
     </file>
-   
+
   </link>
 
   <link id="adadoc" home="http://adadoc.sourceforge.net/">
@@ -101,7 +101,7 @@ AdaDoc - утилита создания документации по спецификациям пакетов.
 AdaDoc is a tool for developers using the Ada95 programming
 language. Its goal is to create a documentation in different
 format (currently html and Latex is available) from a specification
-package.     
+package.
    </descr>
    <file id="adadoc-src"><descr lang="ru">Исходные тексты</descr>
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=22930" regexp="adadoc-v([0-9.]+)src\.tar\.bz2" project="adadoc"/>
@@ -131,12 +131,12 @@ AUnit - набор пакетов для написания тестов из семейства xUnit.
    <descr lang="en">
 AUnit is a set of Ada packages based on the xUnit family of unit
 test frameworks. It's intended as a developer's tool to facilitate
-confident writing and evolution of Ada software. It is purposely 
+confident writing and evolution of Ada software. It is purposely
 lightweight, as one of its main goals is to make it easy to develop
-and run unit tests, rather than to generate artifacts for process 
+and run unit tests, rather than to generate artifacts for process
 management. The framework supports easy composition of sets of unit
-tests to provide flexibility in determining what tests to run for a 
-given purpose. 
+tests to provide flexibility in determining what tests to run for a
+given purpose.
    </descr>
    <file id="aunit"><descr lang="ru">Исходные тексты</descr>
      <download type="regexp" url="http://libre.act-europe.fr/aunit/main.html" regexp=".*aunit-([0-9.]+)tar.gz"/>
@@ -176,10 +176,10 @@ DTraq - утилита для отладки и тестирования приложений, позволяет
 в любом месте Вашей программы, с практически любым типом данных.
    </descr>
    <descr lang="en">
-DTraq is a data logging and playback debugging tool providing near 
+DTraq is a data logging and playback debugging tool providing near
 realtime data logging and analysis to aid debugging and validation.
-Captured, or 'tapped' data from a program can be viewed live while 
-the program is running or, since it is being logged to a file, played 
+Captured, or 'tapped' data from a program can be viewed live while
+the program is running or, since it is being logged to a file, played
 back or printed out later for off-line review and analysis.
    </descr>
    <file id="dtraq.src"><descr lang="ru">Исходные тексты</descr>
@@ -201,7 +201,7 @@ back or printed out later for off-line review and analysis.
 Программа tg, являясь своеобразным препроцессором, служить для
 тестирования ПО и позволяет
 компактно описывать множество тестов Вашей системы.
-Получаемая в результате работы tg процедура, выполняет 
+Получаемая в результате работы tg процедура, выполняет
 поочередно эти тесты, контролируя резултаты вычислений и
 возникшие исключения.
    </descr>
@@ -220,7 +220,7 @@ tg is a simple test driver generator for Ada programs
 для автоматизации тестирования компилятора gnat.
    </descr>
    <descr lang="en">
-The Ada Conformity Assessment Test Suite (ACATS) is the 
+The Ada Conformity Assessment Test Suite (ACATS) is the
 test suite used for Ada processor conformity testing.
    </descr>
    <file id="acats-251"><descr lang="ru">Исходные тексты 1</descr>
@@ -256,11 +256,11 @@ test suite used for Ada processor conformity testing.
         url="http://www.adaic.org/compilers/acats/2.5/tars/acats258.tar.Z"/>
    </file>
     <file id="acats-25-mod"><descr lang="ru">Дополнения</descr>
-     <download type="regexp" url="http://www.ada-auth.org/acats.html" 
+     <download type="regexp" url="http://www.ada-auth.org/acats.html"
      regexp=".*/mod_(2_5[a-z])\.tar\.Z"/>
     </file>
     <file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
-     <download type="regexp" url="http://www.guerby.org/" 
+     <download type="regexp" url="http://www.guerby.org/"
      regexp=".*/acats4gnat-([0-9.]+).tgz"/>
     </file>
   </link>
@@ -283,11 +283,11 @@ Microsoft Internet Explorer и Netscape Communicator.
    <descr lang="en">
 First of all, AWS stands for Ada Web Server but it is more than just
 another Web server...
-   
+
 AWS is a complete framework to develop Web based applications. The main
 part of the framework is the embedded Web server. This small yet powerful
 Web server can be embedded into your application so your application will
-be able to talk with a standard Web browser like Microsoft Internet 
+be able to talk with a standard Web browser like Microsoft Internet
 Explorer or Netscape Communicator for example. Around this Web server
 a lot of services have been developed.
    </descr>
@@ -314,17 +314,18 @@ BUSH является надежной и читабельной альтернативой для интерпретаторов
 BASH, CSH, а также, в некоторых пределах, для Python и PERL.
    </descr>
    <descr lang="en">
-BUSH, the Business Shell, is a powerful Linux/UNIX shell for 
+BUSH, the Business Shell, is a powerful Linux/UNIX shell for
 designing secure, reliable scripts that can be later compiled
-as a fast executable programs. It can also be used an an 
-interactive login shell or to generate Java Virtual Machine 
-or .Net applications. BUSH is a robust and readable alternative 
-to BASH, CSH, and (to a certain extent) Python and PERL. BUSH 
-comes with 12 built-in packages including numerics, string 
+as a fast executable programs. It can also be used an an
+interactive login shell or to generate Java Virtual Machine
+or .Net applications. BUSH is a robust and readable alternative
+to BASH, CSH, and (to a certain extent) Python and PERL. BUSH
+comes with 12 built-in packages including numerics, string
 processing, sound and database access.
    </descr>
    <file id="bush"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://www.vaxxine.com/pegasoft/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/>
+     <!--download type="regexp" url="http://www.vaxxine.com/pegasoft/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/-->
+     <download type="regexp" url="http://66.11.182.223/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/>
    </file>
     <file id="bush-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*bush-([0-9.-]+)\.i386\.rpm"/>
@@ -340,8 +341,8 @@ html-файлов нуждающихся в исправлениях. Для компиляции нужны
 библиотеки OpenToken и SAL.
    </descr>
    <descr lang="en">
-webcheck automatically checks links on a web page for validity, 
-and reports errors in a format that Gnu Emacs (and other IDEs) 
+webcheck automatically checks links on a web page for validity,
+and reports errors in a format that Gnu Emacs (and other IDEs)
 can use to bring up the source html files to be fixed.
    </descr>
    <file id="webcheck"><descr lang="ru">Исходные тексты</descr>
@@ -368,7 +369,7 @@ GPS - средство интерактивной разработки, поддерживает быструю
    <descr lang="en">
 GPS, the GNAT Programming System, is a cutting-edge Free Software IDE
 that streamlines the interaction between developers and their
-software... 
+software...
    </descr>
    <file id="GPS.linux"><descr lang="ru">Дистрибутив для Linux</descr>
       <download type="regexp" url="http://libre.act-europe.fr/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-linux.tgz"/>
@@ -390,7 +391,8 @@ TIA написана с использованием GPL пакета texttools.
 Linux/UNIX Console IDE. Supports several languages and CVS.
    </descr>
    <file id="tia"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/>
+      <!--download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/-->
+      <download type="regexp" url="http://66.11.182.223/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/>
    </file>
     <file id="tia-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*tia-([0-9.-]+)\.i386\.rpm"/>
@@ -399,7 +401,7 @@ Linux/UNIX Console IDE. Supports several languages and CVS.
 
   <link id="adagoop" home="ftp://ftp.usafa.af.mil/pub/dfcs/carlisle/usafa/adagoop/index.html">
    <descr lang="ru">
-AdaGOOP (Ada Generator of Object-Oriented Parsers) - 
+AdaGOOP (Ada Generator of Object-Oriented Parsers) -
 генератор объектноориентированных синтаксических
 анализаторов. С его помощью Вы можете легко получить анализатор
 строящий объектное дерево разбора.
@@ -426,9 +428,9 @@ an object-oriented parse tree.
 входной синтаксис описывается прямо на языке Ада.
    </descr>
    <descr lang="en">
-OpenToken is a series of Ada packages that allow simple creation 
-of token analyzers (aka: lexical analyzers) in straight inline 
-Ada code. No precompilation step is required, and there is no 
+OpenToken is a series of Ada packages that allow simple creation
+of token analyzers (aka: lexical analyzers) in straight inline
+Ada code. No precompilation step is required, and there is no
 arcane error-prone regular expression language to learn.
    </descr>
    <file id="OpenToken"><descr lang="ru">Исходные тексты</descr>
@@ -442,28 +444,61 @@ arcane error-prone regular expression language to learn.
     </file>
   </link>
 
+  <link id="afay"
+        home="http://www.ics.uci.edu/~arcadia/Aflex-Ayacc/aflex-ayacc.html">
+   <descr lang="ru">
+Программы aflex/ayacc являются генераторами лексических и
+синтаксических анализаторов и представляют собой
+аналоги Сишных програм flex и yacc.
+   </descr>
+   <descr lang="en">
+Aflex and ayacc are similar to the Unix tools lex and yacc,
+but they are written in Ada and generate Ada output.
+   </descr>
+    <file id="afay-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
+     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html"
+     regexp=".*aflex_ayacc-([-0-9.a]+)\.i386\.rpm"/>
+    </file>
+   <file id="afay"><descr lang="ru">Исходные тексты</descr>
+     <download type="regexp"
+        url="http://unicoi.kennesaw.edu/ase/ase02_02/tools/ayacc/"
+        regexp="afay_([0-9_a-f]+).zip"/>
+   </file>
+   <file id="afay-doc"><descr lang="ru">Документация</descr>
+     <download type="regexp"
+        url="http://unicoi.kennesaw.edu/ase/ase02_02/tools/ayacc/"
+        regexp="docs_([0-9_a-f]+).zip"/>
+   </file>
+    <file id="scatdsk"><descr lang="ru">SCATDSK</descr>
+     <download type="regexp"
+        url="http://unicoi.kennesaw.edu/ase/ase02_02/tools/scatcdsk/"
+        regexp="scatcb([0-9]+)u.zip"/>
+    </file>
+  </link>
+
+
   <link id="semtools" home="http://www.adalog.fr/compo2.htm#Semtools">
    <descr lang="ru">
 В состав пакета входит утилита adasubst, при помощи которой
 вы можете легко заменить один идентификатор на другой
 во всех модулях вашей программы, перенести определение
 из одного модуля в другой, разбить один пакет на несколько,
-заменить идентификатор на составное имя (Put_Line на 
+заменить идентификатор на составное имя (Put_Line на
 Ada.Text_IO.Put_Line). Также программа может
 удалить все спецификации представления (representation
 clauses) из данной программы.
    </descr>
    <descr lang="en">
-Adasubst performs semantic substitutions, i.e. substitutions 
-that take Ada rules into account. With Adasubst, you can change 
-an identifier, or move elements from a package to another one, 
-and change automatically all previous modules to account for 
-the change. 
+Adasubst performs semantic substitutions, i.e. substitutions
+that take Ada rules into account. With Adasubst, you can change
+an identifier, or move elements from a package to another one,
+and change automatically all previous modules to account for
+the change.
    </descr>
    <file id="semtools"><descr lang="ru">Исходные тексты</descr>
       <download type="regexp" url="http://www.adalog.fr/compo2.htm" regexp=".*semtools(-)source.zip"/>
    </file>
-   
+
   </link>
 
   <link id="auto_io" home="http://www.toadmail.com/~ada_wizard/ada/auto_text_io.html">
@@ -499,24 +534,25 @@ the spec.
 COM/DCOM/COM+ объекты в языке Ада.
    </descr>
    <descr lang="en">
-Tools like GNATCOM allow programming COM objects or 
-using COM objects in ways as easy as Visual Basic, 
+Tools like GNATCOM allow programming COM objects or
+using COM objects in ways as easy as Visual Basic,
 but with as much power and control as C++.
    </descr>
    <file id="gnatcom"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://www.gnavi.org/gnatcom/" 
-       regexp="gnatcom-([0-9]+\.[0-9a-d]+).zip"/>
+      <download type="regexp"
+         url="http://www.gnavi.org/gnatcom/"
+       regexp=".*/gnatcom-([0-9]+\.[0-9a-d]+).zip"/>
    </file>
   </link>
 
-  
+
 
   <link id="adagide" home="http://www.usafa.af.mil/dfcs/bios/mcc_html/adagide.html">
    <descr lang="ru">
 Интегрированная среда разработки под Windows 95/NT.
    </descr>
    <descr lang="en">
-AdaGIDE is the Ada GNAT Integrated Development 
+AdaGIDE is the Ada GNAT Integrated Development
 Environment for Windows 95/NT.
    </descr>
    <file id="adagide-src"><descr lang="ru">Исходный тескст</descr>
@@ -528,7 +564,7 @@ Environment for Windows 95/NT.
   </link>
 
  </folder>
-   
+
    <folder name="os">
      <descr lang="ru">
 Среды исполнения и операционные системы
@@ -538,7 +574,7 @@ Environment for Windows 95/NT.
    <descr lang="ru">
 MaRTE OS - ядро реального времени для встраиваемых приложений
 реализуещее "минимальное подмножество реального времени стандарта
-POSIX.13". Большая часть кода на Аде, небольшие части на Си и 
+POSIX.13". Большая часть кода на Аде, небольшие части на Си и
 ассемблере.
    </descr>
    <descr lang="en">
@@ -551,7 +587,7 @@ Ada with some C and assembler parts.
    </file>
   </link>
 
-  
+
 
  </folder>
 
@@ -567,7 +603,7 @@ Ada with some C and assembler parts.
      </descr>
      <folder name="ada_letters">
        <descr lang="ru">Журнал Ada Letters</descr>
- 
+
 &sept2004;
 &jun2004;
 &dec2003;
@@ -577,7 +613,7 @@ Ada with some C and assembler parts.
      </folder>
    </folder>
  </folder>
- 
+
  <folder name="lib">
    <descr lang="ru">
 Библиотеки и надстройки над библиотеками
@@ -591,7 +627,7 @@ Ada with some C and assembler parts.
 
    <link home="http://www.gnat.com/texts/products/pglade_set.htm" id="glade">
    <descr lang="ru">
-Пакет GLADE содержит инструментальные средства и библиотеки 
+Пакет GLADE содержит инструментальные средства и библиотеки
 необходимые для написания распределенных программ GNU Ada.
 Он позволяет различным частям программы выполняться на
 разных машинах и взаимодействовать между собой.
@@ -599,7 +635,7 @@ Ada with some C and assembler parts.
    <descr lang="en">
 GLADE is an implementation of the distributed Ada 95 programming model.
 It allows parts of a single program to run concurrently on different
-machines and communicate with each other. 
+machines and communicate with each other.
    </descr>
     <file id="glade-src"><descr lang="ru">Glade sources</descr>
      <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*glade-([0-9.p]+)-src\.tgz"/>
@@ -608,7 +644,7 @@ machines and communicate with each other.
      <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*glade-([0-9.p]+)-docs.tar.gz"/>
     </file>
     <file id="glade-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     
+
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-glade-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -619,14 +655,14 @@ machines and communicate with each other.
 необходимые для написания распределенных программ GNU Ada.
    </descr>
    <descr lang="en">
-ASIS-for-GNAT is an implementation of the ASIS standard for use with 
+ASIS-for-GNAT is an implementation of the ASIS standard for use with
 the GNAT Ada 95 development environment and toolset.
    </descr>
     <file id="asis-src"><descr lang="ru">ASIS sources</descr>
      <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*asis-([0-9.p]+)-src\.tgz"/>
     </file>
     <file id="asis-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     
+
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*asis-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -636,15 +672,15 @@ the GNAT Ada 95 development environment and toolset.
    <descr lang="ru">
 Xml/Ada - набор модулей позволяющий легко манипулировать
 XML потоками. Он поддерживает стандарт XML 1.0, включая
-DTD, SAX и DOM интерфейсы. Включает модули работы с 
-Unicode. 
+DTD, SAX и DOM интерфейсы. Включает модули работы с
+Unicode.
    </descr>
    <descr lang="en">
-XML/Ada is a set of modules that provide a simple 
+XML/Ada is a set of modules that provide a simple
 manipulation of XML streams. It supports the whole
 XML 1.0 specifications, and can parse any file that
 follows this standard (including the contents of the DTD).
-It also provides support for a number of other standard 
+It also provides support for a number of other standard
 associated with XML, like SAX and DOM.
 In addition, It includes a module to manipulate Unicode
 streams, since this is required by the XML standard.
@@ -669,7 +705,7 @@ Portable Pixmap (PPM) файлов.
    <descr lang="en">
 The Open_Image project is a portable Ada 95 package hierarchy devoted to
 the Input/Output and manipulation of image (pictures) data. To start out,
-the library will be able to read and write Portable Pixmap (PPM) files. 
+the library will be able to read and write Portable Pixmap (PPM) files.
    </descr>
    <file id="open_image"><descr lang="ru">Исходные тексты</descr>
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=12296" regexp="open_image_([0-9_]+).tar.gz" project="open-image"/>
@@ -685,11 +721,11 @@ WEB-программ на Ada95. Пакет предоставляет связку Ada95
 приложениями WEB-сервера.
    </descr>
    <descr lang="en">
-AdaCGI is an Ada 95 interface to the "Common Gateway Interface" (CGI). 
-AdaCGI makes it easier to create Ada programs that can be invoked by 
-World Wide Web (WWW) HTTP servers using the standard CGI interface. 
-Using it, you can create Ada programs that perform queries or other 
-processing by request from a WWW user. 
+AdaCGI is an Ada 95 interface to the "Common Gateway Interface" (CGI).
+AdaCGI makes it easier to create Ada programs that can be invoked by
+World Wide Web (WWW) HTTP servers using the standard CGI interface.
+Using it, you can create Ada programs that perform queries or other
+processing by request from a WWW user.
    </descr>
    <file id="adacgi"><descr lang="ru">Исходные тексты</descr>
       <download type="regexp" url="http://www.dwheeler.com/adacgi/" regexp=".*adacgi-([0-9.-]+).zip"/>
@@ -713,8 +749,8 @@ GtkAda - библиотека привязки к Gtk+, служит для построения
 и пр. В полной мере использует объектные свойства языка Ада.
    </descr>
    <descr lang="en">
-GtkAda is an Ada95 graphical toolkit based on Gtk+, providing 
-the complete set of Gtk+ widgets using the Object-Oriented features 
+GtkAda is an Ada95 graphical toolkit based on Gtk+, providing
+the complete set of Gtk+ widgets using the Object-Oriented features
 of this language. GtkAda supports the latest 2.2 stable releases.
    </descr>
    <file id="GtkAda.src"><descr lang="ru">Исходные тексты</descr>
@@ -733,11 +769,11 @@ of this language. GtkAda supports the latest 2.2 stable releases.
 
    <link home="http://www.cs.fsu.edu/~baker/florist.html" id="florist">
    <descr lang="ru">
-Пакет Florist содержит набор пакетов Ады, которые позволяют Вам 
+Пакет Florist содержит набор пакетов Ады, которые позволяют Вам
 писать программы использующие реализацию стандарта POSIX 1003.5,
-разработанную в Университете Штата Флорида (FSU). 
+разработанную в Университете Штата Флорида (FSU).
 Стандарт POSIX 1003.5 описывает правила связывания POSIX-функций
-с языком Ада. Эти средства могут понадобиться для прямых вызовов 
+с языком Ада. Эти средства могут понадобиться для прямых вызовов
 функций операционной системы из Ада-программы.
    </descr>
    <descr lang="en">
@@ -747,7 +783,7 @@ An Ada binding for the POSIX 1003.5 API.
      <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*florist-([0-9.p]+)-src\.tgz"/>
     </file>
     <file id="florist-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     
+
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*florist-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -796,11 +832,11 @@ PolyORB предусматривает синтаксический анализатор IDL,
 (определяемые Ада-отображением).
     </descr>
    <descr lang="en">
-PolyORB aims at providing a uniform solution to build distributed 
-applications; relying either on industrial-strength middleware 
-standards such as CORBA, the Distributed System Annex of Ada 95, 
-distribution programming paradigms such as Web Services, Message 
-Oriented Middleware (MOM), or to implement application-specific 
+PolyORB aims at providing a uniform solution to build distributed
+applications; relying either on industrial-strength middleware
+standards such as CORBA, the Distributed System Annex of Ada 95,
+distribution programming paradigms such as Web Services, Message
+Oriented Middleware (MOM), or to implement application-specific
 middleware.
     </descr>
    <file id="polyorb"><descr lang="ru">Исходные тексты</descr>
@@ -837,12 +873,12 @@ The PostgreSQL/MySQL APQ 2.1 Thick Binding
 
   <link id="Gnade" home="http://gnade.sourceforge.net/">
    <descr lang="ru">
-Главная цель проекта - предоставить утилиты и пакеты для 
+Главная цель проекта - предоставить утилиты и пакеты для
 интеграции Ада приложений с SQL базами данных.
     </descr>
    <descr>
 The primary goal of the project is to provide all tools and packages
-necessary to create an Ada 95 development environment providing a 
+necessary to create an Ada 95 development environment providing a
 seamless integration of SQL based databases into Ada 95.
     </descr>
    <file id="gnade"><descr lang="ru">Исходные тексты</descr>
@@ -856,9 +892,9 @@ seamless integration of SQL based databases into Ada 95.
 для работы с X Windows и Motif (или lesstif).
    </descr>
    <descr lang="en">
-Binding from Ada to the X window system. 
-This is a collection of Ada sources which enables a program 
-written in Ada to use the X window (and OSF/Motif or lesstif, 
+Binding from Ada to the X window system.
+This is a collection of Ada sources which enables a program
+written in Ada to use the X window (and OSF/Motif or lesstif,
 if available) routines.
    </descr>
    <file id="adabindx"><descr lang="ru">Исходные тексты</descr>
@@ -894,7 +930,7 @@ binding if time permits.
 из программ на языке Ada.
    </descr>
    <descr lang="en">
-ZLib.Ada is a thick binding to the popular compression/decompression 
+ZLib.Ada is a thick binding to the popular compression/decompression
 library ZLib. It is providing Ada style access to the ZLib C library.
    </descr>
    <file id="zlib-ada"><descr lang="ru">Исходные тексты</descr>
@@ -916,10 +952,10 @@ Ada95 и других языках программирования.
 Автором DLibs является (C) Chris Campbell.
    </descr>
    <descr lang="en">
-DLibs is a binding to Linux's dynamic library support, 
-allowing Ada 95 programs to load libraries at runtime. 
-It provides special facilities for Ada 95 libraries but 
-can also load a library written in any language targetting 
+DLibs is a binding to Linux's dynamic library support,
+allowing Ada 95 programs to load libraries at runtime.
+It provides special facilities for Ada 95 libraries but
+can also load a library written in any language targetting
 library formats known to Linux.
    </descr>
     <file id="dlibs"><descr lang="ru">Исходные тексты</descr>
@@ -945,12 +981,14 @@ Active X support for Ada 95. This is the second public release of
 this powerful framework, version 1.1
    </descr>
     <file id="gwindows"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://www.gnavi.org/gwindows/" regexp=".*gwindows-([0-9p_]+).zip"/>
+     <download type="regexp"
+        url="http://www.gnavi.org/gwindows/"
+      regexp=".*/gwindows-([0-9_a-f]+).zip"/>
     </file>
   </link>
 
  </folder>
-   
+
    <folder name="compon">
      <descr lang="ru">
 Библиотеки контейнеров и компонент.
@@ -977,12 +1015,12 @@ The Ada 95 Booch Components is a port C++ components library.
   <link id="pragmarc" home="http://home.earthlink.net/~jrcarter010/pragmarc.htm">
    <descr lang="ru">
 Библиотека компонент PragmAda Reusable Components (PragmARCs)
-предоставляет такие контейнеры, как 
-ограниченные и неограниченные по длинне списки и очереди, 
-множества (bag), 
-дискретные множества (bit mapped set), 
+предоставляет такие контейнеры, как
+ограниченные и неограниченные по длинне списки и очереди,
+множества (bag),
+дискретные множества (bit mapped set),
 сбалансированные списки и
-стеки. Для каждого типа контейнеров предлагается 
+стеки. Для каждого типа контейнеров предлагается
 защищенный (protected) и незащищенный варианты, стандартный
 набор операций, итератор по контейнеру (без возможности
 модификации контейнера при итерации). Кроме контейнеров
@@ -1006,9 +1044,9 @@ PragmAda Reusable Components (PragmARCs)
   <link id="lgl-adt" home="http://lglwww.epfl.ch/ada/components/ADT/abstract.html">
    <descr lang="ru">
 В состав библиотеки компонент lgl ADT
-включены такие контейнеры, как 
-списки и очереди, множества и 
-дискретные множества, 
+включены такие контейнеры, как
+списки и очереди, множества и
+дискретные множества,
 хэш таблицы. Контейнеры делятся на два типа,
 для хранения лимитированных и
 нелимитированных типов.
@@ -1020,7 +1058,7 @@ Various versions of ADTs including Stacks, Queues, Sets and Tables.
       <download type="regexp" url="http://lglwww.epfl.ch/ada/components/index.html" regexp="http://lgl.epfl.ch/pub/Ada/Components/lgl_ADT_components.tar(\.)gz"/>
    </file>
   </link>
- 
+
   <link id="adasl" home="http://adasl.sourceforge.net/">
    <descr lang="ru">
 AdaSL поддерживает векторы, одно и двусвязные списки,
@@ -1037,7 +1075,7 @@ AdaSL поддерживает векторы, одно и двусвязные списки,
    </descr>
    <descr lang="en">
 This is a set of container classes (lists, queues, stacks,
-heaps, trees, btrees, hash tables, sets, bags, etc.) with 
+heaps, trees, btrees, hash tables, sets, bags, etc.) with
 a lot of different modes.
    </descr>
    <file id="adasl"><descr lang="ru">Исходные тексты</descr>
@@ -1055,7 +1093,7 @@ a lot of different modes.
    <descr lang="ru">
 Библиотеку Stephe's Ada Library трудно назвать библиотекой
 контейнеров, т.к. контейнеры составляют меньшую ее часть.
-Библиотека основанна на настраиваемых пакетах контейнеров 
+Библиотека основанна на настраиваемых пакетах контейнеров
 и пакетах функциональности. Контейнеры (очередя и стеки,
 автоматически расширяемые массивы, списки, бинарные деревья)
 могут хранить как обычные, так лимитерованные или
@@ -1066,7 +1104,7 @@ a lot of different modes.
    </descr>
    <descr lang="en">
 Stephe's Ada Library.
-A large part of SAL provides a coherent set of generic 
+A large part of SAL provides a coherent set of generic
 abstract data types. Another large part of SAL provides
 math operations for kinematics and dynamics of masses in
 3 dimensional space.
