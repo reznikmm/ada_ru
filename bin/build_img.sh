@@ -22,6 +22,8 @@ EOF
 cat $BUILD/jigdo.parts >> $BUILD/ada-ru.jigdo
 
 find $CD// -follow -type f -not -name index.html \
+           -not -name ada_ru.ico \
+           -not -name autorun.exe \
            -not -path "*www.ada-ru.org*" -size +1k |
  \
 jigdo-file make-template                    \

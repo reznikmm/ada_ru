@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name="sept2003">
+  <descr lang="ru">Выпуск sept2003</descr>
+  <link id="sept2003" home="http://www.sigada.org/ada_letters/sept2003">
+    <descr lang="ru">Выпуск sept2003</descr>
+    <file id="sept2003.SIGAda_Annual_Report_2002-2003.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/SIGAda_Annual_Report_2002-2003.pdf"/>
+      <descr lang="ru">
+Годовой отчет SIGAda (SIGAda Annual Report. Currie Colket)
+</descr>
+      <descr lang="en">
+SIGAda Annual Report. Currie Colket
+</descr>
+    </file>
+    <file id="sept2003.newsletter_info.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/newsletter_info.pdf"/>
+      <descr lang="ru">
+От редакции журнала. (Newsletter Information)
+</descr>
+      <descr lang="en">
+Newsletter Information
+</descr>
+    </file>
+    <file id="sept2003.MCondic_Ada_Library.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/MCondic_Ada_Library.pdf"/>
+      <descr lang="ru">
+План создания стандарной библиотеки для Ада.
+(A Plan for Producing a Conventional Ada Library. Marin Condic)
+</descr>
+      <descr lang="en">
+A Plan for Producing a Conventional Ada Library. Marin Condic
+</descr>
+    </file>
+    <file id="sept2003.Invitation_to_Ada_2005.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/Invitation_to_Ada_2005.pdf"/>
+      <descr lang="ru">
+Введение в стандарт Ада 2005.
+(An Introduction to Ada 2005. Pascal Leroy)
+</descr>
+      <descr lang="en">
+An Introduction to Ada 2005. Pascal Leroy
+</descr>
+    </file>
+    <file id="sept2003.SIGAda03.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/SIGAda03.pdf"/>
+      <descr lang="ru">
+Анонс конференции SIGAda 2003.
+(SIGAda 2003 Information.)
+</descr>
+      <descr lang="en">
+SIGAda 2003 Information.
+</descr>
+    </file>
+    <file id="sept2003.ada_europe.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/sept2003/ada_europe.pdf"/>
+      <descr lang="ru">
+Анонс конференции Ada Europe 2004.
+(Ada Europe 2004 CFP.)
+</descr>
+      <descr lang="en">
+Ada Europe 2004 CFP.
+</descr>
+    </file>
+  </link>
+</folder>

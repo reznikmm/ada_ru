@@ -42,4 +42,5 @@ xsltproc --param nav.icon.path \'www.ada-ru.org/graphics/navicons/\' \
 
 cp -r $MISC/* $SITE
 cp -r $CONT/test.css $SITE
-
+cp $MY_ROOT/autoexec/* $CD
+rm -f $CD/.cvsignore

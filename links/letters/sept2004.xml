@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name='sept2004'>
+<descr lang='ru'>Спецвыпуск по библиотекам контейнеров, sept2004</descr>
+<link id='sept2004.'
+ home='http://www.sigada.org/ada_letters/issues/sept2004/'>
+<file id='sept2004.editor.raw'>
+<descr lang="ru">
+От редактора.
+(From the Editor)
+</descr>
+<descr lang="en">
+From the Editor
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/editor.pdf' />
+</file>
+
+<file id='sept2004.Pages.raw'>
+<descr lang="ru">
+Информация автору.
+(Newsletter Information)
+</descr>
+<descr lang="en">
+Newsletter Information.
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/Pages%20from%20newsletter_info.pdf' />
+</file>
+
+<file id='sept2004.SIGAda_Annual_Report.raw'>
+<descr lang="ru">
+Годовой отчет SIGAda.
+(SIGAda Annual Report. Currie Colket)
+</descr>
+<descr lang="en">
+SIGAda Annual Report. Currie Colket
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/SIGAda_Annual_Report.pdf' />
+</file>
+
+<file id='sept2004.AdaLetters-SIGAda2004f_scaled.raw'>
+<descr lang="ru">
+Анонс конференции SIGAda 2004.
+(SIGAda 2004 Information)
+</descr>
+<descr lang="en">
+SIGAda 2004 Information.
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/AdaLetters-SIGAda2004f_scaled.pdf' />
+</file>
+
+<file id='sept2004.ada_europe_scaled.raw'>
+<descr lang="ru">
+Анонс конференции Ada Europe 2005.
+(Ada Europe 2005 CFP)
+</descr>
+<descr lang="en">
+Ada Europe 2005 CFP.
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/ada_europe_scaled.pdf' />
+</file>
+
+<file id='sept2004.charles.raw'>
+<descr lang="ru">
+Charles: Библиотека Стандартных Шаблонов (STL) для языка Ада 95.
+(Charles: An STL for Ada 95. Matthew Heaney)
+</descr>
+<descr lang="en">
+Charles: An STL for Ada 95. Matthew Heaney
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/charles.pdf' />
+</file>
+
+<file id='sept2004.sal_ada_letters_2004.raw'>
+<descr lang="ru">
+Введение в библиотеку Стефана для Ады.
+(Introduction to Stephe's Ada Library. Stephen Leake)
+</descr>
+<descr lang="en">
+Introduction to Stephe's Ada Library. Stephen Leake
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/sal_ada_letters_2004.pdf' />
+</file>
+
+<file id='sept2004.PragmARCs.raw'>
+<descr lang="ru">
+PragmAda компоненты повторного использования.
+(The PragmAda Reusable Components. Jeffrey Carter)
+</descr>
+<descr lang="en">
+The PragmAda Reusable Components. Jeffrey Carter
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/PragmARCs.PDF' />
+</file>
+
+<file id='sept2004.levine.raw'>
+<descr lang="ru">
+Програмные компоненты повторного использования.
+(Reusable Software Components. Trudy Levine)
+</descr>
+<descr lang="en">
+Reusable Software Components. Trudy Levine
+</descr>
+<download type='file'
+ url='http://www.sigada.org/ada_letters/issues/sept2004/levine.pdf' />
+</file>
+
+</link>
+</folder>

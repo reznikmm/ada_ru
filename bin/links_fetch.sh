@@ -19,29 +19,30 @@ function download ()
 
 function part ()
 {
-  TARGET=$CD/$1
+  FILE=`echo $1|sed -e "s/%20/ /g"`
+  TARGET="$CD/$FILE"
   SIZE=$3
-  DIR=`dirname $TARGET`
+  DIR=`dirname "$TARGET"`
   [ -d $DIR ] || mkdir -p $DIR
-  STORE_DIR=`dirname $STORE/$1`
+  STORE_DIR=`dirname "$STORE/$FILE"`
   [ -d $STORE_DIR ] || mkdir -p $STORE_DIR
-  if [ -f $STORE/$1 ]
+  if [ -f "$STORE/$FILE" ]
   then
-    OLD_SIZE=`stat $STORE/$1 |grep "Size:"|cut -f4 -d\ `
+    OLD_SIZE=`stat "$STORE/$FILE" |grep "Size:"|cut -f4 -d\ `
     if [ .$SIZE. == .. ]
     then
-      echo Size ${STORE}$1 is null
+      echo Size ${STORE}$FILE is null
     elif [ $OLD_SIZE -ne $SIZE ]
     then
-      mv ${STORE}$1 ${STORE}$1_old
-      echo Size $1 changed
-      download $2 `dirname $STORE/$1`
+      mv "${STORE}$FILE" "${STORE}$1_old"
+      echo Size $FILE changed
+      download $2 `dirname "$STORE/$FILE"`
     fi
   else
-     download $2 `dirname $STORE/$1`
+     download $2 `dirname "$STORE/$FILE"`
   fi
-  [ -r $STORE/$1 ] && ln -s `revpath $DIR`$STORE/$1 $TARGET
-   MD5=`jigdo-file md5 --report quiet $TARGET |cut -f1 -d\ `
+  [ -r "$STORE/$FILE" ] && ln -s "`revpath $DIR`$STORE/$FILE" "$TARGET"
+   MD5=`jigdo-file md5 --report quiet "$TARGET" |cut -f1 -d\ `
    if [ .$MD5. = .. ]
    then
      echo "Cant download " $*
@@ -62,14 +63,16 @@ rm -fr $BUILD/*
 rm -rf $CD/*
 
 xsltproc -o $BUILD/links.tmp $LINKS/copy.xsl $LIST
-$FETCH $BUILD/links.tmp $NEW
+if [ .$1. != .nofetch. ] 
+then
+  FETCH $BUILD/links.tmp $NEW
 
   if [ $? != 0 ]
   then
      echo Version calucation failed: $?
      exit
   fi
-
+fi
 
 #make jigdo parts
 xsltproc -o $BUILD/jigdo.parts.tmp $LINKS/list.xsl $BUILD/links.tmp

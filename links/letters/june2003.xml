@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name="june2003">
+  <descr lang="ru">Выпуск june2003</descr>
+  <link id="june2003" home="http://www.sigada.org/ada_letters/june2003">
+    <descr lang="ru">Выпуск june2003</descr>
+    <file id="june2003.chair_letter.raw">
+      <descr lang="ru">
+Предисловие председателя.
+(Message from the Chair. Currie Colket)
+</descr>
+      <descr lang="en">
+Message from the Chair. Currie Colket
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/chair_letter.pdf"/>
+    </file>
+    <file id="june2003.newsletter_info.raw">
+      <descr lang="ru">
+От редакции журнала. (Newsletter Information)
+</descr>
+      <descr lang="en">
+Newsletter Information
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/newsletter_info.pdf"/>
+    </file>
+    <file id="june2003.PDCentreRelease.raw">
+      <descr lang="ru">
+Анонс Центра профессиональной разработки ACM.
+(ACM Professional Development Centre Announcement.)
+</descr>
+      <descr lang="en">
+ACM Professional Development Centre Announcement.
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/PDCentreRelease.pdf"/>
+    </file>
+    <file id="june2003.levine.raw">
+      <descr lang="ru">
+Компоненты для повторного использования.
+(Reusable Software Components. Trudy Levine)
+</descr>
+      <descr lang="en">
+Reusable Software Components. Trudy Levine
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/levine.pdf"/>
+    </file>
+    <file id="june2003.liang.raw">
+      <descr lang="ru">
+Автоматическое построение прототипов при помощи
+Оптимизированной Объектной Модели.
+(Automatic Prototype Generating via Optimized Object Model.
+Sheldon X. Liang, Lynn Zhang, Luqi)
+</descr>
+      <descr lang="en">
+Automatic Prototype Generating via Optimized Object Model.
+Sheldon X. Liang, Lynn Zhang, Luqi
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/liang.pdf"/>
+    </file>
+    <file id="june2003.sanden.raw">
+      <descr lang="ru">
+Надежность программирования задач реального времени
+в языках Java и Ада.
+(Real-time programming safety in Java and Ada. Bo Sanden)
+</descr>
+      <descr lang="en">
+Real-time programming safety in Java and Ada. Bo Sanden
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/sanden.pdf"/>
+    </file>
+    <file id="june2003.dearada.raw">
+      <descr lang="ru">
+Дорогая Ада.
+(Dear Ada. Matthew Heaney)
+</descr>
+      <descr lang="en">
+Dear Ada. Matthew Heaney
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/dearada.pdf"/>
+    </file>
+    <file id="june2003.cfp-sigada03.raw">
+      <descr lang="ru">
+Анонс SIGAda 2003.
+(SIGAda 2003 CFP)
+</descr>
+      <descr lang="en">
+SIGAda 2003 CFP.
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/cfp-sigada03.pdf"/>
+    </file>
+    <file id="june2003.IRTAW12-cfp.raw">
+      <descr lang="ru">
+Анонс IRTAW 2003.
+(IRTAW 2003 CFP)
+</descr>
+      <descr lang="en">
+IRTAW 2003 CFP.
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/IRTAW12-cfp.pdf"/>
+    </file>
+    <file id="june2003.ada_europe_cpf.raw">
+      <descr lang="ru">
+Анонс Ada Europe 2004.
+(Ada Europe 2004 CFP)
+</descr>
+      <descr lang="en">
+Ada Europe 2004 CFP.
+</descr>
+      <download type="file" url="http://www.sigada.org/ada_letters/june2003/ada_europe_cpf.pdf"/>
+    </file>
+  </link>
+</folder>

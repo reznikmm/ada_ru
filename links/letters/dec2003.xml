@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name="dec2003">
+  <descr lang="ru">Выпуск dec2003. 
+ Спецвыпуск по 12-му заседанию международной рабочей группы по 
+ использованию язвыка Ада в системах реального времени.
+ (Proceedings of the 12th International Real-Time Ada Workshop).
+</descr>
+  <link id="dec2003" home="http://www.sigada.org/ada_letters/dec2003">
+    <descr lang="ru">Выпуск dec2003. 
+ Спецвыпуск по 12-му заседанию международной рабочей группы по 
+ использованию язвыка Ада в системах реального времени.
+ (Proceedings of the 12th International Real-Time Ada Workshop).
+</descr>
+    <file id="dec2003.chair_letter_2003_12.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/chair_letter_2003_12.pdf"/>
+      <descr lang="ru">
+Предисловие председателя.
+(Message from the Chair. Currie Colket)
+</descr>
+      <descr lang="en">
+Message from the Chair. Currie Colket 
+</descr>
+    </file>
+    <file id="dec2003.newsletter_info.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/newsletter_info.pdf"/>
+      <descr lang="ru">
+От редакции журнала. (Newsletter Info)
+</descr>
+      <descr lang="en">
+Newsletter Info
+</descr>
+    </file>
+    <file id="dec2003.Title_Page.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/Title_Page.pdf"/>
+      <descr lang="ru">
+Титульная страница.
+</descr>
+      <descr lang="en">
+Title Page.
+</descr>
+    </file>
+    <file id="dec2003.S1.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S1.pdf"/>
+      <descr lang="ru">
+Секция "Основные свойства языка".
+(Session: New Core Language Features)
+</descr>
+      <descr lang="en">
+Session: New Core Language Features.
+</descr>
+    </file>
+    <file id="dec2003.S2.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S2.pdf"/>
+      <descr lang="ru">
+Секция "Интеграция или ортогональность 
+(Java реального времени вместо Ады)"
+(Session: Integration vs. Orthogonality)
+</descr>
+      <descr lang="en">
+Session: Integration vs. Orthogonality
+</descr>
+    </file>
+    <file id="dec2003.02_Wellings_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/02_Wellings_final.pdf"/>
+      <descr lang="ru">
+Является ли грядущая технология 'Java в рельном времени'
+лучшей, чем Ada технология?
+(Is Java Augmented with the RTSJ a Better Real-Time ...
+Technology than Ada 95?
+AJ Wellings)
+</descr>
+      <descr lang="en">
+Is Java Augmented with the RTSJ a Better Real-Time ...
+Technology than Ada 95?
+AJ Wellings
+</descr>
+    </file>
+    <file id="dec2003.S3.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S3.pdf"/>
+      <descr lang="ru">
+Секция: Текущие вопросы/предложения по системам реального времени.
+(Session: Current Real-Time AIs)
+</descr>
+      <descr lang="en">
+Session: Current Real-Time AIs.
+</descr>
+    </file>
+    <file id="dec2003.04_Real_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/04_Real_final.pdf"/>
+      <descr lang="ru">
+Отчет "Реализация в GNAT динамических предельных приоритетов".
+(Dynamic Ceiling Priorities in GNAT Implementation Report. Miranda et al.)
+</descr>
+      <descr lang="en">
+Dynamic Ceiling Priorities in GNAT Implementation Report. Miranda et al.
+</descr>
+    </file>
+    <file id="dec2003.08_Harbour_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/08_Harbour_final.pdf"/>
+      <descr lang="ru">
+Управление несколькими таймерами времени исполнения из
+одиночной задачи.
+(Managing Multiple Execution-Time Timers from a Single Task.
+MG Harbour and MA Rivas)
+</descr>
+      <descr lang="en">
+Managing Multiple Execution-Time Timers from a Single Task.
+MG Harbour and MA Rivas
+</descr>
+    </file>
+    <file id="dec2003.S4.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S4.pdf"/>
+      <descr lang="ru">
+Секция "Гибкое планирование исполнения задач в Аде".
+(Session: Flexible Scheduling in Ada)
+</descr>
+      <descr lang="en">
+Session: Flexible Scheduling in Ada.
+</descr>
+    </file>
+    <file id="dec2003.01_Burns_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/01_Burns_final.pdf"/>
+      <descr lang="ru">
+Планирование исполнения задач на основе их атрибутов - 
+развитие поддержки планирования в Аде.
+(Task Attribute-Based Scheduling - Extending Ada s Support for Scheduling.
+Burns and AJ Wellings)
+</descr>
+      <descr lang="en">
+Task Attribute-Based Scheduling - Extending Ada s Support for Scheduling.
+Burns and AJ Wellings.
+</descr>
+    </file>
+    <file id="dec2003.10_Harbour_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/10_Harbour_final.pdf"/>
+      <descr lang="ru">
+Контроллируемое приложением планирование задач в Аде.
+(Application-Defined Scheduling in Ada.
+MA Rivas and MG Harbour)
+</descr>
+      <descr lang="en">
+Application-Defined Scheduling in Ada.
+MA Rivas and MG Harbour
+</descr>
+    </file>
+    <file id="dec2003.11_Tokar_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/11_Tokar_final.pdf"/>
+      <descr lang="ru">
+Разделение по пространству и времени при помощи
+ARINC 653 и прагмы Profile.
+(Space &amp; Time Partitioning with ARINC 653 and pragma Profile. JL Tokar)
+</descr>
+      <descr lang="en">
+Space &amp; Time Partitioning with ARINC 653 and pragma Profile. JL Tokar
+</descr>
+    </file>
+    <file id="dec2003.S5.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S5.pdf"/>
+      <descr lang="ru">
+Секция "Статус и будущее для Ravenscar".
+(Session: Ravenscar Status and Future)
+</descr>
+      <descr lang="en">
+Session: Ravenscar Status and Future.
+</descr>
+    </file>
+    <file id="dec2003.03_Dobbing_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/03_Dobbing_final.pdf"/>
+      <descr lang="ru">
+Статический анализ Ravenscar программ.
+(Static Analysis of Ravenscar Programs. PN Amey and BJ Dobbing)
+</descr>
+      <descr lang="en">
+Static Analysis of Ravenscar Programs. PN Amey and BJ Dobbing
+</descr>
+    </file>
+    <file id="dec2003.05_Vardanega_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/05_Vardanega_final.pdf"/>
+      <descr lang="ru">
+Шаблоны проектирования для Ravenscar?
+Опыт использования Ravenscar Profile.
+(Ravenscar Design Patterns? Reflections on Use of the Ravenscar Profile.
+T Vardanega)
+</descr>
+      <descr lang="en">
+Ravenscar Design Patterns? Reflections on Use of the Ravenscar Profile.
+T Vardanega
+</descr>
+    </file>
+    <file id="dec2003.06-12_Barbosa_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/06-12_Barbosa_final.pdf"/>
+      <descr lang="ru">
+Проверка, тестирование и мониторинг Open Ravenscar Real Time Kernel.
+(Verifying, Validating and Monitoring the Open Ravenscar Real Time Kernel.
+R Maia et al)
+</descr>
+      <descr lang="en">
+Verifying, Validating and Monitoring the Open Ravenscar Real Time Kernel.
+R Maia et al
+</descr>
+    </file>
+    <file id="dec2003.07_Puente_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/07_Puente_final.pdf"/>
+      <descr lang="ru">
+Часы исполняемого времени и Ravenscar ядра.
+(Execution-Time Clocks and Ravenscar Kernels.
+A de la Puente and J Zamorano)
+</descr>
+      <descr lang="en">
+Execution-Time Clocks and Ravenscar Kernels.
+A de la Puente and J Zamorano
+</descr>
+    </file>
+    <file id="dec2003.09_Michell_final.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/09_Michell_final.pdf"/>
+      <descr lang="ru">
+Один из подходов к проверке конкурентных Ада-программ реального времени.
+(An Approach to Formal Verification of Real Time Concurrent Ada Programs.
+DJ Howe and S Michell)
+</descr>
+      <descr lang="en">
+An Approach to Formal Verification of Real Time Concurrent Ada Programs.
+DJ Howe and S Michell
+</descr>
+    </file>
+    <file id="dec2003.S6.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S6.pdf"/>
+      <descr lang="ru">
+Секция "Создание новых предложений к расширению языка"
+(Session: Generating New AIs)
+</descr>
+      <descr lang="en">
+Session: Generating New AIs.
+</descr>
+    </file>
+    <file id="dec2003.S7.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/dec2003/S7.pdf"/>
+      <descr lang="ru">
+Секция "Будущее IRTAW (международной рабочей группы по 
+ использованию язвыка Ада в системах реального времени)".
+(Session: The Future of IRTAW)
+</descr>
+      <descr lang="en">
+Session: The Future of IRTAW.
+</descr>
+    </file>
+  </link>
+</folder>

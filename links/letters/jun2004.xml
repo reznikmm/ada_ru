@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name="jun2004">
+  <descr lang="ru">Выпуск jun2004</descr>
+  <link id="jun2004" home="http://www.sigada.org/ada_letters/issues/jun2004">
+    <descr lang="ru">Выпуск jun2004</descr>
+    <file id="jun2004.chair_2004_06.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/issues/jun2004/chair_2004_06.pdf"/>
+      <descr lang="ru">
+Предисловие председателя. (Letter from the Chair. Currie Colket)
+</descr>
+      <descr lang="en">
+Letter from the Chair. Currie Colket
+</descr>
+    </file>
+    <file id="jun2004.awards.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/issues/jun2004/awards.pdf"/>
+      <descr lang="ru">
+Награды SIGAda за 2003. (2003 SIGAda Awards. Currie Colket)
+</descr>
+      <descr lang="en">
+2003 SIGAda Awards. Currie Colket
+</descr>
+    </file>
+    <file id="jun2004.ravenscar_article.raw">
+      <download type="file" url="http://www.sigada.org/ada_letters/issues/jun2004/ravenscar_article.pdf"/>
+      <descr lang="ru">
+Руководство по использованию Ada Ravenscar Profile
+в системах повышенной надежности.
+(Guide for the use of the Ada Ravenscar Profile in high integrity systems.
+Burns, Dobbing, and Vardanega)
+</descr>
+      <descr lang="en">
+Guide for the use of the Ada Ravenscar Profile in high integrity systems.
+Burns, Dobbing, and Vardanega</descr>
+    </file>
+  </link>
+</folder>
