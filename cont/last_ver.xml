@@ -1,15 +1,18 @@
 <?xml version='1.0' encoding='koi8-r'?>
 <table class="last-ver" width="100%">
 <tr><th>Новые версии</th></tr>
+<tr><td><a href="soft.html#mgnat">26 Окт mgnat 2.01</a></td></tr>
+<tr><td><a href="soft.html#gnatcom">26 Окт gnatcom 1.4a</a></td></tr>
+<tr><td><a href="soft.html#dtraq.linux">09 Окт dtraq 0.986</a></td></tr>
 <tr><td><a href="soft.html#mgnat">28 Сен mgnat</a></td></tr>
 <tr><td><a href="soft.html#dtraq.linux">25 Сен dtraq 0.985</a></td></tr>
 <tr><td><a href="soft.html#adagide-src">22 Сен adagide 721</a></td></tr>
 <tr><td><a href="soft.html#adagide-bin">12 Сен adagide</a></td></tr>
 <tr><td><a href="soft.html#mgnat">10 Сен mgnat 1.2</a></td></tr>
+<!--
 <tr><td><a href="soft.html#zlib-ada">06 Сен zlib-ada 1.3</a></td></tr>
 <tr><td><a href="soft.html#webcheck">08 авг webcheck 1.01</a></td></tr>
 <tr><td><a href="soft.html#auto_io">07 авг auto_io 3.03</a></td></tr>
-<!--
 <tr><td><a href="soft.html#sal">07 авг sal 1.70</a></td></tr>
 <tr><td><a href="soft.html#aws">08 июнь aws 2.0p.</a></td></tr>
 <tr><td><a href="soft.html#polyorb">08 июнь polyorb 1.1r</a></td></tr>

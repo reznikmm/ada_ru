@@ -493,7 +493,7 @@ the spec.
     </file>
   </link>
 
-  <link id="gnatcom" home="http://www.adapower.com/gnatcom/index.html">
+  <link id="gnatcom" home="http://www.gnavi.org/gnatcom/">
    <descr lang="ru">
 Утилита gnatcom позволяет программировать/использовать
 COM/DCOM/COM+ объекты в языке Ада.
@@ -504,7 +504,8 @@ using COM objects in ways as easy as Visual Basic,
 but with as much power and control as C++.
    </descr>
    <file id="gnatcom"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://www.adapower.com/gnatcom/index.html" regexp="gnatcom-([0-9]+).zip"/>
+      <download type="regexp" url="http://www.gnavi.org/gnatcom/" 
+       regexp="gnatcom-([0-9]+\.[0-9a-d]+).zip"/>
    </file>
   </link>
 
@@ -932,7 +933,7 @@ library formats known to Linux.
     </file>
   </link>
 
-  <link id="gwindows" home="http://www.adapower.com/gwindows/">
+  <link id="gwindows" home="http://www.gnavi.org/gwindows/">
    <descr lang="ru">
 GWindows - связка с win32 компонентами ADO доступа к базам
 данных и Active X для компонент управления, диалогов, печати
@@ -944,7 +945,7 @@ Active X support for Ada 95. This is the second public release of
 this powerful framework, version 1.1
    </descr>
     <file id="gwindows"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://www.adapower.com/gwindows/" regexp=".*/gwindows-([0-9p_]+).zip"/>
+     <download type="regexp" url="http://www.gnavi.org/gwindows/" regexp=".*gwindows-([0-9p_]+).zip"/>
     </file>
   </link>
 

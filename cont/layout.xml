@@ -32,8 +32,8 @@
        <tocentry page="../cont/dict_ru.xml" filename="dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="fnotes.html"/>
     </tocentry>
-    <tocentry page="../cont/conf.xml" filename="conf.html" revisionflag="added"/>
-    <!--  revisionflag="changed" -->
+    <tocentry page="../cont/conf.xml" filename="conf.html" revisionflag="changed"/>
+    <!--  revisionflag="changed" revisionflag="added" -->
     <tocentry page="../cont/src.xml" filename="src.html">
        <tocentry page="../cont/src_asissq.xml"  filename="src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="src_ais.html"/>
