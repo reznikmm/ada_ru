@@ -120,7 +120,7 @@
 </tbody></tgroup>
 </informaltable>
 
-<section>
+<section id="1">
 <title>Книги</title>
 <informaltable frame="none">
 <tgroup cols='2' tgroupstyle="odd">
@@ -199,7 +199,7 @@
 </informaltable>
 </section>
 
-<section>
+<section id="2">
 <title>Статьи</title>
 
 <informaltable frame="none">

@@ -20,7 +20,7 @@
 раннюю версию компакт диска без необходимости загрузки
 образа целиком.
 </para>
-<section>
+<section id="1">
  <title>Jigdo</title>
  <para>
    <ulink url="http://atterer.net/jigdo/"
@@ -70,7 +70,7 @@
  </para>
 </section>
 
-<section>
+<section id="2">
  <title>Образ компакт диска</title>
  <para>
   <informaltable pgwide="1">
@@ -106,7 +106,7 @@
  </para>
 </section>
 
-<section>
+<section id="3">
  <title>Ru.Ada.Community CDROM</title>
 <para>
 Собственную версию компакт диска распространяет Кирил Сазонов.

@@ -9,7 +9,7 @@
 	    omit-xml-declaration="no" />
 									
 <xsl:template match="/">
- <section><title>Новости</title>
+ <section id="news"><title>Новости</title>
   <xsl:apply-templates select="/news/*[6>position()]"/>
  </section>
 </xsl:template>
