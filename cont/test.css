@@ -1,0 +1,51 @@
+body {
+   background-color: #fffae8;
+}
+
+a,a:active,a:visited {
+   color:#634421
+}
+a:hover {
+   color:black
+}
+
+p.navtoc a,p.navtoc a:active,p.navtoc a:visited {
+   color:#fffae8;
+}
+p.navtoc a:hover {
+   color:yellow
+}
+p.navtoc {
+   color:#fffae8;
+   font-size: smaller;
+   line-height:120%;
+   font-weight: bold;
+}
+
+p.navtoc img {
+   width: 199px
+   height: 220px
+}
+
+td a img {
+   border: 0
+}
+table.last-ver th {
+  background-color: #fffae8;
+  color:#634421;
+  text-align: center;
+}
+
+table.last-ver td a,table.last-ver td a:active,table.last-ver td a:visited {
+  color: #fffae8;
+  font-family: arial,helvetica,sans-serif;
+  font-size: smaller;
+  padding-left: 5pt;
+  text-indent: 5pt;
+  text-decoration: none;
+}
+
+table.last-ver td a:hover {
+  color: yellow;
+}
+

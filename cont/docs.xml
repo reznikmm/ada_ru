@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+<!ENTITY ada83 SYSTEM "ada83.xml" NDATA XML>
+<!ENTITY asis  SYSTEM "asis.xml"  NDATA XML>
+%last_mod;
+]>
+<webpage id="docs" lang="ru">
+<config param="desc" value="Documentation in Russian"/>
+<config param="rcsdate" value="&last_mod_docs;"/>
+<head>
+<title>Документация</title>
+</head>
+
+<para>
+Здесь представленна известная мне документация
+на русском языке в электронном виде:
+</para>
+<informaltable frame="none"><tgroup cols='2' tgroupstyle="odd">
+<tbody valign="top">
+
+<row>
+ <entry>
+  <ulink url="http://faqs.org.ru/progr/other_l/adafaq.htm"
+     old_url="http://www.slo.ru/programming/ada.htm"
+     >Частые вопросы и ответы (FAQ)</ulink>
+ </entry>
+ <entry>
+  Сборник вопросов часто задаваемых в конференции 
+  fido7.su.pascal.modula.ada относительно языка Ада 95.
+ </entry>
+</row>
+<row>
+ <entry>
+  <olink targetdocent="asis"
+  >Интерфейс ASIS</olink>
+ </entry>
+ <entry>
+   Введение в ASIS (Ada Semantic Interface Specification,
+   Спецификация Семантического Интерфейса к языку Ада).
+   Интерфейс ASIS служит для анализа синтаксической и 
+   семантической информации любой Ада программы.
+ </entry>
+</row>
+<row>
+ <entry>
+  ASIS для GNAT
+ </entry>
+ <entry>
+    <ulink url="asis_ugrg_RU/asis_ug_RU.html"
+    >Руководство пользователя</ulink>
+   и
+    <ulink url="asis_ugrg_RU/asis_rm_RU.html"
+    >справочное руководство</ulink>
+   по библиотеке ASIS для компилятора GNAT.
+    <ulink url="files/asis_ugrg_RU.zip"
+    >Можно скачать ZIP архив.</ulink>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <anchor id="gtkada"/>
+  <ulink url="GtkAda/gtkada_ug_RU.html"
+  >Руководство пользователя GtkAda</ulink>
+ </entry>
+ <entry>
+    GtkAda - это высокоуровневая переносимая графическая библиотека,
+    которая основана на графической библиотеке gtk+, одной из официальных
+    библиотек GNU. Она позволяет легко создавать интерфейсы пользователя,
+    которые бутут переносимы для множества платформ, включая основные
+    платформы, которые используют сервер X11 и платформу Win32.
+    <ulink url="files/GtkAda2_ug_RU.zip"
+    >Можно скачать ZIP архив.</ulink> Доступна, также, 
+    <ulink url="files/GtkAda1_ug_RU.zip">
+    документация к GtkAda-1.x</ulink>.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="glade_UG_RU/glade_ug_RU.html"
+  >Система построения распределенных приложений Glade. Руководство
+   пользователя</ulink>
+ </entry>
+ <entry>
+  Построение распределенных систем оговорено в стандарте
+  языка Ада (приложение Е).
+  Компилятор GNAT поддерживает распределенные системы
+  при помощи пакета Glade. Фактически, любую программу,
+  состоящую из нескольких модулей, можно превратить в распределенную,
+  заставив модули выполняться на разных машинах. Кроме подробных
+  инструкций по построению распределенных систем, руководство
+  включает сравнение технологий Glade и CORBA.
+    <ulink url="files/glade_UG_RU.zip"
+    >Можно скачать ZIP архив.</ulink>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <anchor id="acats"/>
+  <ulink url="acats/acats_RU.html"
+  >ACATS - комплект тестов для сертификации Ада-компиляторов</ulink>
+ </entry>
+ <entry>
+   ACATS (Ada Conformity Test Suite) является официальным            
+   комплектом тестов, который используется для сертификации Ада-компиляторов
+   на соответствие реализации Ада-системы требованиям стандарта
+   (ANSI/ISO/IEC 8652:1995).
+   Поставка ACATS включает в себя руководство пользователя, тестовые 
+   программы и пакеты поддержки.
+   Данный документ, любезно предоставленный Александром Гавва,
+   является переводом руководства пользователя на русский язык.
+    <ulink url="files/acats_RU.zip"
+    >Можно скачать ZIP архив.</ulink>
+ </entry>
+</row>
+
+</tbody></tgroup>
+</informaltable>
+
+<section>
+<title>Книги</title>
+<informaltable frame="none">
+<tgroup cols='2' tgroupstyle="odd">
+<tbody valign="top">
+
+<row>
+ <entry>
+    <ulink url="V-0.4w/index.html">
+      <inlinegraphic fileref="graphics/ada_prog.png" 
+                     align="left" 
+                     srccredit="Адское программирование"/>
+    </ulink>
+ </entry>
+ <entry>
+    <para>
+  <anchor id="book"/>
+    Мы рады предложить Вам
+    <ulink url="V-0.4w/index.html">
+    книгу "Адское программирование"
+    </ulink>
+    любезно предоставленную нам автором, Александром Гавва.
+    Хотя в библиотеках можно найти много хороших книг по Аде,
+    все они описывают стандарт языка 83 года. Эта книга,
+    являясь замечательным пособием для изучающих язык Ада,
+    основана на текущем стандарте Ада 95. Кроме описания
+    самого языка, книга содержит описания свойственных языку
+    методик программирования и руководство по использованию 
+    свободно распространяемого компилятора GNAT. 
+    </para>
+    <para>
+    Вы можете скачать
+    книгу для некоммерческого использования.
+    Архив html версии размером 395К находится
+    <ulink url="files/ada_prog-0.4w.zip">здесь</ulink>.
+    Есть также 
+    <ulink url="http://reznikmm.front.ru/files/ADA_RU.pdf.gz"
+    >Acrobat PDF</ulink>
+    и 
+    <ulink url="http://reznikmm.front.ru/files/ADA_RU.ps.gz"
+    >PostScript</ulink>
+    версии книги.
+    </para>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <olink targetdocent="ada83">
+  Перевод стандарта Ада 83
+  </olink>
+ </entry>
+ <entry>
+ Электронный вариант перевода стандарта языка Ада 83 на русский язык.
+ </entry>
+</row>
+<row>
+ <entry>
+  <ulink url="http://www.happytown.ru/books/comp/i432/"
+  >Организация системы ИНТЕЛ 432</ulink>
+ </entry>
+ <entry>
+ Первые три главы о языке Ада книги
+  Э. Органик "Организация системы ИНТЕЛ 432"
+ Издательство "Мир" 1987 г.
+ (Elliott I. Organick "A programmr's view of the Intel 432 system"
+ Intel corp. 1983.)
+ Язык Ада использовался в качестве базового языка для реализации
+ системы Intel432. В книге большое внимание уделено выбору языка
+ программирования Ада как в качестве языка реализации операционной 
+ системы, так и в качестве базового языка для создания прикладных 
+ пакетов программ и систем управления базами данных. 
+ </entry>
+</row>
+
+</tbody></tgroup>
+</informaltable>
+</section>
+
+<section>
+<title>Статьи</title>
+
+<informaltable frame="none">
+<tgroup cols='2' tgroupstyle="odd">
+<tbody valign="top">
+<row>
+ <entry>
+  <ulink url="http://www.osp.ru/os/1997/03/52.htm"
+  >Новые концепции и возможности языка Ада95</ulink>
+ </entry>
+ <entry>
+  Статья Кирилла и Олега Перминовых, опубликованная в
+  журнале "Открытые системы", содержит обзор средств языка Ада 95,
+  раскрывает отличия от предыдущего стандарта языка,
+  является прекрасным вводным материялом дающим ясное представление
+  о языке.
+ </entry>
+</row>
+<row>
+ <entry>
+  <ulink url="http://www.osp.ru/os/1996/06/32.htm"
+  >Ада - язык разработки больших программных комплексов реального времени</ulink>
+ </entry>
+ <entry>
+  Более ранняя статья Кирилла и Олега Перминовых в
+  журнале "Открытые системы" посвящена принципам и
+  истории создания языка Ада 83.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <anchor id="razm"/>
+  <ulink url="http://qnxclub.net/files/articles/razm/razm.html"
+  >Размышлизмы о выборе языка реализации</ulink>
+ </entry>
+ <entry>
+В последнее время, среди 
+  <ulink url="http://qnx.org.ru/">пользователей ОС QNX</ulink>
+усиливается                       
+интерес к языку Ада. В результате появилась 
+  <ulink url="http://qnxclub.net/files/articles/razm/razm.html"
+>статья "Размышлизмы о выборе языка реализации"</ulink>,
+в которой автор,                       
+Владимир Лось, призывает к использованию языков со встроенными                  
+механизмами параллельного исполнения, вместо ручного                            
+кодирования операций на основе API конкретной операционной системы.             
+В статье рассматриваются примеры кода на языках Active Oberon,                  
+Ada и Zonnon. Автор обещает, что данная статья будет началом                    
+цикла статей о языке Ада.                                                       
+ </entry>
+</row>
+
+
+<row>
+ <entry>
+  <ulink url="http://www.osp.ru/pcworld/1997/08/53.htm"
+  >Опыт использования языка Ада</ulink>
+ </entry>
+ <entry>
+Небольшая статья (3 стр.),
+как пятеро студентов, изучив Аду за месяц,
+успешно реализовали дипломный проект
+разработки компилятора языка высокого уровня.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://adalab.nm.ru/ada_intro.html"
+  >Краткое введение в язык Ада</ulink>
+ </entry>
+ <entry>
+   Перевод небольшой статьи Eric DeArment, Team Ada.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink
+   url="http://www.pcweek.ru/Year2000/N35/CP1251/CorporationSystems/chapt3.htm"
+  >Опыт создания бортового ПО для истребителя F-22</ulink>
+ </entry>
+ <entry>
+В статье, автор, Сергей Бобровский, описывает опыт создания 
+сложной (2.2 миллиона строк) бортовой системы современного 
+многоцелевого тактического истребителя F-22. Система была 
+реализована на языке Ada. Удивительно, но автор приходит к 
+выводу, что для реализации подобных российских проектов больше 
+подходит язык C, так как программирование на языке Ada "требует
+более высокой квалификации". Разве можно создать подобную систему,
+не имея достаточной квалификации?
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://home.perm.ru/~strannik/st_txt_prog_02.html"
+  >Сравнение языков программирования
+   Си++, Паскаль и Ада (Си, Модула-2, Оберон-2 и Ява)</ulink>
+ </entry>
+ <entry>
+  Статья из журнала Программист N 2 за 2002 год. Сравнение проводилось
+  по следующим группам свойств: набор операторов, механизм процедур, 
+  конструктор типов, механизмы раздельной компиляции, ООП, процессы и
+  исключительные ситуации, другое. Автором дана субъективная оценка
+  каждого языка программирования.
+ </entry>
+</row>
+<row>
+ <entry>
+  <ulink url="http://kis.pcweek.ru/kis/win/techno/ada.html"
+  >Язык Ада</ulink>
+ </entry>
+ <entry>
+   Пример поверхностного и неквалифицированного суждения об
+   Ада-технологии на страницах 
+   журнала PC Week за 1996 год. Автор Сергей Бобровский.
+ </entry>
+</row>
+</tbody></tgroup>
+</informaltable>
+</section>
+
+</webpage>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<news>
+
+<item day="17" month="08" year="2004">
+   В сентябре в Украине состоится
+  <olink targetdocent="conf">конференция SCALNET'04 </olink>
+   с подсекцией "Язык Ада и смежные технологии".
+   Приглашаем всех желающих!
+</item>
+
+<item day="16" month="06" year="2004">
+ Одновременно с выходом новых версий AWS и PolyORB
+ был открыт анонимный доступ к CVS. Теперь из CVS 
+ можно скачивать текущие версии AWS, GDB,
+ Glade, GtkAda, GPS, и PolyORB.
+</item>
+
+<item day="25" month="05" year="2004">
+Доступна новая сборка множества RPM пакетов
+для RedHat 7.x Linux и ему подобных,
+сделанная Александром Гавва.
+Сборка включает около 35 пакетов
+(не считая пакетов библиотек времени исполнения и
+ пакетов исходных текстов).
+  <ulink url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html"
+  >Скачать можно здесь</ulink>.
+Большинство пакетов уже пополнили наш 
+  <olink targetdocent="download"
+  >образ компакт диска</olink>,
+доведя его размер до 172М.
+</item>
+
+<item day="24" month="05" year="2004">
+Андрей Кузнецов предложил собственную IDE
+под Windows. Весьма симпатичная, поддерживает
+компиляцию и отладку. Язык разработки - Делфи.
+Пробуйте.
+  <ulink url="http://reznikmm.front.ru/files/adaide.zip"
+  >Скачать можно здесь</ulink>.
+</item>
+
+<item day="12" month="05" year="2004">
+Доступна новая версия
+  <olink targetdocent="docs" localinfo="book"
+  >книги по языку Ада</olink>
+Александра Гавва с некоторыми добавлениями и расширениями.
+Теперь есть версии в форматах PS и PDF.
+</item>
+
+<item day="26" month="04" year="2004">
+Вадим Годунко предложил свою
+  <olink targetdocent="src-xm"
+  >библиотеку привязки</olink>.
+к OpenMotif и X Windows для свободного использования.
+Библиотека охватывает большую часть интерфейса OpenMotif,
+а также X Toolkit Intrinsics и собственно X Window.
+</item>
+
+<item day="02" month="03" year="2004">
+Александр Гавва обновил перевод
+  <olink targetdocent="docs" localinfo="gtkada"
+  >руководства пользователя GtkAda</olink>.
+Теперь есть переводы и для GtkAda-2.2.0 и
+для GtkAda-1.X.
+</item>
+
+<item day="22" month="01" year="2004">
+В последнее время, среди пользователей ОС QNX,
+усиливается интерес к языку Ада. В результате
+появилась статья
+  <olink targetdocent="docs" localinfo="razm"
+  >"Размышлизмы о выборе языка реализации"</olink>.
+Автор обещает, что данная статья будет началом
+цикла статей о языке Ада.
+</item>
+
+<item day="08" month="01" year="2004">
+  Доступен перевод 
+  <olink targetdocent="docs" localinfo="acats"
+  >руководства пользователя</olink>.
+  комплекта тестов сертификации компилятора ACATS.
+  Спасибо Александру Гавва!
+</item>
+
+<item day="01" month="01" year="2004">
+  Вновь заработала система отслеживания версий программного обеспечения
+  на языке Ада. Теперь, с ее помощью, мы можем получать
+  образы CDROM дисков. Смотри раздел
+  <olink targetdocent="download">"Скачать"</olink>.
+  С новым годом!
+</item>
+
+<item day="07" month="07" year="2003">
+   Вышла новая версия 
+   <ulink url="http://libre.act-europe.fr/GtkAda">
+   GtkAda 2.2.0</ulink>.
+   Обновление включает
+   бинарный дистрибутив для Windows, поддержку Glade-2 и
+   libglade-2. Обновились также следующие пакеты:
+   <olink targetdocent="soft" localinfo="AdaBrowse">AdaBrowse</olink> версия
+   3.4.2,
+   
+   <olink targetdocent="soft" localinfo="Gnade">Gnade</olink> версия
+   1.4.3a.
+ </item>
+
+<item day="04" month="06" year="2003">
+ <inlinegraphic fileref="graphics/beagle2.png" align="right"/>
+На днях стартовала европейская автоматическая экспедиция к Марсу
+ <ulink url="http://www.esa.int/SPECIALS/Mars_Express/index.html"
+ >Mars Express</ulink>. Среди компонент космической станции
+ пять сделано в России. Большая часть ПО функционирующего на
+ станции написано на Аде. Например, спускаемый аппарат
+ <ulink url="http://www.beagle2.com">Beagle 2</ulink>
+ использует Ада 95 Ravenscar профайл. В силу строгих
+ ограничений на массу и размер, аппарат не имеет 
+ дублирующих устройств. Вместо этого сделан упор на
+ надежное, устойчивое к сбоям ПО.
+</item>
+
+<item day="03" month="06" year="2003">
+   Вышли новые версии следующих продуктов 
+   <olink targetdocent="soft" localinfo="AdaBrowse">AdaBrowse</olink> :
+   3.4.
+   <olink targetdocent="soft" localinfo="adasockets">adasockets</olink> :
+   1.7.
+   <olink targetdocent="soft" localinfo="Gnade">Gnade</olink> :
+   1.4.2.
+   <olink targetdocent="soft" localinfo="zlib-ada">zlib-ada</olink> :
+   1.1.
+ </item>
+
+<item day="22" month="05" year="2003">
+Добавлен раздел <olink targetdocent="soft">"Наши разработки"</olink>.
+Туда вошли две библиотеки Вадима Годунко. Раздел открыт для любых
+Ваших проектов, которые Вы желаете здесь расположить.
+</item>
+
+<item day="09" month="04" year="2003">
+Появился проект 
+   <ulink url="http://bernia.disca.upv.es/rtportal/apps/rtl-gnat/"
+    >RTLGnat</ulink>
+ - компилятор Gnat 3.14 для ОС реального времени RTLinux 3.1.
+Используя его можно откомпилировать Ада-программу как модуль ядра Linux.
+Запустить программу на исполнение можно при помощи команды 'insmod',
+при этом она загружается в адресное пространство ядра и исполняется
+с наивысшим приоритетом. Каждая Ада-задача выполняется как отдельный
+поток (thread). Данная архитектура позволяет реализовать требования
+реального времени спецификации языка Ада (приложение D).
+ </item>
+
+<item day="14" month="03" year="2003">
+Компания
+   <ulink url="http://www.gnat.com">ACT</ulink>
+анонсировала выход новой версии компилятора GNAT 5.00a.
+Компилятор использует новый генератор кода на основе
+GCC 3.2, что позволяет получать более качественный
+объектный код. О дате выхода бесплатной версии
+этого компилятора пока ничего не известно.
+ </item>
+
+<item day="11" month="03" year="2003">
+   Вышли новые версии следующих продуктов 
+   <olink targetdocent="soft" localinfo="aws">aws</olink> : 
+   1.3.
+   <olink targetdocent="soft" localinfo="adasockets">adasockets</olink> : 
+   1.6.
+   <olink targetdocent="soft" localinfo="marte">marte</olink> : 
+   1.2.
+   <olink targetdocent="soft" localinfo="Gnade">Gnade</olink> : 
+   1.4.1.
+ </item>
+
+ <item day="24" month="01" year="2003">
+ Журнал Aviation Week &amp; Space Technology, "AeroBytes", поместил
+ следующую заметку:
+"В рамках регулярной программы 
+усовершенствования оборудования Boeing производит модификацию 
+бомбардировщика B-1B с целью увеличения количества высокотехнологичного 
+вооружения, включающую замену шести компьютеров авиационного, 
+навигационного оборудования и систем вооружения, каждый из которых будет 
+содержать два процессорных модуля PowerPC. Новые компьютеры используют 
+операционную систему реального времени Green Hills Software's Integrity,
+что позволит реализовать возможность сопровождения нескольких 
+целей и другие новые 
+функции, программирование которых будет производиться на Ada с 
+использованием среды разработки AdaMulti."
+<para>
+К тому же в предшествующей статье, о сотрудничестве компаний BAE Systems
+Controls с DDC-I в целях разработки Score-653 для критичных к безопасности
+встроенных систем, упоминается, что "Ada признан надежным
+языком программирования."
+</para>
+ </item>
+
+ <item day="09" month="01" year="2003">
+    Пользуясь статистикой сайта 
+   <ulink url="http://www.bitbreather.com/programming_languages.html"
+   >bitbreather</ulink>
+    можно увидеть положение языка Ада среди других языков
+    программирования. Так, на 4 января 2003, Ада занимает 11 место по
+    числу вакансий, предлагаемых на monsters.com и dice.com.
+    Впереди SQL, ASP, Java, C++, Visual Basic, Perl, Javascript, Cobol,
+    SAS и C#. Ада обгоняет такие популярные у нас языки, как Delphi, PHP,
+    Python и Pascal.
+    Другой сайт
+   <ulink url="http://www.tiobe.com/tpci.htm">tiobe</ulink>,
+    меряя число квалифицированных инженеров, курсов и производителей,
+    строит свой индекс популярности, в котором Ада занимает 18 место.
+ </item>
+
+ <item day="16" month="12" year="2002">
+    Японцы запустили австралийский спутник FedSat.
+    Бортовой компьютер собран на 10 МГц процессоре ERC-32 и имеет 16 Мб
+    памяти на борту. Запрограммирован на Аде 95 при помощи компилятора
+    GNAT 3.13p. На героев можно поглядеть 
+   <ulink url="http://www.crcss.csiro.au/spin/spin90/spin9007.html"
+   >здесь</ulink>.
+ </item>
+
+ <item day="15" month="12" year="2002">
+   IBM купила компанию Rational за 2.1 миллиарда долларов. Среди
+   продуктов последней, кроме всем известного Raitonal Rose, присутствует
+   Apex Ada - высококачественный компилятор языка Ада для разных платформ.
+   Если с продуктом Rose все понятно (его ждет интеграция с продуктами IBM),
+   то судьба Apex и клиентов использующих его остается туманной.
+ </item>
+
+ <item day="06" month="12" year="2002">
+    У нас теперь свой
+   <ulink url="http://www.ada-ru.org">домен и сайт www.ada-ru.org</ulink>!
+   Сайт живет на базе
+      <olink targetdocent="soft" localinfo="aws">Ada Web Server</olink>.
+ </item>
+	  
+ <item day="05" month="12" year="2002">
+   Вышла новая версия
+      <olink targetdocent="soft" localinfo="AdaBrowse">AdaBrowse</olink> :
+         3.2.
+ </item>
+
+ <item day='27' month='11' year='2002'>
+   <ulink url="http://www.usafa.af.mil/dfcs/bios/mcc_html/a_sharp.html"
+   >Вышла версия компилятора GNAT для .Net</ulink>.
+   Кроме самого компилятора, поставляется утилита MSIL2Ada для
+   генерации Ада-спецификаций по файлам .Net (MSIL).
+   Для работы компилятора необходим MS .NET Framework или
+   Visual Studio .NET. Компилятор сделан на базе JGNAT.
+ </item>
+
+<item day="25" month="11" year="2002">
+   Вышла новая версия 
+   <olink targetdocent="soft" localinfo="AdaBrowse">AdaBrowse</olink> : 
+   3.1.
+ 
+   Вышла новая версия 
+   <olink targetdocent="soft" localinfo="adasockets">adasockets</olink> : 
+   1.4.1..
+ </item>
+	    
+ <item day='19' month='11' year='2002'>
+ Вышла новая версия 3.15p компилятора GNAT!
+ Тащить можно с 
+  <ulink url="http://libre.act-europe.fr/GNAT/">Libre</ulink>
+  или как всегда с 
+  <ulink url="ftp://ftp.cs.nyu.edu/pub/gnat">ftp.cs.nyu.edu</ulink>.
+  Читайте 
+  <ulink url="http://libre.act-europe.fr/GNAT/3.15p/features">
+  что нового</ulink>.
+ </item>
+ <item day='15' month='11' year='2002'>
+  Открылся наш сайт 
+  <ulink url="http://ada-rm.euro.ru">Ада по русски</ulink>.
+  Среди разделов - ПО в исходных текстах (будут отслеживаться
+  изменения версий), документация на русском языке.
+ </item>
+</news>

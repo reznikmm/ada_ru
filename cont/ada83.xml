@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="ada83">
+ <config param="desc" value="Ada 83 in Russian"/>
+ <config param="rcsdate" value="&last_mod_ada83;"/>
+ <head>
+  <title> Справочное руководство по языку Ада 83. Русский перевод.
+  </title>
+  <titleabbrev>Ада 83</titleabbrev>
+ </head>
+   
+ <para>
+   Здесь находится электронная версия перевода Ada Reference Manual 83
+   на русский язык. Перевод был опубликован в книге 
+   Джехани H. Язык Ада. /пеp. под pед. А.А.Кpасилова и
+       О.H.Пеpминова.- М.:Миp, 1988 г. (оpигинал - 1984)/
+ </para>
+ <para>
+   Перевод доступен в форматах
+   <itemizedlist>
+    <listitem>
+     <para>
+       <ulink url="arm83/index.html">
+         <citetitle>HTML версия для просмотра и ссылок</citetitle>
+       </ulink>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+       <ulink url="http://ada-rm.euro.ru/arm83-html-v1.tar.gz">
+         <citetitle>HTML версия в архиве (240K)</citetitle>
+       </ulink>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+       <ulink url="http://ada-rm.euro.ru/arm83-v1.pdf.gz">
+         <citetitle>PDF версия в архиве (980K)</citetitle>
+       </ulink>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+       <ulink url="http://ada-rm.euro.ru/arm83-src-v1.tar.gz">
+         <citetitle>исходный текст в формате Docbook (220K)</citetitle>
+       </ulink>
+     </para>
+    </listitem>
+   </itemizedlist>   
+ </para>
+
+</webpage>

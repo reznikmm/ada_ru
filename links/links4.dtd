@@ -1,0 +1,26 @@
+<!ELEMENT links  (folder)*>
+<!ELEMENT folder (descr*, (folder|link)*)>
+<!ATTLIST folder
+   name         CDATA #REQUIRED
+>
+<!ELEMENT descr (#PCDATA)>
+<!ATTLIST descr
+   lang         CDATA #REQUIRED
+>
+<!ELEMENT link  (descr*, file*)>
+<!ATTLIST link
+   id           ID    #REQUIRED
+   home         CDATA #REQUIRED
+>
+<!ELEMENT file  (download|descr)*>
+<!ATTLIST file
+   id           ID    #REQUIRED
+   name         CDATA #IMPLIED
+>
+<!ELEMENT download EMPTY>
+<!ATTLIST download
+   type         (file|regexp|sf) #REQUIRED
+   url          CDATA #REQUIRED
+   regexp       CDATA #IMPLIED
+   project      CDATA #IMPLIED
+>

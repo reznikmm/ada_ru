@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<dict>
+
+ <item>
+ <en>
+ 
+ </en>
+ <ru>
+Органик
+ </ru>
+ <ru>
+Бар
+ </ru>
+ <ru>
+Янг
+ </ru>
+ <ru>
+Кpасилов/Пеpминов
+ </ru>
+ <ru>
+Корочкин
+ </ru>
+</item>
+
+ <item>
+ <en>
+private
+ </en>
+ <ru>
+приватный
+ </ru>
+ <ru>
+приватный
+ </ru>
+ <ru>
+приватный
+ </ru>
+ <ru>
+личный
+ </ru>
+ <ru>
+приватный
+ </ru>
+</item>
+
+ <item>
+ <en>
+clause (with)
+ </en>
+ <ru>
+with список, use список ...
+ </ru>
+ <ru>
+спецификатор (совместимости)
+ </ru>
+ <ru>
+спецификатор (контекста)
+ </ru>
+ <ru>
+спецификатор (контекста)
+ </ru>
+ <ru>
+спецификатор (with)
+ </ru>
+</item>
+
+ <item>
+ <en>
+generic
+ </en>
+ <ru>
+родовой
+ </ru>
+ <ru/>
+ <ru>
+настраиваемый
+ </ru>
+ <ru>
+настраиваемый
+ </ru>
+ <ru>
+настраиваемый
+ </ru>
+</item>
+
+ <item>
+ <en>
+access type
+ </en>
+ <ru>
+ссылочный тип, тип указателей
+ </ru>
+ <ru/>
+ <ru>
+ссылочный тип
+ </ru>
+ <ru>
+ссылочный тип
+ </ru>
+ <ru>
+ссылочный тип
+ </ru>
+</item>
+
+ <item>
+ <en>
+record type
+ </en>
+ <ru>
+тип записи
+ </ru>
+ <ru/>
+ <ru>
+комбинированный тип
+ </ru>
+ <ru>
+именуемый тип
+ </ru>
+ <ru>
+тип записи
+ </ru>
+</item>
+
+ <item>
+ <en>
+array type
+ </en>
+ <ru/>
+ <ru/>
+ <ru>
+регулярный тип
+ </ru>
+ <ru>
+индексируемый тип
+ </ru>
+ <ru>
+массив, индексируемый тип
+ </ru>
+</item>
+
+ <item>
+ <en>
+discriminant
+ </en>
+ <ru>
+опеределитель
+ </ru>
+ <ru/>
+ <ru>
+дискриминант
+ </ru>
+ <ru>
+дискриминант
+ </ru>
+ <ru>
+дискриминант
+ </ru>
+</item>
+
+ <item>
+ <en>
+statement
+ </en>
+ <ru>
+оператор
+ </ru>
+ <ru>
+оператор
+ </ru>
+ <ru>
+оператор
+ </ru>
+ <ru>
+оператор
+ </ru>
+ <ru>
+оператор
+ </ru>
+</item>
+
+ <item>
+ <en>
+limited type
+ </en>
+ <ru/>
+ <ru>
+ограниченный тип
+ </ru>
+ <ru/>
+ <ru>
+лимитируемый тип
+ </ru>
+ <ru>
+ограниченный (лимитированный) тип
+ </ru>
+</item>
+
+ <item>
+ <en>
+exception
+ </en>
+ <ru>
+исключительная ситуация
+ </ru>
+ <ru/>
+ <ru>
+исключение
+ </ru>
+ <ru>
+исключение
+ </ru>
+ <ru>
+исключение
+ </ru>
+</item>
+
+ <item>
+ <en>
+pragma
+ </en>
+ <ru>
+указание
+ </ru>
+ <ru/>
+ <ru>
+директива компилятору
+ </ru>
+ <ru>
+прагма
+ </ru>
+ <ru>
+прагма
+ </ru>
+</item>
+
+ <item>
+ <en>
+allocator
+ </en>
+ <ru>
+генератор
+ </ru>
+ <ru/>
+ <ru>
+генератор
+ </ru>
+ <ru>
+генератор
+ </ru>
+ <ru>
+генератор
+ </ru>
+</item>
+
+ <item>
+ <en>
+qualified
+ </en>
+ <ru/>
+ <ru/>
+ <ru>
+квалифицированный
+ </ru>
+ <ru>
+квалифицированный
+ </ru>
+ <ru/>
+</item>
+
+ <item>
+ <en>
+operator
+ </en>
+ <ru/>
+ <ru/>
+ <ru>
+операция
+ </ru>
+ <ru>
+операция
+ </ru>
+ <ru>
+операция
+ </ru>
+</item>
+
+ <item>
+ <en>
+constrained type
+ </en>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru>
+ограниченный тип
+ </ru>
+ <ru>
+ограниченный тип
+ </ru>
+</item>
+
+ <item>
+ <en>
+classwide type
+ </en>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru>
+тип широкого класса
+ </ru>
+</item>
+
+ <item>
+ <en>
+tagged type
+ </en>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru>
+тэговый тип
+ </ru>
+</item>
+
+ <item>
+ <en>
+general access type
+ </en>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru/>
+ <ru>
+универсальный ссылочный тип
+ </ru>
+</item>
+
+</dict>

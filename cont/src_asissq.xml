@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="src-asissq" lang="ru">
+<config param="desc" value="ASIS queries"/>
+<config param="rcsdate" value="&last_mod_src_asissq;"/>
+<head>
+  <title>Запросы определения категорий программных модулей
+  </title>
+  <titleabbrev>Asissq</titleabbrev>
+</head>
+
+<para>
+Данная небольшая библиотека предоставляет набор запросов для
+определения категории модулей Ада-программы. Вы можете скачать
+архив (10К) <ulink url="files/asissq.tar.gz">здесь</ulink>.
+</para>
+
+<para>
+Перед рассмотрением запросов определения принадлежности программных модулей
+языка Ada различным категориям необходимо отметить, что стандарт языка
+определяет две "шкалы" категоризации.
+</para>
+<para>
+С точки зрения процесса элаборации модули разделяются на предэлаборируемые
+и нормальные.
+</para>
+<para>
+С точки зрения поддержки распределенных вычислений модули подразделяются
+на категории Declared Pure, Shared Passive, Remote Types, Remote Call
+Interface. Модули, попадающие в одну из этих категорий, являются
+категоризованными, а все остальные - некатегоризованными.
+</para>
+<para>
+В категорию предэлаборируемых модулей входят модули категорий Declared Pure и
+Shared Passive. Кроме этого предэлаборируемыми являются модули, явно
+объявленные таковыми посредством директивы компилятора pragma Preelaborate.
+</para>
+<para>
+Необходимо отметить, что возможно совмещение категорий разных шкал для одного
+модуля.  Так, например, модуль стандартной библиотеки Ada.Finalization является
+одновременно предэлаборируемым и Remote_Types.
+</para>
+<table>
+  <title>
+Соответствие категорий распределенных вычислений категориям
+элаборации. Допустимость совмещения категории распределенных вычислений с
+категорией явно определенных как предэлабориремые.
+  </title>
+  <tgroup cols='4'>
+  <tbody>
+  <row><entry>  </entry>
+       <entry>Предэлаборируемый</entry>
+       <entry>Нормальный</entry>
+       <entry>Явное использование pragma Preelaborate</entry>
+  </row>
+  <row><entry>Declared Pure</entry>
+       <entry>+</entry>
+       <entry></entry>
+       <entry></entry>
+  </row>
+  <row><entry>Shared Passive</entry>
+       <entry>+</entry>
+       <entry></entry>
+       <entry>o</entry>
+  </row>
+  <row><entry>Remote Types</entry>
+       <entry>x</entry>
+       <entry>x</entry>
+       <entry>o</entry>
+  </row>
+  <row><entry>Remote Call Interface</entry>
+       <entry>x</entry>
+       <entry>x</entry>
+       <entry>o</entry>
+  </row>
+  <row><entry>Некатегоризованный</entry>
+       <entry>x</entry>
+       <entry>x</entry>
+       <entry>o</entry>
+  </row>
+  </tbody>
+  </tgroup>
+</table>
+<formalpara><title>Где:</title>
+<simplelist type="vert" columns="1">
+ <member>+ - является</member>
+ <member>x - при явном наличии в спецификации директивы 
+             компилятора pragma Preelaborate является 
+             предэлаборируемым, при отсутствии - не является.
+ </member>
+ <member>o - допустимо</member>
+</simplelist>
+</formalpara>
+<section><title>Описание запросов</title>
+<orderedlist>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля категории Declared Pure. Основанием
+для принадлежности модуля этой категории является наличие в его спецификации
+директивы компилятора pragma Pure.
+  <informalexample><programlisting>
+   function Is_Declared_Pure
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля категории Shared Passive.
+Основанием для принадлежности модуля этой категории является наличие в его
+спецификации директивы компилятора pragma Shared_Passive.
+
+  <informalexample><programlisting>
+   function Is_Shared_Passive
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля категории Remote_Types. Основанием
+для принадлежности модуля этой категории является наличие в его спецификации
+директивы компилятора pragma Remote_Types.
+
+  <informalexample><programlisting>
+   function Is_Remote_Types
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля категории Remote Call Interface.
+Основанием для принадлежности модуля этой категории является наличие в его
+спецификации директивы компилятора pragma Remote_Call_Interface.
+
+  <informalexample><programlisting>
+   function Is_Remote_Call_Interface
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля к одной из категорий по шкале
+категоризации поддержки распределенных вычислений.
+
+  <informalexample><programlisting>
+   function Is_Categorized_Library_Unit
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос определения принадлежности модуля к категории предэлаборируемых.
+Основанием для принадлежности модуля этой категории является наличие в его
+спецификации одной из директив компилятора pragma Pure, pragma Preelaborate,
+pragma Shared_Passive.
+
+  <informalexample><programlisting>
+   function Is_Preelaborated
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+ <listitem>
+ <para>
+ Запрос явной принадлежности модуля категории предэлаборируемых. Основанием
+для принадлежности модуля этой категории является наличие в его спецификации
+директивы компилятора pragma Preelaborate.
+
+  <informalexample><programlisting>
+   function Is_Declared_Preelaborate
+    (The_Compilation_Unit : in ASIS.Compilation_Unit)
+       return Boolean;
+
+  </programlisting></informalexample>
+ </para>
+ </listitem>
+</orderedlist>
+</section>
+ <para>
+Вадим Годунко. Май 2003г.
+ </para>
+</webpage>
+
+

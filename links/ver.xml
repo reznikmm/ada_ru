@@ -1,0 +1,15 @@
+<!DOCTYPE versions [
+<!ENTITY versions SYSTEM "vers_new.xml">
+<!ELEMENT versions (version)*>
+<!ELEMENT version EMPTY>
+<!ATTLIST version
+   id      ID    #REQUIRED
+   url     CDATA #REQUIRED
+   version CDATA #REQUIRED
+   size    CDATA #REQUIRED
+   date    CDATA #REQUIRED
+   >
+]>
+<a>
+&versions;
+</a>

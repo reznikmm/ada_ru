@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY to_docbook SYSTEM "../build/soft_list.xml">
+<!ENTITY soft_page  SYSTEM "../build/soft_page.xml">
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+<!ENTITY download   SYSTEM "download.xml" NDATA XML>
+<!ENTITY soft_full  SYSTEM "../build/soft.xml">
+%last_mod;
+]>
+<webpage id="soft">
+&soft_page;
+</webpage>

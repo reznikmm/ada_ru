@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!DOCTYPE article [
+<!ENTITY asis-src  SYSTEM "asis-src.xml">
+]>
+    
+<article lang='ru'>
+ <artheader>
+ <title>Интерфейс ASIS</title>
+  <author>
+  <firstname>Василий</firstname>  
+  <othername role='mi'>Александрович</othername>
+  <surname>Фофанов</surname>
+  </author>
+  <author>
+  <firstname>Сергей</firstname>  
+  <othername role='mi'>Игоревич</othername>
+  <surname>Рыбин</surname>
+  </author>
+ </artheader>
+
+&asis-src;
+
+</article>

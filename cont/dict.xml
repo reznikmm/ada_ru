@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<dict>
+ <item>
+ <en>
+library item
+ </en>
+ <ru>
+библиотечный элемент
+ </ru>
+ </item>
+ <item>
+ <en>
+library unit
+ </en>
+ <ru>
+библиотечный модуль
+ </ru>
+ </item>
+
+ <item>
+ <en>
+compilation unit
+ </en>
+ <ru>
+единица компиляции
+ </ru>
+ </item>
+ <item>
+ <en>
+programm unit
+ </en>
+ <ru>
+программный модуль
+ </ru>
+ </item>
+ <item>
+ <en>
+private type
+ </en>
+ <ru>
+приватный тип
+ </ru>
+ </item>
+ <item>
+ <en>
+post-compilation rules
+ </en>
+ <ru>
+правила, проверяемые после компиляции модулей
+ </ru>
+ </item>
+ <item>
+ <en>
+deffered constant
+ </en>
+ <ru>
+отложенная константа
+ </ru>
+ </item>
+
+ <item>
+ <en>
+limited type
+ </en>
+ <ru>
+лимитированный тип
+ </ru>
+ </item>
+
+ <item>
+ <en>
+constrained type
+ </en>
+ <ru>
+ограниченный тип
+ </ru>
+ </item>
+ <item>
+ <en>
+pragma
+ </en>
+ <ru>
+директива компилятору
+ </ru>
+ </item>
+ <item>
+ <en>
+classwide type
+ </en>
+ <ru>
+надклассовый тип
+ </ru>
+ </item>
+
+ <item>
+ <en>
+aliased object
+ </en>
+ <ru>
+косвенно доступный объект
+ </ru>
+ </item>
+
+ <item>
+ <en>
+operator
+ </en>
+ <ru>
+оператор, знак операции
+ </ru>
+ </item>
+
+ <item>
+ <en>
+operation
+ </en>
+ <ru>
+операция
+ </ru>
+ </item>
+
+ <item>
+ <en>
+statement
+ </en>
+ <ru>
+ инструкция
+ </ru>
+ </item>
+
+ <item>
+ <en>
+tagged type
+ </en>
+ <ru>
+тэговый тип
+ </ru>
+ </item>
+
+ <item>
+ <en>
+general access type
+ </en>
+ <ru>
+обобщенный ссылочный тип
+ </ru>
+ </item>
+
+ <item>
+ <en>
+partition
+ </en>
+ <ru>
+секция
+ </ru>
+ </item>
+
+ <item>
+ <en>
+qualified aggregat, expression
+ </en>
+ <ru>
+квалифицированный агрегат, выражение
+ </ru>
+ </item>
+
+ <item>
+ <en>
+overloading
+ </en>
+ <ru>
+совмещение
+ </ru>
+ </item>
+
+</dict>

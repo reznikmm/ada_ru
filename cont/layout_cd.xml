@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding='koi8-r'?>
+<layout>
+
+  <config param="homebanner-tabular" value="www.ada-ru.org/graphics/ada_.png"
+          altval="Home Banner"/>
+  <config param="banner-tabular" value="www.ada-ru.org/graphics/ada_.png"
+          altval="Banner"/>
+  <!--config param="feedback.href" value="http://guestbook.chat.ru/gbook.html?uname=ada_rm" /-->
+  <config param="feedback.href" value="mailto:reznikmm@front.ru" />
+  <config param="navbgcolor" value="#634421" />
+  <config param="navtocwidth" value="205" />
+  <style src="www.ada-ru.org/test.css" type="text/css"/>
+
+  <copyright>
+      <year>2004</year>
+      <holder><ulink url="mailto:reznikmm@front.ru">Maxim Reznik</ulink>
+      </holder>
+  </copyright>
+	    
+  <toc page="../cont/homepage.xml" filename="www.ada-ru.org/index.html">
+    <tocentry page="../cont/projects.xml" filename="www.ada-ru.org/projects.html"
+              tocskip="0" >
+       <tocentry page="../cont/prj_be200.xml" filename="www.ada-ru.org/prj_be200.html"/>
+       <tocentry page="../cont/prj_doc.xml"   filename="www.ada-ru.org/prj_doc.html"/>
+       <tocentry page="../cont/prj_ora.xml"   filename="www.ada-ru.org/prj_ora.html"/>
+    </tocentry>
+    <tocentry page="../cont/tutorial.xml"
+       filename="www.ada-ru.org/Lovelace/lovelace.htm" />
+    <tocentry page="../cont/docs.xml" filename="www.ada-ru.org/docs.html">
+       <tocentry page="../cont/asis.xml"  filename="www.ada-ru.org/asis.html"/>
+       <tocentry page="../cont/ada83.xml" filename="www.ada-ru.org/ada83.html"/>
+       <tocentry page="../cont/dict_ru.xml" filename="www.ada-ru.org/dict_ru.html"/>
+       <tocentry page="../cont/fnotes.xml" filename="www.ada-ru.org/fnotes.html"/>
+    </tocentry>
+    <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html" revisionflag="added"/>
+    <!--  revisionflag="changed" -->
+    <tocentry page="../cont/src.xml" filename="www.ada-ru.org/src.html">
+       <tocentry page="../cont/src_asissq.xml"  filename="www.ada-ru.org/src_asissq.html"/>
+       <tocentry page="../cont/src_ais.xml"     filename="www.ada-ru.org/src_ais.html"/>
+       <tocentry page="../cont/src_xw.xml"     filename="www.ada-ru.org/src_xw.html"/>
+    </tocentry>
+    <tocentry page="../cont/soft_cd.xml" filename="www.ada-ru.org/soft_list.html"/>
+    <tocentry page="../cont/links.xml" filename="www.ada-ru.org/links.html"/>
+    <tocentry page="../cont/search.xml" filename="www.ada-ru.org/search.html"/>
+    <tocentry page="../cont/download.xml" filename="www.ada-ru.org/download.html"/>
+  </toc>
+  
+  <notoc page="../build/soft.xml" filename="www.ada-ru.org/soft.html"/>
+  <notoc page="../build/old_news.xml" filename="www.ada-ru.org/old_news.html"/>
+
+<notoc page="../build/soft_bin.xml2" filename="bin/index.html"/>
+<notoc page="../build/soft_bin_compiler.xml2" filename="bin/compiler/index.html"/>
+<notoc page="../build/soft_bin_docgen.xml2" filename="bin/docgen/index.html"/>
+<notoc page="../build/soft_bin_test.xml2" filename="bin/test/index.html"/>
+<notoc page="../build/soft_bin_app.xml2" filename="bin/app/index.html"/>
+<notoc page="../build/soft_bin_devel.xml2" filename="bin/devel/index.html"/>
+<notoc page="../build/soft_bin_os.xml2" filename="bin/os/index.html"/>
+<notoc page="../build/soft_doc.xml2" filename="doc/index.html"/>
+<notoc page="../build/soft_doc_en.xml2" filename="doc/en/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters.xml2" filename="doc/en/ada_letters/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_jun2004.xml2" filename="doc/en/ada_letters/jun2004/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_dec2003.xml2" filename="doc/en/ada_letters/dec2003/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_sept2003.xml2" filename="doc/en/ada_letters/sept2003/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_june2003.xml2" filename="doc/en/ada_letters/june2003/index.html"/>
+<notoc page="../build/soft_lib.xml2" filename="lib/index.html"/>
+<notoc page="../build/soft_lib_pure.xml2" filename="lib/pure/index.html"/>
+<notoc page="../build/soft_lib_bindings.xml2" filename="lib/bindings/index.html"/>
+<notoc page="../build/soft_lib_compon.xml2" filename="lib/compon/index.html"/>
+
+</layout>
+

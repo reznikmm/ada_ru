@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="search">
+<config param="desc" value="Ada Search Engine"/>
+<config param="rcsdate" value="&last_mod_search;"/>
+<head>
+<title>Поиск в Сети</title>
+</head>
+
+<para>
+На <ulink url="http://www.adaic.com/site/wide-search.html">
+сайте AdaIС</ulink> располагается
+<ulink url="http://www.adaic.com/site/wide-search.html">
+поисковая машина</ulink> 
+по Ада-ресурсам. Поиск ведется по дюжине самых
+главных сайтов, связанных с языком Ада. Сама машина также
+написана на Аде. Эта же машина выполняет поиск и
+по более конкретным темам:
+
+<itemizedlist mark='opencircle'>
+ <listitem><para>
+    <ulink url="http://www.adaic.com/site/search.html">
+    По всему сайту AdaIC</ulink>
+  </para></listitem>
+ <listitem><para>
+    <ulink url="http://archive.adaic.com/search.html">
+    По архивам сайта AdaIC</ulink>
+  </para></listitem>
+ <listitem><para>
+    <ulink url="http://www.adaic.com/docs/95style/html/search.html">
+    По книге "Ада 95: качество и стиль"</ulink>
+  </para></listitem>
+ <listitem><para>
+    <ulink url="http://www.adaic.com/standards/95lrm/html/RM-SRCH.html">
+    По справочному руководству языка Ада 95 (ARM)</ulink>
+  </para></listitem>
+ <listitem><para>
+    <ulink url="http://www.adaic.com/standards/95aarm/html/AA-SRCH.html">
+    По аннотированной версии руководства по языку Ада 95 (AARM)</ulink>
+  </para></listitem>
+</itemizedlist>
+  
+</para>
+
+</webpage>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="links">
+<config param="desc" value="Useful links"/>
+<config param="rcsdate" value="&last_mod_links;"/>
+<head>
+<title>Полезные ссылки</title>
+</head>
+
+<para>
+Здесь Вы можете найти ссылки на сетевые ресурсы,
+посвященные языку Ада.
+</para>
+<informaltable frame="none"><tgroup cols='2' tgroupstyle="odd">
+<tbody valign="top">
+<row>
+ <entry>
+  <ulink url="news:comp.lang.ada">comp.lang.ada</ulink>
+ </entry>
+ <entry>
+  Англоязычная конференция, посвященная языку Ада.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="news:fido7.su.pascal.modula.ada"
+  >fido7.su.pascal.modula.ada</ulink>
+ </entry>
+ <entry>
+  Русскоязычная конференция, где можно обсудить вопросы,
+  касающиеся языка Ада.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://groups.yahoo.com/group/ada_ru/"
+  >Подписка Ada_Ru</ulink>
+ </entry>
+ <entry>
+   Список рассылки, посвященный языку Ада в русскоговорящих странах.
+   Чтобы подписаться направьте письмо по адресу
+   <ulink url="mailto:ada_ru-subscribe@yahoogroups.com"
+   >ada_ru-subscribe@yahoogroups.com</ulink>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://qnxclub.net/modules.php?name=Forums&amp;file=viewforum&amp;f=8"
+  >Форум по языку Ада</ulink>
+ </entry>
+ <entry>
+   Харьковский форум, посвященный языку Ада.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.adaworld.com/">www.adaworld.com</ulink>
+ </entry>
+ <entry>
+  Новый быстро развивающийся сайт содержит много полезной
+  информации, в том числе, каталог доступных в сети 
+  проектов, использующих Аду, форум, 
+  ссылки на обучающий материал и другие ресурсы. связанные с Адой.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.gnuada.org/">www.gnuada.org</ulink>
+ </entry>
+ <entry>
+   GNU Ada веб сайт. Содержит информацию об использовании
+   GNAT (Gnu Ada Translator) на операционных системах
+   Linux, DOS, SCO, NetBSD, OS/2.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.adapower.com/">www.adapower.com</ulink>
+ </entry>
+ <entry>
+   Богатый сервер содержит массу статей, книг, исходных текстов, ссылок,
+   позволяет добавить информацию о новых разработках в базу данных,
+   поместить свои тексты на сервер.
+ </entry>
+</row>
+
+<!--row>
+ <entry>
+  <ulink url="http://www.adahome.com/">www.adahome.com</ulink>
+ </entry>
+ <entry>
+  Сайт призван распространять информацию о языке Ада и действует
+  с 1994 года. Сайт очень богат материалами. Среди прочего:
+  каталог библиотек и компонент на языке Ада, книги и статьи,
+  обзоры литературы по языку, так называемый "рынок", где
+  представлены коммерческие продукты.
+ </entry>
+</row-->
+
+<row>
+ <entry>
+  <ulink url="http://www.adaic.com/">www.adaic.com</ulink>
+ </entry>
+ <entry>
+  Ada Information Clearinghouse задуман, как центр сбора
+  всевозможной информации касающейся языка Ада. Действуя более
+  15 лет, он накопил множество материалов, в том числе
+  сведения об крупнейших проектах использующих Аду,
+  аргументы использования языка в разных областях программирования,
+  действующий список рассылки новостей, каталог вакансий,
+  материалы для изучающих Аду и прочее.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-auth.org/">www.ada-auth.org</ulink>
+ </entry>
+ <entry>
+   Официальный сайт группы ARG, которая выносит окончательный
+   вердикт в спорных вопросах стандарта языка Ада,
+   собирает предложения по расширению языка и готовит следующий
+   стандарт. Здесь находятся официальные версии стандартов, база
+   данных всех предложений и вопросов, 
+   комплект тестов для проверки компилятора на соответствие стандарту.
+ </entry>
+</row>
+</tbody></tgroup>
+</informaltable>
+ 
+</webpage>
