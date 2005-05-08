@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+<!ENTITY ssqrt.ads SYSTEM "sample/ssqrt.ads.xml">
+<!ENTITY ssqrt.adb SYSTEM "sample/ssqrt.adb.xml">
+<!ENTITY ssqrt_test.adb SYSTEM "sample/ssqrt_test.adb.xml">
+%last_mod;
+]>
+<webpage id="smpl-ssqrt" lang="ru">
+<config param="desc" value="SSqrt"/>
+<config param="rcsdate" value="&last_mod_smpl-ssqrt;"/>
+<head>
+<title>Параллельные вычисления</title>
+<titleabbrev>SSqrt</titleabbrev>
+</head>
+
+ <para>
+  Продемонстрируем параллельные вычисления в языке Ада на
+  примере подсчета среднего квадратичного значения
+  элементов массива. Задача: по данному массиву
+  чисел A (1 .. N) найти среднее квадратичное, как
+  S = Sqrt (A(1) ** 2 + A(2) ** 2 + ... + A(N) ** 2).
+  Решение: будем выполнять подсчет суммы, используя
+  несколько задач, работающих параллельно.
+ </para>
+
+ <para>
+  Настраиваемая функция позволяет нам при необходимости
+  легко поменять тип обрабатываемых значений.
+  Функция принимает, как параметры, вектор исходных значений
+  и желаемую степень распараллеливания.
+  </para>
+ <informalexample>
+   <programlisting>
+&ssqrt.ads;
+   </programlisting>
+ </informalexample>
+
+ <para>
+  Реализация функции состоит из подпрограммы
+  подсчета суммы Square_Sum и задачного типа Calculator,
+  который вычисляет
+  сумму квадратов пренадлежащего ему участка вектора.
+  Жизненный цикл объекта типа Calculator состоит из
+  получения диапазона участка, вычисления суммы квадратов
+  и возврата результата.
+ </para>
+ <informalexample>
+   <programlisting>
+&ssqrt.adb;
+   </programlisting>
+ </informalexample>
+ 
+ <para>
+  Главный модуль настраивает функцию на тип Long_Float
+  и вычисляет среднее квадратичное двухсот элементов вектора,
+  используя разную степень распараллеливания.
+ </para>
+ <informalexample>
+   <programlisting>
+&ssqrt_test.adb;
+   </programlisting>
+ </informalexample>
+
+<para>
+Архив с тесктом этой программы доступен
+<ulink url="files/ssqrt.zip">здесь</ulink>.
+Эту программу любезно предоставил Дмитрий Анисимков.
+</para>
+
+</webpage>

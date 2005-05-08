@@ -4,7 +4,7 @@ MY_BIN=`dirname $0`
 
 function download ()
 {
-  WGET="wget --directory-prefix=$2 --execute continue=off --timestamping"
+  WGET="wget --output-document=$2 --execute continue=off --timestamping"
   case "$1" in
     SF:*)
        sf_url=`echo $1 |sed -e s#SF:#$SF#`
@@ -36,10 +36,10 @@ function part ()
     then
       mv "${STORE}$FILE" "${STORE}$1_old"
       echo Size $FILE changed
-      download $2 `dirname "$STORE/$FILE"`
+      download $2 "$STORE/$FILE"
     fi
   else
-     download $2 `dirname "$STORE/$FILE"`
+     download $2 "$STORE/$FILE"
   fi
   [ -r "$STORE/$FILE" ] && ln -s "`revpath $DIR`$STORE/$FILE" "$TARGET"
    MD5=`jigdo-file md5 --report quiet "$TARGET" |cut -f1 -d\ `

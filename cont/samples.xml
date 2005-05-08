@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+<!ENTITY smpl-ssqrt    SYSTEM "smpl-ssqrt.xml"    NDATA XML>
+%last_mod;
+]>
+<webpage id="samples">
+<config param="desc" value="Code Samples"/>
+<config param="rcsdate" value="&last_mod_samples;"/>
+<head>
+<title>Примеры кода</title>
+<titleabbrev>Примеры</titleabbrev>
+</head>
+
+ <para>
+ Здесь мы представляем подборку примеров, демонстрирующих те
+ или иные свойства языка Ада.
+ Иногда несколько строк кода позволяют более доходчиво
+ донести идею, чем несколько страниц книжного текста.
+ </para>
+<itemizedlist mark='opencircle'>
+ <listitem><para>
+   <olink targetdocent="smpl-ssqrt">Параллельные вычисления</olink>
+ </para></listitem>
+</itemizedlist>
+ 
+</webpage>

@@ -5,57 +5,115 @@
 ]>
 <webpage id="conf">
 <config param="desc" value="Conference"/>
-<config param="rcsdate" value="&last_mod_links;"/>
+<config param="rcsdate" value="&last_mod_conf;"/>
 <head>
 <title>Конференция</title>
 </head>
 
-<para>
-  28 сентября 2004г. в городе Кременчуге (Украина)
-  состоялясь
-  <ulink url="http://www.scalnet.org">конференция SCALNET'04</ulink>,
-  в рамках которой действововала секция
-  "Язык Ада и смежные технологии".
-</para>
+<itemizedlist mark='opencircle'>
+<listitem>
+Институт высоких технологий Харьковского 
+национального университета им. В.Н.Каразина.
+</listitem>
+<listitem>
+Институт вычислительной математики Российской Академии Наук.
+</listitem>
+<listitem>
+Кафедра прикладной математики и информационных технологий 
+Херсонского государственного университета
+</listitem>
+</itemizedlist>
 
 <para>
-  В секции были представленны следующие доклады:
-  <itemizedlist mark='opencircle'>
-    <listitem><para>
-    <ulink url="files/17_27.pdf">
-Экспериментальный анализ эффективности использования языка
-Ада95 в распределенных вычислительных системах.
-Корочкин  А., Ровто В., Корочкин Д
-    </ulink>
-    </para></listitem>
-    <listitem><para>
-    <ulink url="files/23_25.pdf">
-Ada programming language and specifying, modeling and
-distributed computing for the implementation of the
-discrete singularities methods.
-Victor Mishchenko
-    </ulink>
-    </para></listitem>
-
-    <listitem><para>
-    <ulink url="files/25_30.pdf">
-Testing a new approach to the analysis of projects development
-using generalization parameters offered by software science.
-Andrey Gahov
-    </ulink>
-    </para></listitem>
-
-    <listitem><para>
-Scalable Architecture of Server Application based on Ada Web Server.
-Юрий Королев
-    </para></listitem>
-  </itemizedlist>
+Сообщают о проведении
+13-18 июня 2005 г.
+школы-семинара "Высокие информационные технологии, связанные с языком Ада"
+в приморском пос. Лазурное, Херсонской области, Украина, на базе ХГУ.
 </para>
-
 <para>
-Подробнее о прохождении конференции можно узнать на
-  <ulink url="http://www.scalnet.org">сайте конференции SCALNET'04</ulink>.
-
+Статус проведения - мероприятие, сопутствующее 
+    <ulink url="http://dsmmph.univer.kharkov.ua">
+международному симпозиуму МДОЗМФ-2005</ulink>.
+</para>
+<para>
+Приглашаются
+студенты, аспиранты,
+преподаватели, программисты и руководители проектов - в качестве слушателей, 
+лекторов или докладчиков. 
+Об Ада-технологиях см. например, 
+  <ulink url="http://www.ada-ru.org/">http://www.ada-ru.org/</ulink>
+</para>
+<para>
+Рекомендуем зарегистрироваться до 18 апреля 2005г., заявки рассматриваем сразу!
+Участие в работе школы семинара ВИТ-Ада - бесплатно (и безоплатно), 
+но за месяц до мероприятия нужно сделать предоплату пансионата, 
+по крайней мере, за первые сутки. По приезде -  доплата за жильё и 
+питание на всё время пребывания в школе. Оформление командировок 
+гарантируется. Возможно распространение книг и других материалов 
+по тематике от издателей (по минимальным ценам).
+</para>
+<para>
+Предварительный проект программы включает:
+<itemizedlist mark='box'>
+<listitem>
+цикл учебных лекций "Основы языка Ада и ведение в Ада-технологии", 
+мастер-класс опытного программиста (только для начинающих и 
+интересующихся методикой преподавания) - 13-15 июня
+</listitem>
+<listitem>
+лекции по проблемно-ориентированным средствам и инструментам - 14-16 июня
+</listitem>
+<listitem>
+доклады и сообщения по проблемам и достижениям Ада-технологий 
+в "русской" и "украинской" компонентах сообщества 
+Ада-программистов - 15-17 июня
+</listitem>
+<listitem>
+дискуссия о перспективах Ада-технологий в вычислительных применениях, 
+в частности, перспективных проектах МДОЗМФ - 16-18 июня
+</listitem>
+<listitem>
+свободная дискуссия по всем азимутам "адского" горизонта - в любое 
+время в любом месте
+</listitem>
+</itemizedlist>
+</para>
+<para>
+Регистрация и текущая информация - 
+    <ulink url="http://dsmmph.univer.kharkov.ua/rus/information_ada.php">
+http://dsmmph.univer.kharkov.ua/rus/information_ada.php
+    </ulink>
+</para>
+<para>
+Связь с координационным комитетом для потенциальных участников школы-семинара
+<itemizedlist mark='opencircle'>
+<listitem>
+из России - Сергей Рыбин, МГУ, Москва, 
+<ulink url="mailto:rybin@adacore.com">rybin@adacore.com</ulink>
+</listitem>
+<listitem>
+с Украины (классические университеты и НИИ, координация с МДОЗМФ-2005) - 
+Виктор Мищенко, ХНУ, Харьков, 
+<ulink url="mailto:Victor.O.Mischenko@univer.kharkov.ua"
+ >Victor.O.Mischenko@univer.kharkov.ua</ulink>
+</listitem>
+<listitem>
+с Украины (технические вузы и КБ) - Геннадий Сисюк, Кременчуг, КГПУ, 
+<ulink url="mailto:app@polytech.poltava.ua"
+ >app@polytech.poltava.ua</ulink>
+</listitem>
+<listitem>
+по вопросам учебной программы - Александр Гавва, НБУ, Львов, 
+<ulink url="mailto:alex@Lviv.Bank.Gov.UA"
+ >alex@Lviv.Bank.Gov.UA</ulink>
+</listitem>
+<listitem>
+по техническим вопросам к принимающей стороне - на кафедру ПМИТ ХГУ - 
+со 2 ап-реля 2005 адрес будет указан на сайте.
+</listitem>
+</itemizedlist>
 </para>
 
+Координационный комитет школы-семинара,
+Оргкомитет симпозиума МДОЗМФ-2005
 </webpage>

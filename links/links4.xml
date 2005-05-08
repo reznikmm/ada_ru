@@ -45,7 +45,7 @@ An Ada 95 compiler.
     </file>
   </link>
 
-   <link home="http://www.usafa.af.mil/dfcs/bios/mcc_html/a_sharp.html" id="A#">
+   <link home="http://www.martincarlisle.com/a_sharp.html" id="A#">
    <descr lang="ru">
 Этот пакет содержит компилятор Ada95 для Microsoft .NET платформы
 и генератор Ада спецификаций для MSIL файлов.
@@ -104,7 +104,8 @@ format (currently html and Latex is available) from a specification
 package.
    </descr>
    <file id="adadoc-src"><descr lang="ru">Исходные тексты</descr>
-     <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=22930" regexp="adadoc-v([0-9.]+)src\.tar\.bz2" project="adadoc"/>
+     <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=22930"
+        regexp="adadoc-v([0-9]+\.[1-9][0-9]*)\.src\.tar\.bz2" project="adadoc"/>
    </file>
    <file id="adadoc-ug"><descr lang="ru">Руководство пользователя</descr>
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=22930" regexp="UserGuide(\.)pdf" project="adadoc"/>
@@ -139,7 +140,8 @@ tests to provide flexibility in determining what tests to run for a
 given purpose.
    </descr>
    <file id="aunit"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/aunit/main.html" regexp=".*aunit-([0-9.]+)tar.gz"/>
+     <download type="regexp" url="http://libre.act-europe.fr/aunit/main.html"
+      regexp=".*aunit-([0-9.p]+)-src.zip"/>
    </file>
     <file id="aunit-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aunit-([0-9.-]+)\.i386\.rpm"/>
@@ -183,13 +185,16 @@ the program is running or, since it is being logged to a file, played
 back or printed out later for off-line review and analysis.
    </descr>
    <file id="dtraq.src"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://www.dtraq.com/dtraq.html" regexp="linux/dtq-gnat-3.15p/dtraq-linux-gnat-3.15p-([0-9.]+)-src.tar.gz"/>
+      <download type="regexp" url="http://www.dtraq.com/dtraq.html" 
+       regexp="linux/dtq-gnat-3.15p/dtraq-linux-gnat-3.15p-([0-9a-c.]+)-src.tar.gz"/>
    </file>
    <file id="dtraq.linux"><descr lang="ru">Дистрибутив для Linux</descr>
-      <download type="regexp" url="http://www.dtraq.com/dtraq.html" regexp="linux/dtq-gnat-3.15p/dtraq-linux-gnat-3.15p-([0-9.]+).tar.gz"/>
+      <download type="regexp" url="http://www.dtraq.com/dtraq.html" 
+      regexp="linux/dtq-gnat-3.15p/dtraq-linux-gnat-3.15p-([0-9.a-c]+).tar.gz"/>
    </file>
    <file id="dtraq.doc"><descr lang="ru">Документация</descr>
-      <download type="regexp" url="http://www.dtraq.com/dtraq.html" regexp="dtq_common/DTraq(.)pdf"/>
+      <download type="regexp" url="http://www.dtraq.com/dtraq.html" 
+      regexp="dtq_common/DTraq(.)pdf"/>
    </file>
     <file id="dtraq-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dtraq-([0-9.-]+)\.i386\.rpm"/>
@@ -216,8 +221,9 @@ tg is a simple test driver generator for Ada programs
   <link id="acats" home="http://www.ada-auth.org/acats.html">
    <descr lang="ru">
 Набор тестов для проверки компиляторов языка Ада на
-соответствие стандарту. acats4gnat - набор скриптов
-для автоматизации тестирования компилятора gnat.
+соответствие стандарту.
+<!-- acats4gnat - набор скриптов
+для автоматизации тестирования компилятора gnat.-->
    </descr>
    <descr lang="en">
 The Ada Conformity Assessment Test Suite (ACATS) is the
@@ -260,8 +266,8 @@ test suite used for Ada processor conformity testing.
      regexp=".*/mod_(2_5[a-z])\.tar\.Z"/>
     </file>
     <file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
-     <download type="regexp" url="http://www.guerby.org/"
-     regexp=".*/acats4gnat-([0-9.]+).tgz"/>
+     <download type="regexp" url="http://www.guerby.org/ftp/"
+     regexp="acats4gnat-([0-9.]+).tgz"/>
     </file>
   </link>
 
@@ -547,7 +553,7 @@ but with as much power and control as C++.
 
 
 
-  <link id="adagide" home="http://www.usafa.af.mil/dfcs/bios/mcc_html/adagide.html">
+  <link id="adagide" home="http://www.martincarlisle.com/adagide.html">
    <descr lang="ru">
 Интегрированная среда разработки под Windows 95/NT.
    </descr>
@@ -556,7 +562,7 @@ AdaGIDE is the Ada GNAT Integrated Development
 Environment for Windows 95/NT.
    </descr>
    <file id="adagide-src"><descr lang="ru">Исходный тескст</descr>
-      <download type="regexp" url="http://www.usafa.af.mil/dfcs/bios/mcc_html/adagide.html" regexp=".*agsrc([0-9.]+).zip"/>
+      <download type="regexp" url="http://www.martincarlisle.com/adagide.html" regexp=".*agsrc([0-9.]+).zip"/>
    </file>
    <file id="adagide-bin"><descr lang="ru">Win32 binary</descr>
       <download type="file" url="ftp://ftp.usafa.af.mil/pub/dfcs/carlisle/adagide/adagide-install.exe"/>
@@ -604,7 +610,7 @@ Ada with some C and assembler parts.
      <folder name="ada_letters">
        <descr lang="ru">Журнал Ada Letters</descr>
 
-&sept2004;
+<!-- &sept2004; -->
 &jun2004;
 &dec2003;
 &sept2003;

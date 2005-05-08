@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+<!ENTITY docs  SYSTEM "docs.xml"  NDATA XML>
+%last_mod;
+]>
+<webpage id="src-acr">
+<config param="desc" value="Ada COCO/R"/>
+<config param="rcsdate" value="&last_mod_src_acr;"/>
+<head>
+  <title>Coco/R - генератор лексических и синтаксических анализаторов
+  </title>
+  <titleabbrev>Ada Coco/R</titleabbrev>
+</head>
+  <para>
+Ada Coco/R - порт распространенного 
+<ulink url="http://www.ssw.uni-linz.ac.at/Research/Projects/Coco/">
+  генератора Coco/R
+</ulink>
+для генерации кода на языке Ада. Coco/R был изначально написан
+на/для Oberon, а затем портирован на множество других языков:
+Modula-2, Pascal, Delphi, C/C++, Java, C#, Icon/UnIcon, Ruby.
+  </para>
+  <para>
+Coco/R воспринимает атрибутную LL(1) грамматику языка в РБНФ (EBNF) и 
+строит для нее низходящий рекурсивный синтаксический и лексический
+анализатор. По функциональности Coco/R покрывает использование
+пары утилит flex/yacc. Можно отметить следующие приемущества
+Coco/R над аналогичными программами:
+  </para>
+
+<itemizedlist mark='opencircle'>
+ <listitem>
+Использование атрибутных грамматик позволяет вычислять атрибуты
+по мере синтаксического разбора 
+ </listitem>
+ <listitem>
+Мощное описание лексического сканера позволяет легко определять
+вложенные комментарии, игнорировать регистр символов, оперировать
+множествами символов, обрабатывать директивы (pragma) языка
+не описывая их в синтаксисе
+ </listitem>
+ <listitem>
+Использывание EBNF упрощает описание языка
+ </listitem>
+ <listitem>
+Поддержка обработки ошибок позволяет указывать в синтаксисе
+точки синхронизации и "слабые" (часто пропускаемые) лексемы
+ </listitem>
+ <listitem>
+Структура рекурсивного анализатора отражает структуру
+обрабатываемого языка, позволяя легко отлаживать
+грамматику (в сравнении с табличными анализаторами).
+ </listitem>
+</itemizedlist>
+
+<para>
+Текущая версия библиотеки находится
+<ulink url="files/cocor_ada-1.53.1.tar.gz">здесь</ulink>.
+Доступна
+  <olink targetdocent="docs" localinfo="acr"
+  >документация на русском языке</olink>.
+Автор Ada Coco/R и документации - Александр Гавва.
+</para>
+
+</webpage>
+
+

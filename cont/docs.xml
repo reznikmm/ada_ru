@@ -131,7 +131,21 @@
 
 <row>
  <entry>
-  <anchor id="acats"/>
+  <anchor id="acr"/>
+  <ulink url="files/cocor_doc_ru.zip"
+  >Ada Coco/R - Руководство пользователя
+  </ulink>
+ </entry>
+ <entry>
+Программа Coco/R является генератором лексических и
+синтаксических анализаторов аналогично паре aflex и ayacc.
+В архиве содержатся руководства пользователя
+в форматах PS и PDF.
+ </entry>
+</row>
+
+<row>
+ <entry>
   <ulink url="acats/acats_RU.html"
   >ACATS - комплект тестов для сертификации Ада-компиляторов</ulink>
  </entry>
@@ -251,13 +265,17 @@
 <tbody valign="top">
 <row>
  <entry>
-  <ulink url="http://www.osp.ru/os/2003/10/063.htm"
+  <anchor id="ada_20_years"/>
+  <ulink url="files/ada_20_years.pdf.gz"
   >Язык Ада - двадцать лет спустя</ulink>
  </entry>
  <entry>
   Сергей Рыбин и Василий Фофанов популярно освещают возможности
   языка Ада, его отличия от других языков, останавливаются
   на некоторых распространенных заблуждениях, касающихся языка.
+  Сокращенная версия статьи была опубликована в журнале
+  <ulink url="http://www.osp.ru/os/2003/10/063.htm"
+  >"Открытые Системы"</ulink>
  </entry>
 </row>
 
@@ -351,7 +369,7 @@ Ada и Zonnon. Автор обещает, что данная статья будет началом
  </entry>
 </row>
 
-<row>
+<!--row>
  <entry>
   <ulink url="http://home.perm.ru/~strannik/st_txt_prog_02.html"
   >Сравнение языков программирования
@@ -375,7 +393,7 @@ Ada и Zonnon. Автор обещает, что данная статья будет началом
    на мифах, на страницах журнала PC Week за 1996 год. Автор Сергей
    Бобровский.
  </entry>
-</row>
+</row-->
 </tbody></tgroup>
 </informaltable>
 </section>

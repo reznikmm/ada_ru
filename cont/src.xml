@@ -4,13 +4,14 @@
 <!ENTITY src-asissq SYSTEM "src_asissq.xml" NDATA XML>
 <!ENTITY src-ais    SYSTEM "src_ais.xml"    NDATA XML>
 <!ENTITY src-xw     SYSTEM "src_xw.xml"     NDATA XML>
+<!ENTITY src-acr    SYSTEM "src_acr.xml"    NDATA XML>
 %last_mod;
 ]>
 <webpage id="src">
 <config param="desc" value="Our Developments"/>
 <config param="rcsdate" value="&last_mod_src;"/>
 <head>
-<title>Собственные </title>
+<title>Собственные разработки</title>
 <titleabbrev>Разработки</titleabbrev>
 </head>
 
@@ -30,6 +31,10 @@
  <listitem><para>
   <olink targetdocent="src-xw">Связка для использования
     X Window System и OpenMotif/OSF Motif
+  </olink>
+ </para></listitem>
+ <listitem><para>
+  <olink targetdocent="src-acr">Порт Coco/R под Аду
   </olink>
  </para></listitem>
 </itemizedlist>

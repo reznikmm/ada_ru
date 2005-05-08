@@ -1,6 +1,26 @@
 <?xml version='1.0' encoding='koi8-r'?>
 <table class="last-ver" width="100%">
 <tr><th>Новые версии</th></tr>
+<tr><td><a href="soft.html#adabrowse">29 Апр adabrowse</a></td></tr>
+<tr><td><a href="soft.html#dtraq">18 Апр dtraq 0.986a</a></td></tr>
+<tr><td><a href="soft.html#adagide">12 Апр adagide 730</a></td></tr>
+<tr><td><a href="soft.html#bc">09 Апр bc 20050409</a></td></tr>
+<tr><td><a href="soft.html#pragmarc">31 Мар pragmarc</a></td></tr>
+<tr><td><a href="soft.html#adagide">25 Фев adagide 722</a></td></tr>
+<tr><td><a href="soft.html#gnade">29 Янв gnade 1.5.3b.</a></td></tr>
+<tr><td><a href="soft.html#marte">25 Янв marte 1.57.</a></td></tr>
+<tr><td><a href="soft.html#bush">25 Янв bush 1.0.1</a></td></tr>
+<tr><td><a href="soft.html#aunit">21 Янв aunit 1.03p</a></td></tr>
+<!--
+<tr><td><a href="soft.html#polyorb">20 Янв polyorb 1.2r</a></td></tr>
+<tr><td><a href="soft.html#acats">08 Янв acats 2_5l</a></td></tr>
+<tr><td><a href="soft.html#pragmarc">27 Дек pragmarc .</a></td></tr>
+<tr><td><a href="soft.html#GPS">22 Дек GPS.linux 2.1.0</a></td></tr>
+<tr><td><a href="soft.html#GtkAda">16 Дек GtkAda 2.4.0.</a></td></tr>
+<tr><td><a href="soft.html#GPS.win">16 Дек GPS.win 2.1.0</a></td></tr>
+<tr><td><a href="soft.html#GtkAda.src">15 Дек GtkAda.src 2.4.0.</a></td></tr>
+<tr><td><a href="soft.html#acats">08 Янв acats mod 2_5l</a></td></tr>
+<tr><td><a href="soft.html#pragmarc">27 Дек pragmarc</a></td></tr>
 <tr><td><a href="soft.html#GPS">22 Дек GPS 2.1.0</a></td></tr>
 <tr><td><a href="soft.html#GtkAda">16 Дек GtkAda 2.4.0.</a></td></tr>
 <tr><td><a href="soft.html#adasockets">26 Ноя adasock 1.8.4.7.</a></td></tr>
@@ -10,7 +30,6 @@
 <tr><td><a href="soft.html#gnatcom">26 Окт gnatcom 1.4a</a></td></tr>
 <tr><td><a href="soft.html#dtraq.linux">09 Окт dtraq 0.986</a></td></tr>
 <tr><td><a href="soft.html#mgnat">28 Сен mgnat</a></td></tr>
-<!--
 <tr><td><a href="soft.html#dtraq.linux">25 Сен dtraq 0.985</a></td></tr>
 <tr><td><a href="soft.html#adagide-src">22 Сен adagide 721</a></td></tr>
 <tr><td><a href="soft.html#adagide-bin">12 Сен adagide</a></td></tr>

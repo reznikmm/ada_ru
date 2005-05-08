@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="comp_gnat">
+<config param="desc" value="Compiling GNAT"/>
+<config param="rcsdate" value="&last_mod_comp_gnat;"/>
+<head>
+<title>Построение GNAT</title>
+</head>
+
+<para>
+В некоторых случаях бывает необходимо самому собрать компилятор GNAT
+из исходных текстов. Например, если вы решили поэкспериментировать
+с компилятором и разобраться в его устройстве, или желаете
+получить более новую версию GNAT, чем предусмотрено в вашей
+операционной системе, или для вашей ОС нет бинарного дистрибутива.
+В этой статье мы попробуем осветить некоторые практические моменты
+построения компилятора GNAT.
+</para>
+
+<section>
+  <title>
+Построение GNAT из дистрибутива GCC-3.4.x под Linux на i386 платформе
+  </title>
+
+<para>
+Так как исходные тексты GNAT находятся в CVS дереве компилятора
+<ulink url="http://gcc.gnu.org/">
+GCC (Gnu Compiler Collection)</ulink>
+и его разработчики используют ОС
+Linux, то, очевидно, простейшим случаем является сборка GNAT под
+Linux из исходных текстов одной из последних версий GCC. Для
+построения вам понадобится
+   <itemizedlist mark="opencircle">
+    <listitem>
+      Установленный GCC, GNU binutils, GNU make,
+      архиваторы gzip, tar, bzip2.
+    </listitem>
+    <listitem>
+      Рабочий компилятор GNAT (т.к. сам GNAT написан на языке Ада).
+      Это может быть GNAT-3.15p или GNAT, основанный на GCC 3.x.
+    </listitem>
+    <listitem>
+      Исходные тексты GCC. Либо полный архив gcc-3.x.x.tar.bz2, либо
+      только gcc-core-3.x.x-tar.bz2, gcc-ada-3.x.x-tar.bz2 и
+      (необязательно) gcc-testsuite-3.x.x.tar.bz2.
+    </listitem>
+   </itemizedlist>
+</para>
+
+<para>
+   Для построения обычно используют две директории:
+   <itemizedlist mark="opencircle">
+    <listitem>
+      Директория исходных текстов (srcdir).
+      В ней разархивируются скачанные файлы.
+      В этой директории не производят изменений.
+      В первом примере это будет директория gcc-3.4.1,
+      получаемая при разархивировании исходных текстов.
+    </listitem>
+    <listitem>
+      Директория построения (objdir).
+      Здесь происходит фактическая сборка компиолятора.
+      В первом примере это будет директория build.
+    </listitem>
+   </itemizedlist>
+</para>
+
+<para>
+Выполните следующие команды:
+   <programlisting>
+tar xjf gcc-core-3.4.1.tar.bz2
+tar xjf gcc-ada-3.4.1.tar.bz2
+mkdir build
+cd build
+../gcc-3.4.1/configure \
+  --prefix=/usr/local/gnat-3.4.1 \
+  --program-prefix=gnat \
+  --enable-languages="c,ada"
+
+make bootstrap
+make -C gcc gnatlib_and_tools
+make install
+   </programlisting>
+Далее начнется процесс построения и "make bootstrap" будет запускать
+скрипт configure в поддиректориях.
+Желательно проконтролировать определение работоспособности
+установленного Ада компилятора, иначе довольно длительная
+процедура построения будет безрезультатна. Для этого
+вскоре после надписи
+   <programlisting>
+   Configuring in gcc
+   </programlisting>
+найдите строки
+   <programlisting>
+   checking for gnatbind... gnatbind
+   checking whether compiler driver understands Ada... yes
+   </programlisting>
+Если вместо yes стоит no, необходимо уточнить расположение и
+имя Ада компилятора. Если он называется gcc поставьте его в
+пути вперед стандартного gcc. Либо подскажите системе
+полный путь к компилятору
+
+   <programlisting>
+export CC=/usr/local/gnat-3.15p/bin/gcc
+make bootstrap
+   </programlisting>
+
+Процесс построения компилятора проходит в 3 стадии, в которых
+сначала строится компилятор при помощи системного gcc, затем
+строится вторая версия компилятора при помощи той, что получена
+на первой стадии, затем третья версия собирается при помощи второй.
+Это дает возможность проверить работу компилятора, сравнив
+результаты второй и третьей стадий компиляции. Процесс построения
+занимает около часа на современных машинах.
+</para>
+
+<para>
+По окончании компиляции желательно запустить набор тестов ACATS,
+который распространяется вместе с исходными тестами компилятора
+начиная с версии gcc-3.4.
+   <programlisting>
+make check
+   </programlisting>
+
+Это займет еще 20 минут, и результат должен выглядеть примерно так:
+   <programlisting>
+                   === acats Summary ===
+# of expected passes            2322
+# of unexpected failures        0
+   </programlisting>
+
+</para>
+</section>
+
+<section>
+  <title>
+Заметки по построению GCC-Ada компилятора под FreeBSD 4.10 на i386 платформе
+  </title>
+
+<para>
+Все действия производятся под обычным (не root) пользователем системы, если не
+оговорено другое.
+</para>
+
+<para>
+Исходные тексты компилятора были разархивированы в каталог /home/obj/gcc-3.4.3.
+(Вы конечно же можете выбрать любой другой каталог вместо /home/obj).
+</para>
+
+<para>
+Перед построением компилятора настоятельно рекомендуется ознакомиться с
+инструкцией построения, индекс которой расположен в
+/home/obj/gcc-3.4.3/INSTALL/index.html
+</para>
+
+<para>
+Создан каталог ~/setup/gcc-obj для файлов, созданных в процессе построения
+компилятора (Вы конечно же можете выбрать любой другой каталог вместо
+~/setup/gcc-obj).
+</para>
+
+<para>
+Необходимо инсталировать и поставить первым в пути
+   <ulink
+   url="ftp://ftp.freebsd.org/pub/FreeBSD/ports/i386/packages-stable/All/gnat-3.15p_1.tgz"
+   >GNAT-3.15p</ulink>
+
+ссылка на него со страницы
+
+   <ulink url="http://www.freebsd.org/ports/lang.html"
+   >http://www.freebsd.org/ports/lang.html</ulink>.
+
+Так же обязательно надо инсталировать GNU Make.
+</para>
+
+<para>
+Конфигурирование производилось из каталога ~/setup/gcc-obj
+командой
+   <programlisting>
+/home/obj/gcc-3.4.3/configure --prefix=/usr/gcc-3.4.3 --enable-languages=ada,c
+   </programlisting>
+
+После конфигурирования запускался не
+
+   <programlisting>
+make bootstrap
+   </programlisting>
+
+а GNU Make
+
+   <programlisting>
+gmake bootstrap
+   </programlisting>
+</para>
+
+<para>
+Была непонятная проблема. gmake сразу не проходил, запинался на каком-то этапе,
+не находил какую-то библиотеку.
+
+Повторно запускался
+
+   <programlisting>
+make bootstrap
+   </programlisting>
+
+проходил эту ошибку, запинался несколько дальше, потому что makefile
+расчитан на GNU Make.
+
+В очередной раз запускался
+
+   <programlisting>
+gmake bootstrap
+   </programlisting>
+
+который уже доходил до конца.
+</para>
+
+<para>
+После построения GCC, согласно инструкции, достраивались GNAT библиотеки и
+инструменты
+
+   <programlisting>
+cd gcc
+gmake gnatlib_and_tools
+cd ..
+   </programlisting>
+
+После построения запустились тесты
+
+   <programlisting>
+make check
+   </programlisting>
+</para>
+
+<para>
+В силу того, что для Cи-тестов необходимы дополнительные инструменты,
+запустились только тесты Ada компилятора ACATS.
+</para>
+
+<para>
+Некоторые тесты с префиксом cxg (Annex G.) не прошли, потому что использовался
+пакет по умолчанию a-numaux.ad? с недостаточной точностью вместо специфичного
+для платформы i386 86numaux.ad?. После копирования
+
+   <programlisting>
+cp /home/obj/gcc-3.4.3/gcc/ada/86numaux.ads \
+   ~/setup/gcc-obj/gcc/ada/rts/a-numaux.ads
+cp /home/obj/gcc-3.4.3/gcc/ada/86numaux.adb \
+   ~/setup/gcc-obj/gcc/ada/rts/a-numaux.adb
+   </programlisting>
+
+и перестройки Ада библиотек
+
+   <programlisting>
+cd gcc
+gmake gnatlib_and_tools
+cd ..
+   </programlisting>
+
+тесты ACATS прошли полностью.
+</para>
+
+<para>
+Новый компилятор был инсталирован и прописан первым в пути.
+Инсталяцию необходимо производить под пользователем root
+
+   <programlisting>
+su
+gmake install
+exit
+   </programlisting>
+</para>
+
+<para>
+При использовании файлов проектов .gpr оказалось, что project manager
+не поддерживает библиотеки.
+
+После копирования
+
+   <programlisting>
+cp /home/obj/gcc-3.4.3/gcc/ada/5lml-tgt.adb \
+   ~/setup/gcc-obj/gcc/ada/tools/mlib-tgt.adb
+   </programlisting>
+
+перестройки Ада библиотек
+
+   <programlisting>
+cd gcc
+gmake gnatlib_and_tools
+cd ..
+   </programlisting>
+
+и инсталяции
+
+   <programlisting>
+su
+gmake install
+exit
+   </programlisting>
+</para>
+
+<para>
+поддержка библиотек менеджером проектов образовалась.
+</para>
+
+</section>
+
+<section>
+  <title>
+Построение утилиты gnatmem
+  </title>
+
+<para>
+Утилита gnatmem предназначена для тестирования утечки памяти.
+В фирменной сборке ее построение требует библиотеки
+libaddr2line. Эта же библиотека нужна для функционирования
+пакета GNAT.Traceback.Symbolic, позволяющего расшифровывать
+трасировку стека в список номеров строк и имен файлов в исходном
+тексте программы.
+</para>
+
+<para>
+В исходных текстах версии 3.15 есть
+патч на binutils который позволяет создать эту библиотеку.
+Для более поздних версий компилятора такого патча нет.
+В замен мы предлагаем другой способ получения утилиты
+gnatmem. Вместо корректировки binutils мы предлагаем
+процедуру, которая вызовет стандартную программу (из
+пакета binutils) addr2line и расшифрует ее результат.
+</para>
+
+<para>
+Процедура построения gnatmake, предложенная Вадимом Годунко,
+выглядит следующим образом:
+   <itemizedlist mark="opencircle">
+    <listitem>
+Скопировать файлы
+
+gnatmem.adb,
+gnatvsn.adb,
+gnatvsn.ads,
+memroot.ads,
+memroot.adb,
+gmem.c
+
+из каталога [gcc_root]/gcc/ada
+    </listitem>
+    <listitem>
+Скопировать файлы
+
+version.h
+version.c
+
+из каталога [gcc_root]/gcc
+    </listitem>
+    <listitem>
+Скопировать файл 
+<ulink url="files/mya2l.c.gz">mya2l.c</ulink>
+с нашего сайта.
+    </listitem>
+    <listitem>
+Выполнить кодманду:
+   <programlisting>
+gnatmake gnatmem.adb -largs gmem.c version.c mya2l.c
+   </programlisting>
+    </listitem>
+   </itemizedlist>
+
+</para>
+
+<para>
+Аналогичный метод был использован в сборках GNAT 3.13p
+<ulink url="http://www.gnuada.org/alt.html">Ada Linux Team</ulink>
+и GNAT 3.15p 
+<ulink url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html"
+ >Александром Гаввой</ulink>.
+Аналогичная процедура, автор которой Juergen Pfeifer, в файле
+<ulink url="files/convert_addresses.c.gz">convert_addresses.c</ulink>
+вызывает шел скрипт gnat_addr2line, обвертку вокруг addr2line,
+позволяет использовать addr2line из разных версий binutils.
+</para>
+
+</section>
+
+
+<!--section>
+  <title>
+Построение GNAT-3.15p.
+  </title>
+
+<para>
+Особенностью этой и более ранних версий компилятора является
+возможность построения лишь при помощи "драйвера" и
+компановщика (gcc + gnatbind).
+Например, если вы не имеете рабочих GNAT библиотек или утилиты
+gnatmake, вам может помочь сборка версии gnat-3.15p.
+Например, я использовал статически собранный под glibc драйвер
+для сборки компилятора Ада под uclibc библиотеку. К тому же,
+версия 3.15p это пока последняя версия, для которой существует
+официальная версия библиотеки ASIS.
+</para>
+
+<para>
+Версия 3.15p основана на gcc 2.8.1.
+</para>
+
+</section-->
+
+<para>
+Вадим Годунко, Дмитрий Анисимков, Максим Резник
+</para>
+
+</webpage>

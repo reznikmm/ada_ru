@@ -26,20 +26,27 @@
     </tocentry>
     <tocentry page="../cont/tutorial.xml" filename="lovelace.htm"
          dir="Lovelace"   />
-    <tocentry page="../cont/docs.xml" filename="docs.html" revisionflag="changed">
+    <tocentry page="../cont/docs.xml" filename="docs.html">
        <tocentry page="../cont/asis.xml"  filename="asis.html"/>
-       <tocentry page="../cont/comp_gnat.xml"  filename="comp_gnat.html"/>
+       <tocentry page="../cont/comp_gnat.xml" filename="comp_gnat.html" revisionflag="changed"/>
        <tocentry page="../cont/ada83.xml" filename="ada83.html"/>
        <tocentry page="../cont/dict_ru.xml" filename="dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="fnotes.html"/>
     </tocentry>
-    <tocentry page="../cont/conf.xml" filename="conf.html"/>
+    <tocentry page="../cont/conf.xml" filename="conf.html" revisionflag="changed">
+      <tocentry page="../cont/conf-2004.xml" filename="conf-2004.html"/>
+    </tocentry>
     <!--  revisionflag="changed" revisionflag="added" -->
     <tocentry page="../cont/src.xml" filename="src.html">
        <tocentry page="../cont/src_asissq.xml"  filename="src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="src_ais.html"/>
-       <tocentry page="../cont/src_xw.xml"     filename="src_xw.html"/>
+       <tocentry page="../cont/src_xw.xml"      filename="src_xw.html"/>
+       <tocentry page="../cont/src_acr.xml"     filename="src_acr.html"/>
     </tocentry>
+    <tocentry page="../cont/samples.xml" filename="samples.html" revisionflag="added">
+       <tocentry page="../cont/smpl-ssqrt.xml"  filename="smpl-ssqrt.html"/>
+    </tocentry>
+
     <tocentry page="../cont/soft.xml" filename="soft_list.html"/>
     <tocentry page="../cont/links.xml" filename="links.html"/>
     <tocentry page="../cont/search.xml" filename="search.html"/>
@@ -56,7 +63,7 @@
 <notoc page="../build/soft_bin_app.xml" filename="soft_bin_app.html"/>
 <notoc page="../build/soft_bin_devel.xml" filename="soft_bin_devel.html"/>
 <notoc page="../build/soft_bin_os.xml" filename="soft_bin_os.html"/>
-<notoc page="../build/soft_doc.xml" filename="soft_doc.html"/>
+<!--notoc page="../build/soft_doc.xml" filename="soft_doc.html"/>
 <notoc page="../build/soft_doc_en.xml" filename="soft_doc_en.html"/>
 <notoc page="../build/soft_doc_en_ada_letters.xml" filename="soft_doc_en_ada_letters.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2004.xml" filename="soft_doc_en_ada_letters_sept2004.html"/>
@@ -64,6 +71,7 @@
 <notoc page="../build/soft_doc_en_ada_letters_dec2003.xml" filename="soft_doc_en_ada_letters_dec2003.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2003.xml" filename="soft_doc_en_ada_letters_sept2003.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_june2003.xml" filename="soft_doc_en_ada_letters_june2003.html"/>
+-->
 <notoc page="../build/soft_lib.xml" filename="soft_lib.html"/>
 <notoc page="../build/soft_lib_pure.xml" filename="soft_lib_pure.html"/>
 <notoc page="../build/soft_lib_bindings.xml" filename="soft_lib_bindings.html"/>

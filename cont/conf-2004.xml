@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="conf-2004">
+<config param="desc" value="Conference"/>
+<config param="rcsdate" value="&last_mod_conf-2004;"/>
+<head>
+<title>Конференция SCALNET'04</title>
+  <titleabbrev>SCALNET'04</titleabbrev>
+</head>
+
+<para>
+  28 сентября 2004г. в городе Кременчуге (Украина)
+  состоялясь
+  <ulink url="http://www.scalnet.org">конференция SCALNET'04</ulink>,
+  в рамках которой действововала секция
+  "Язык Ада и смежные технологии".
+</para>
+
+<para>
+  В секции были представленны следующие доклады:
+  <itemizedlist mark='opencircle'>
+    <listitem><para>
+    <ulink url="files/17_27.pdf">
+Экспериментальный анализ эффективности использования языка
+Ада95 в распределенных вычислительных системах.
+Корочкин  А., Ровто В., Корочкин Д
+    </ulink>
+    </para></listitem>
+    <listitem><para>
+    <ulink url="files/23_25.pdf">
+Ada programming language and specifying, modeling and
+distributed computing for the implementation of the
+discrete singularities methods.
+Victor Mishchenko
+    </ulink>
+    </para></listitem>
+
+    <listitem><para>
+    <ulink url="files/25_30.pdf">
+Testing a new approach to the analysis of projects development
+using generalization parameters offered by software science.
+Andrey Gahov
+    </ulink>
+    </para></listitem>
+
+    <listitem><para>
+Scalable Architecture of Server Application based on Ada Web Server.
+Юрий Королев
+    </para></listitem>
+  </itemizedlist>
+</para>
+
+<para>
+Подробнее о прохождении конференции можно узнать на
+  <ulink url="http://www.scalnet.org">сайте конференции SCALNET'04</ulink>.
+
+</para>
+
+</webpage>
