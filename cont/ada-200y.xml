@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage  [
+<!ENTITY ada-200y-src  SYSTEM "ada-200y-src.xml">
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="ada-200y" lang='ru'>
+<config param="desc" value="Standard Ada 2005"/>
+<config param="rcsdate" value="&last_mod_ada-200y-src;"/>
+<head>
+ <title>Обзор стандарта Ада 2005</title>
+  <titleabbrev>Ада 2005</titleabbrev>
+</head>
+
+&ada-200y-src;
+
+<!--para>
+Если Вы хотите распечатать данную статью используйте
+<ulink url="files/ada-200y.pdf">версию для печати</ulink>.
+</para-->
+</webpage>

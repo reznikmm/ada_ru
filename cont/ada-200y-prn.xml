@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE article [
+<!ENTITY ada-200y-src  SYSTEM "ada-200y-src.xml">
+]>
+    
+<article lang='ru'>
+ <artheader>
+ <title>Введение в стандарт Ада 2005</title>
+  <author>
+  <surname>Резник</surname>
+  <firstname>Максим</firstname>  
+  <othername role='mi'>Михайлович</othername>
+  </author>
+ </artheader>
+
+&ada-200y-src;
+
+</article>

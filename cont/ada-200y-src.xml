@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<section id="1">
+  <title>Развитие языка Ада</title>
+  <para>
+Язык Ада строго и однозначно определен в стандарте языка ISO и
+не допускает каких-либо расширений и дополнений со стороны
+разработчиков компиляторов. Но прогресс не стоит на месте, и,
+вместе с развитием аппаратной базы, компьютерной науки и 
+практики, язык должен развиваться. Регулярно, раз в 
+десятилетие, происходит пересмотр стандарта языка.
+  </para>
+  <para>
+Предыдущий пересмотр состоялся в 1995г и внес в язык Ада такие
+возможности, как объектно-ориентированное программирование
+путем расширений типов, иерархические библиотеки и защищенные
+объекты. Целью нового пересмотра стандарта является утверждение
+языка Ада в таких качествах, как надежность, производительность,
+гибкость, переносимость, взаимодействие с другими языками и
+поддержка программирования задач реального времени.
+  </para>
+  <para>
+В этом обзоре мы рассмотрим подробнее предлагаемые нововведения.
+  </para>
+</section>
+
+<section id="2">
+  <title>Объектно-ориентированное программирование</title>
+  <para>
+К расширениям в области ООП относятся:
+интерфейсы, новая нотация вызовов операций, вложенные расширения типов,
+родовой конструктор.
+  </para>
+  <section id="2.1">
+    <title>Интерфейсы</title>
+    <para>
+Во время разработки стандарта Ада 95 было много споров о необходимости
+введения возможности множественного наследования, но из-за
+чрезмерной сложности реализации решено было оставить лишь
+простое наследование. С тех пор удалось найти удачный компромисс - 
+механизм интерфейсов. При его использовании разрешается иметь
+множественное наследование для спецификаций, но единичное для
+реализации. Интерфейс предоставляет только определения операций, без
+их реализации. Такие определения выполнены либо как абстрактные, либо
+как пустые (null) подпрограммы. 
+Тип может реализовывать несколько интерфейсов, но
+наследовать реализацию может только от одного родительского типа. 
+Таким образом
+достигается удобство множественного наследования при минимальной
+трудности реализации.
+    </para>
+
+   <informalexample>
+    <programlisting>
+<command>type</command> Widget <command>is tagged record</command>
+   Object : Gtk.Widget.Gtk_Widget;
+<command>end record</command>;
+
+<command>procedure</command> Draw (Object : Widget) <command>is abstract</command>;
+
+<command>type</command> Observer <command>is interface</command>;
+
+<command>procedure</command> Notify
+  (Object : Observer;
+   Cause  : <command>access</command> Widget'Class) <command>is null</command>;
+
+<command>type</command> Container <command>is interface</command>;
+
+<command>procedure</command> Add
+  (Object : <command>in out</command> Container;
+   Item   : <command>access</command> Widget'Class) <command>is abstract</command>;
+
+<command>type</command> Window <command>is new</command> Widget <command>and</command> Observer <command>and</command> Container <command>with private</command>;
+
+<command>procedure</command> Draw (Object : Window);
+
+<command>procedure</command> Add
+  (Object : <command>in out</command> Window;
+   Item   : <command>access</command> Widget'Class);
+
+<command>procedure</command> Notify
+  (Object : Window;
+   Cause  : <command>access</command> Widget'Class);
+    </programlisting>
+   </informalexample>
+
+    <para>
+Мощь аппарата множественного наследования проявляется в 
+динамическом связывании и полиморфизме при использовании
+надклассовых типов над интерфейсами. Также в новом стандарте
+расширены операции тестирования на принадлежность к классу
+для проверки, реализует ли данный объект нужный интерфейс или
+нет.
+    </para>
+    <para>
+Кроме обычных (процедурных) интерфейсов вводятся также
+синхронные. Синхронные интерфейсы могут быть реализованы
+только задачными и защищенными типами.
+    </para>
+    <para>
+Введен новый тип описаний процедур - пустые (null). 
+Они эквивалентны процедурам с телом из одной
+пустой инструкции. Кроме
+уже упоминавшегося применения при спецификации интерфейсов,
+пустые процедуры также могут быть использованы как параметры по
+умолчанию в настраиваемых модулях. Такие параметры могут быть опущены
+при конкретизации модуля.
+    </para>
+   <informalexample>
+    <programlisting>
+<command>generic</command>
+   <command>with procedure</command> Start_Document <command>is null</command>;
+   <command>with procedure</command> End_Document <command>is null</command>;
+   <command>with procedure</command> Start_Element (Name : String; Attr : Attributes) <command>is null</command>;
+   <command>with procedure</command> End_Element (Name : String) <command>is null</command>;
+<command>package</command> SAX_Parser <command>is</command>
+   ...
+<command>end</command> SAX_Parser;
+
+<command>package</command> My_Parser <command>is new</command> SAX_Parser (End_Element => Process_End_Element);
+    </programlisting>
+   </informalexample>
+  </section>
+
+  <section id="2.2">
+    <title>Новая нотация вызовов операций</title>
+    <para>
+Теперь в языке поддерживается новая нотация вызова операций, часто 
+используемая в других ООП языках. Вызов может быть записан в форме
+ОБЪЕКТ.ОПЕРАЦИЯ (Аргументы).
+Для использования этой
+нотации в описании примитивной операции тэгового типа управляющий
+аргумент должен стоять первым.
+    </para>
+    <para>
+Использование новой нотации может улучшить читаемость программ.
+При использовании старой нотации
+часто приходилось явно указывать пакет, в котором описана операция
+или использовать спецификатор use. Это приводило в первом случае к 
+громоздкой
+записи вызова операций, во втором - к чрезмерному использованию 
+спецификаторов видимости. 
+Зачастую определить пакет, где определена данная 
+операция,
+бывает трудно, т.к. наследуемые операции могут определяться неявно,
+а надклассовые операции часто описаны вместе с базовым типом,
+а не с производным.
+    </para>
+  </section>
+
+  <section id="2.3">
+    <title>Расширения типов во вложенных структурах</title>
+    <para>
+По правилам языка Ада 95 расширение типа должно находиться на том же
+лексическом уровне, что и описание родительского типа.
+В новом стандарте это ограничение ослаблено, и введены необходимые
+проверки, чтобы нельзя было вернуть объект нового типа (или указатель
+на него) из подпрограммы, где этот тип описан.
+    </para>
+  </section>
+
+  <section id="2.4">
+    <title>Настраиваемый конструктор тэговых типов</title>
+    <para>
+Новая настраиваемая функция Ada.Tags.Generic_Dispatching_Constructor
+позволяет создавать тип из заданной иерархии тэговых типов по заданному
+тэгу типа. Это полезно при чтении данных из внешних источников,
+потоков, XML файлов и т.д. Конкретизация данной функции исполняет
+роль, аналогичную методам "factory" в других ООП языках.
+    </para>
+  </section>
+</section>
+
+<section id="3">
+  <title>Ссылочные типы</title>
+  <para>
+Ссылочные типы в Ада 95 обладают отличной надежностью. В то же
+время их использование накладывает некоторые ограничения и иногда
+требует многих преобразований типов. Нововведения в стандарте
+позволяют использовать ссылочные типы более гибко.
+  </para>
+  <para>
+Ссылочные типы делятся на именованные и анонимные. В языке Ада 95
+существует заметная асимметричность между этими типами. Например,
+для анонимных типов нельзя задать пустое значение, или ограничить
+указываемые объекты константами. В новом стандарте 
+ссылочные типы, как именованные, так и анонимные, стали более выразительными. 
+Любой ссылочный тип можно ограничить так, что он не будет 
+иметь пустых значений.
+Можно ограничить анонимные типы ссылками на константы.
+  </para>
+
+   <informalexample>
+    <programlisting>
+<command>procedure</command> Run_1 (Ptr : <command>access</command> Object);
+<command>procedure</command> Run_2 (Ptr : <command>access constant</command> Object);
+<command>procedure</command> Run_3 (Ptr : <command>access all</command> Object);
+
+<command>procedure</command> Run_4 (Ptr : <command>not null access</command> Object);
+<command>procedure</command> Run_5 (Ptr : <command>not null access constant</command> Object);
+<command>procedure</command> Run_6 (Ptr : <command>not null access all</command> Object);
+    </programlisting>
+   </informalexample>
+
+   <para>
+Введены анонимные ссылки на подпрограммы.
+Использование анонимных ссылок на подпрограммы решает проблему
+с ограничением уровня вложенности. Например, при использовании
+именованных ссылочных типов нельзя присвоить ссылку
+на процедуру, находящуюся на более вложенном уровне, чем сам
+ссылочный тип. Вместо этого можно использовать анонимный
+тип. Этот прием широко используется в новой библиотеке
+контейнеров.
+  </para>
+  <para>
+Анонимные типы теперь могут использоваться не только в параметрах и 
+дискриминантах, но и в компонентах сложных типов, как результат,
+возвращаемый функцией, и в переименованиях. 
+Широкое использование анонимных типов позволяет
+избежать явного преобразования типов, сохраняя при этом
+контроль над областью видимости. Отпадает необходимость в 
+неполных описаниях типов при построении ссылок объекта на
+самого себя.
+  </para>
+   <informalexample>
+    <programlisting>
+<command>type</command> List_Item <command>is record</command>
+   Next    : <command>access all</command> List_Item;
+   Content : Value;
+<command>end record</command>;
+    </programlisting>
+   </informalexample>
+</section>
+
+<section id="4">
+  <title>Структура программы</title>
+  <section id="4.1">
+    <title>Циклическое определение типов между пакетами</title>
+    <para>
+В то время, как Ада 95 дает возможность строить иерархии
+пакетов, позволяя каждому модулю описывать отдельную абстракцию,
+все же остается одна проблема, ограничивающая подобную
+декомпозицию. Мы должны описывать циклически определенные типы в 
+одном пакете. В новом стандарте языка Ада найдено решение, позволяющее
+избежать этого. Новый спецификатор видимости "limited with"
+позволяет внутри модуля иметь доступ к ограниченному виду
+другого модуля, не создавая синтаксической зависимости
+между модулями. В этот вид входят только
+неполные описания (incomplete) типов и дочерние пакеты.
+Таким образом, несколько пакетов могут иметь ссылки на типы
+друг друга, формирующие циклическую структуру, если хотя бы
+один пакет имеет спецификатор "limitied with".
+    </para>
+   <informalexample>
+    <programlisting>
+<command>limited with</command> Users;
+<command>package</command> Cars <command>is</command>
+   <command>type</command> Car <command>is record</command>
+      Owner : <command>access all</command> Users.User;
+   <command>end record</command>;
+   ... 
+<command>end Cars</command>;
+
+<command>with</command> Cars;
+<command>package</command> Users <command>is</command>
+   <command>type</command> User <command>is record</command>
+      Car : <command>access all</command> Cars.Car;
+   <command>end record</command>;
+   ... 
+<command>end</command> Users;
+    </programlisting>
+   </informalexample>
+  </section>
+
+  <section id="4.2">
+    <title>Видимость приватных модулей</title>
+    <para>
+Благодаря новой форме спецификатора видимости "private with"
+появилась возможность использовать определения из приватных
+пакетов в приватной части обычных пакетов. В Аде 95
+приватные пакеты могли использоваться только в телах и
+спецификациях других приватных пакетов, что зачастую
+вызывало некоторые неудобства.
+    </para>
+
+   <informalexample>
+    <programlisting>
+<command>private</command>
+<command>package</command> My_OS.Implementation <command>is</command>
+   <command>type</command> File_Node <command>is private</command>;
+   ... 
+<command>end</command> Cars;
+
+<command>private with</command> My_OS.Implementation;
+<command>package</command> My_OS.File_Operations <command>is</command>
+   <command>type</command> File <command>is private</command>;
+   <command>procedure</command> Open (Object : <command>out</command> File);
+<command>private</command>
+   <command>type</command> File <command>is access</command> Implementation.File_Node;
+<command>end</command> My_OS.File_Operations;
+    </programlisting>
+   </informalexample>
+  </section>
+
+  <section id="4.3">
+    <title>Приватные типы в конкретизации настраиваемых модулей</title>
+    <para>
+Приватный тип не может участвовать в конкретизации настраиваемых 
+модулей до тех пор, пока не будет предоставлено полное описание типа.
+Новая форма конкретизации помогает преодолеть это ограничение.
+Выглядит это следующим образом. В видимой части пакета в конкретизации
+участвует приватный тип и добавляется фраза with private. В
+приватной части пакета, после полного описания типа,
+конкретизация повторяется.
+    </para>
+
+   <informalexample>
+    <programlisting>
+<command>with</command> Lists;
+<command>package</command> Nodes <command>is</command>
+
+   <command>type</command> Node <command>is private</command>;
+
+   <command>package</command> Node_Lists <command>is new</command> Lists (Node) <command>with private</command>;
+
+<command>private</command>
+
+   <command>type</command> Node <command>is record</command>
+      ...;
+   <command>end record</command>;
+
+   <command>package</command> Node_Lists <command>is new</command> Lists (Node);
+<command>end</command> Nodes;
+    </programlisting>
+   </informalexample>
+  </section>
+
+  <section id="4.4">
+    <title>Лимитированные типы и агрегаты</title>
+    <para>
+Основное назначение лимитированных типов - обеспечить невозможность
+копирования объектов данного типа. В то же время в языке Ада 95 лимитированные
+типы обладают рядом ограничений, напрямую не связанных с невозможностью 
+копирования. В новом стандарте эти ограничения ослаблены, 
+теперь для инициализации объектов лимитированных типов можно использовать
+агрегаты и вызовы функций.
+    </para>
+
+   <informalexample>
+    <programlisting>
+<command>protected type</command> Lock <command>is</command>
+   <command>entry</command> Allocate;
+   <command>entry</command> Free;
+<command>end</command> Lock;
+
+<command>type</command> Locked_Value <command>is limited record</command>
+   Locker : Lock;
+   Value  : Integer := 0;
+<command>end record</command>;
+
+Value : Locked_Value := (Lock =&gt; &lt;&gt;, Value =&gt; 1.0);
+    </programlisting>
+   </informalexample>
+
+    <para>
+С введением агрегатов для лимитированных типов был расширен их
+синтаксис. Теперь в агрегатах для компонент можно указывать
+инициализацию по умолчанию. Для компонент задачного и защищенного
+типов это единственно возможный вариант.
+    </para>
+    <para>
+Для конструирования объектов, возвращаемых функцией, расширен
+синтаксис инструкции return. Расширенная форма представляет собой
+составную инструкцию, которая явно определяет возвращаемый
+объект и выполняет произвольные действия для его инициализации.
+    </para>
+   <informalexample>
+    <programlisting>
+<command>function</command> Create_Value <command>return</command> Locked_Value <command>is</command>
+<command>begin</command>
+   <command>return</command> New_Object : Locked_Value <command>do</command>
+      New_Object.Value := Next_Value;
+      New_Object.Lock.Allocate;
+   <command>end return</command>;
+<command>end</command> Create_Value;
+
+Value : Locked_Value := Create_Value;
+    </programlisting>
+   </informalexample>
+
+  </section>
+</section>
+
+<section id="5">
+  <title>Стандартные библиотеки</title>
+  <para>
+В новом стандарте была значительно расширена и доработана
+стандартная библиотека языка. Перечислим введенные изменения.
+  </para>
+  <para>
+Векторы и матрицы. Введены настраиваемые пакеты для работы
+с векторами и матрицами. Пакеты поддерживают арифметические операции,
+транспонирование и обращение матриц, нахождение детерминанта,
+решение системы линейных уравнений. Все это является хорошо 
+проработанным материалом, стандартизованным ранее в отдельном
+ISO-13813. Теперь это стало доступно, как часть языка Ада.
+  </para>
+  <para>
+Пакет Ada.Directories вводит единообразный механизм работы
+с файлами и каталогами, независимый от целевой операционной системы.
+  </para>
+  <para>
+Пакет Ada.Environment_Variables предоставляет доступ к переменным
+окружения операционной системы.
+  </para>
+  <para>
+В пакетах Ada.Strings.Unbounded, Ada.Strings.Bounded введены варианты
+функций Index и Slice с типами Unbounded_String и Bounded_String,
+для сокращения количества преобразований в тип String.
+Добавлен пакет Ada.Text_IO.Unbounded_IO и функция Get_Line в
+пакет Ada.Text_IO.
+  </para>
+  <para>
+Расширен диапазон символьных типов.
+Введены новые типы Wide_Wide_Character и Wide_Wide_String, позволяющие
+хранить 32-битные Unicode. В лексике языка также произошли изменения.
+Теперь правила формирования идентификаторов взяты из стандарта
+Unicode. В итоге, мы можем свободно писать идентификаторы на любом
+языке. В пакет Ada.Numerics введена константа с именем "греческая пи".
+  </para>
+   <informalexample>
+    <programlisting>
+   &#x3c0; : <command>constant</command> := Pi;
+    </programlisting>
+   </informalexample>
+  <para>
+Библиотека контейнеров Ada.Containers содержит настраиваемые
+типы векторов, связных списков, хешей и множеств. Она включает
+алгоритмы итераций, поиска и сортировки.
+  </para>
+  <para>
+Расширена работа с датой/временем, введены временные зоны,
+форматирование и арифметические операции.
+  </para>
+</section>
+
+<section id="6">
+  <title>Повышение надежности</title>
+  <para>
+Появилась возможность явного контроля перегрузки операций.
+При описании примитивной операции можно указать фразу
+"overloading" и компилятор проверит, что операция действительно 
+перегружает унаследованную операцию родительского типа.
+При указании "not overloading" перегрузка не произойдет даже,
+если родительский тип имел соответствующую операцию.
+Эта возможность особенно важна для настраиваемых модулей,
+когда заранее не известен родительский тип и набор его
+примитивных операций.
+  </para>
+   <informalexample>
+    <programlisting>
+<command>type</command> Child <command>is new</command> Parent <command>with private</command>;
+<command>overloading</command>
+<command>procedure</command> Run (Item : Child);
+
+<command>generic</command>
+   <command>type</command> Parent <command>is private</command>;
+<command>package</command> Extend_Parent
+   <command>type</command> Child <command>is new</command> Parent <command>with private</command>;
+   <command>not overloading</command>
+   <command>procedure</command> New_Action (Item : Child);
+<command>private</command>
+   ...
+<command>end</command> Extended_Parent;
+    </programlisting>
+   </informalexample>
+
+  <para>
+Стандартизованы директивы компилятору Assert, Assertion_Policy,
+Unsuppress, No_Return.
+  </para>
+</section>
+
+<section id="7">
+  <title>Поддержка систем реального времени</title>
+  <para>
+Большое количество нововведения касаются поддержки программирования
+систем реального времени. Вкратце перечислим основные.
+  </para>
+  <itemizedlist>
+  <listitem mark='bullet'>
+Ravenscar Profile - подмножество мультизадачной модели языка Ада.
+Позволяет легко проводить анализ и планирование выполнения
+программ, может быть эффективно реализован на встраиваемых системах.
+  </listitem>
+  <listitem mark='bullet'>
+Контроль над временем исполнения включает в себя мониторинг
+времени исполнения, события по его исчерпанию, бюджет для
+группы задач.
+  </listitem>
+  <listitem mark='bullet'>
+Настройка событий запускаемых по таймеру.
+  </listitem>
+  <listitem mark='bullet'>
+Всевозможные настройки приоритетов и планирования исполнения
+задач (Round Robin, Deadlines). Проверка взаимных блокировок.
+  </listitem>
+  </itemizedlist>
+</section>
+
+<para>
+Десятилетняя работа по улучшению языка вылилась в новый стандарт,
+позволяющий более гибко, легко и выразительно пользоваться
+возможностями языка Ада, сохраняя, и даже увеличивая при этом
+надежность и эффективность получаемых программ.
+Стандартизация новой версии языка выходит на финишную прямую.
+Черновик стандарта доступен для общественности на сайте
+www.adaic.com. Многие из новых возможностей уже доступны
+пользователям компилятора GNAT (Profession и GAP редакций).
+Очевидно, в скором будущем стандарт вступит в силу, появятся
+полные его реализации, и таким образом, завершится очередной
+цикл в развитии замечательного языка Ада.
+</para>

@@ -59,8 +59,8 @@ function date_one ()
    >> $BUILD/diff.txt
 }
 
-rm -fr $BUILD/*
-rm -rf $CD/*
+rm -fr $BUILD/[^C]*
+rm -rf $CD/[^C]*
 
 xsltproc -o $BUILD/links.tmp $LINKS/copy.xsl $LIST
 if [ .$1. != .nofetch. ] 

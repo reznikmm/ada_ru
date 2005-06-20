@@ -263,6 +263,20 @@
 <informaltable frame="none">
 <tgroup cols='2' tgroupstyle="odd">
 <tbody valign="top">
+
+<row>
+ <entry>
+  <olink targetdocent="ada-200y">
+   Обзор стандарта Ада 2005
+  </olink>
+ </entry>
+ <entry>
+   В обзоре рассмотрены новые средства языка Ада, предлагаемые в 
+   стандарте  Ада-2005, такие как интерфейсы, новые ссылочные типы, 
+   цыклические зависимости типов между единицами компиляции и пр.
+ </entry>
+</row>
+
 <row>
  <entry>
   <anchor id="ada_20_years"/>

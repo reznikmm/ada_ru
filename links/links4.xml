@@ -1000,7 +1000,7 @@ this powerful framework, version 1.1
 Библиотеки контейнеров и компонент.
      </descr>
 
-  <link id="bc" home="http://www.pogner.demon.co.uk/components/bc/index.html">
+  <link id="bc" home="http://booch95.sourceforge.net/">
    <descr lang="ru">
 Библиотека компонент Гради Буча, перенесенная в Аду.
    </descr>
@@ -1008,7 +1008,8 @@ this powerful framework, version 1.1
 The Ada 95 Booch Components is a port C++ components library.
    </descr>
    <file id="bc"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://www.pogner.demon.co.uk/components/bc/download/" regexp="bc-([0-9]+)\.zip"/>
+     <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=135616"
+         regexp="bc-([0-9]+)\.zip" project="booch95"/>
    </file>
     <file id="booch-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*ada_booch-([0-9-]+)\.i386\.rpm"/>

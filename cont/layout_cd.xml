@@ -27,6 +27,7 @@
     <tocentry page="../cont/tutorial.xml"
        filename="www.ada-ru.org/Lovelace/lovelace.htm"/>
     <tocentry page="../cont/docs.xml" filename="www.ada-ru.org/docs.html">
+       <tocentry page="../cont/ada-200y.xml" filename="www.ada-ru.org/ada-200y.html" revisionflag="added"/>
        <tocentry page="../cont/asis.xml"  filename="www.ada-ru.org/asis.html"/>
        <tocentry page="../cont/comp_gnat.xml"  filename="www.ada-ru.org/comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="www.ada-ru.org/ada83.html"/>
