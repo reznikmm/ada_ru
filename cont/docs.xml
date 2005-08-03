@@ -3,6 +3,7 @@
 <!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
 <!ENTITY ada83 SYSTEM "ada83.xml" NDATA XML>
 <!ENTITY asis  SYSTEM "asis.xml"  NDATA XML>
+<!ENTITY ada-200y   SYSTEM "ada-200y.xml"  NDATA XML>
 <!ENTITY comp_gnat  SYSTEM "comp_gnat.xml"  NDATA XML>
 %last_mod;
 ]>
@@ -236,7 +237,7 @@
 </row>
 <row>
  <entry>
-  <ulink url="http://www.happytown.ru/books/comp/i432/"
+  <ulink url="i432/index.html"
   >Организация системы ИНТЕЛ 432</ulink>
  </entry>
  <entry>
@@ -252,6 +253,21 @@
  пакетов программ и систем управления базами данных.
  </entry>
 </row>
+<row>
+ <entry>
+  <ulink url="files/jang_text6.doc.gz"
+  >Алгоритмические языки реального времени</ulink>
+ </entry>
+ <entry>
+Янг С. 
+ Издательство "Мир" 1985 г.
+Автор знакомит читателей с основными принципами построения
+языков программнирования приложений реального времени.
+Одна из глав содержит краткое введение в язык Ада и
+применение принципов реального времени в этом языке.
+ </entry>
+</row>
+
 
 </tbody></tgroup>
 </informaltable>
