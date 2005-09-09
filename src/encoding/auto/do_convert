@@ -1,3 +1,5 @@
+#!/bin/sh
+cd ..
 for I in \
       ISO_8859_1     ISO_8859_2 \
       ISO_8859_3     ISO_8859_4 \
@@ -17,6 +19,6 @@ for I in \
       CP_1255    CP_1256    CP_1257    CP_1258 \
       KOI8_R     AtariST
 do
-./encodings.converter $I
+./encodings-converter $I
 done
 
