@@ -1,0 +1,8 @@
+This directory contains map tables from 
+http://www.unicode.org/Public/MAPPINGS/
+It used to read encodings by Encodings.Maps.Runtime
+which was't linked into executable.
+
+You can conver tables to Ada sources by Encodings.Converter
+See auto/do_convert file.
+
