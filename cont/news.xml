@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="koi8-r"?>
 <news>
 
+<item day="06" month="09" year="2005">
+Цифравая копия (в формате djvu) известной многим книги Бар Р. 
+<olink targetdocent="docs" localinfo="bar"
+>"Язык Ада в проектировании систем"</olink>
+в разделе 
+<olink targetdocent="docs"
+>Документация</olink>
+</item>
+
+<item day="26" month="08" year="2005">
+Вадим Годунко прислал новую версию библиотеки
+<olink targetdocent="src_xw">связки с Motif</olink> 
+и пример ее использования
+<ulink url="files/hello_world.tar.gz">Hello World</ulink>.
+</item>
+
 <item day="25" month="06" year="2005">
 Книга
 <olink targetdocent="docs" localinfo="book"

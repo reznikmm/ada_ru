@@ -27,13 +27,13 @@
 An Ada 95 compiler.
    </descr>
     <file id="gnat-nt"><descr lang="ru">GNAT for Windows</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-nt\.exe"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-nt\.exe"/>
     </file>
     <file id="gnatwin"><descr lang="ru">WIN32 API and utilities for Windows</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*gnatwin-([0-9.p]+)\.exe"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnatwin-([0-9.p]+)\.exe"/>
     </file>
     <file id="gnat-linux-tgz"><descr lang="ru">GNAT for Linux i686</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-i686-pc-redhat71-gnu-bin.tar.gz"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-i686-pc-redhat71-gnu-bin.tar.gz"/>
     </file>
     <file id="gnat-linux-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
 
@@ -121,7 +121,7 @@ package.
 Средства тестирования программ
      </descr>
 
-  <link id="aunit" home="http://libre.act-europe.fr/aunit/">
+  <link id="aunit" home="http://libre.adacore.com/aunit/">
    <descr lang="ru">
 AUnit - набор пакетов для написания тестов из семейства xUnit.
 Этот легкий в использовании модуль позволяет написать набор
@@ -140,7 +140,7 @@ tests to provide flexibility in determining what tests to run for a
 given purpose.
    </descr>
    <file id="aunit"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/aunit/main.html"
+     <download type="regexp" url="http://libre.adacore.com/aunit/main.html"
       regexp=".*aunit-([0-9.p]+)-src.zip"/>
    </file>
     <file id="aunit-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
@@ -278,7 +278,7 @@ test suite used for Ada processor conformity testing.
 Готовые приложения
      </descr>
 
-  <link id="aws" home="http://libre.act-europe.fr/aws/">
+  <link id="aws" home="http://libre.adacore.com/aws/">
    <descr lang="ru">
 AWS - означает Ада веб сервер. Но это не просто еще один веб сервер.
 AWS - средство разработки веб-приложений. Вы можете встроить небольшой,
@@ -298,7 +298,7 @@ Explorer or Netscape Communicator for example. Around this Web server
 a lot of services have been developed.
    </descr>
    <file id="aws"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/aws/main.html" regexp="aws-([0-9.p]+)tgz"/>
+     <download type="regexp" url="http://libre.adacore.com/aws/main.html" regexp="aws-([0-9.p]+)tgz"/>
    </file>
     <file id="aws-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-([0-9.-]+)\.i386\.rpm"/>
@@ -308,7 +308,7 @@ a lot of services have been developed.
     </file>
   </link>
 
-  <link id="bush" home="http://www.vaxxine.com/pegasoft/bush.html">
+  <link id="bush" home="http://www.pegasoft.ca/bush.html">
    <descr lang="ru">
 BUSH (Business Shell) это командный интерпретатор Linux/UNIX предназначенный
 для разработки надежных скриптов командного интерпретатора, которые позже
@@ -330,8 +330,7 @@ comes with 12 built-in packages including numerics, string
 processing, sound and database access.
    </descr>
    <file id="bush"><descr lang="ru">Исходные тексты</descr>
-     <!--download type="regexp" url="http://www.vaxxine.com/pegasoft/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/-->
-     <download type="regexp" url="http://66.11.182.223/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/>
+     <download type="regexp" url="http://www.pegasoft.ca/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/>
    </file>
     <file id="bush-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*bush-([0-9.-]+)\.i386\.rpm"/>
@@ -366,7 +365,7 @@ can use to bring up the source html files to be fixed.
 Средства разработки.
      </descr>
 
-  <link id="GPS" home="http://libre.act-europe.fr/gps/">
+  <link id="GPS" home="http://libre.adacore.com/gps/">
    <descr lang="ru">
 GPS - средство интерактивной разработки, поддерживает быструю
 навигацию по исходным текстам, файлы проектов, раскраску синтаксиса
@@ -378,10 +377,10 @@ that streamlines the interaction between developers and their
 software...
    </descr>
    <file id="GPS.linux"><descr lang="ru">Дистрибутив для Linux</descr>
-      <download type="regexp" url="http://libre.act-europe.fr/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-linux.tgz"/>
+      <download type="regexp" url="http://libre.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-linux.tgz"/>
    </file>
    <file id="GPS.win"><descr lang="ru">Дистрибутив для Windows</descr>
-      <download type="regexp" url="http://libre.act-europe.fr/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-windows.exe"/>
+      <download type="regexp" url="http://libre.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-windows.exe"/>
    </file>
     <file id="gps-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gps-([0-9.-]+)\.i386\.rpm"/>
@@ -644,10 +643,10 @@ It allows parts of a single program to run concurrently on different
 machines and communicate with each other.
    </descr>
     <file id="glade-src"><descr lang="ru">Glade sources</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*glade-([0-9.p]+)-src\.tgz"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-src\.tgz"/>
     </file>
     <file id="glade-doc"><descr lang="ru">Glade documentation</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*glade-([0-9.p]+)-docs.tar.gz"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-docs.tar.gz"/>
     </file>
     <file id="glade-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
 
@@ -665,7 +664,7 @@ ASIS-for-GNAT is an implementation of the ASIS standard for use with
 the GNAT Ada 95 development environment and toolset.
    </descr>
     <file id="asis-src"><descr lang="ru">ASIS sources</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*asis-([0-9.p]+)-src\.tgz"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*asis-([0-9.p]+)-src\.tgz"/>
     </file>
     <file id="asis-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
 
@@ -674,7 +673,7 @@ the GNAT Ada 95 development environment and toolset.
   </link>
 
 
-  <link id="XmlAda" home="http://libre.act-europe.fr/xmlada/">
+  <link id="XmlAda" home="http://libre.adacore.com/xmlada/">
    <descr lang="ru">
 Xml/Ada - набор модулей позволяющий легко манипулировать
 XML потоками. Он поддерживает стандарт XML 1.0, включая
@@ -692,7 +691,7 @@ In addition, It includes a module to manipulate Unicode
 streams, since this is required by the XML standard.
    </descr>
    <file id="xmlada"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/xmlada/main.html" regexp="XmlAda-([0-9.]+)tgz"/>
+     <download type="regexp" url="http://libre.adacore.com/xmlada/main.html" regexp="XmlAda-([0-9.]+)tgz"/>
    </file>
     <file id="xmlada-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-([0-9.-]+)\.i386\.rpm"/>
@@ -748,7 +747,7 @@ processing by request from a WWW user.
 Надстройки над C-библиотеками (bindings).
      </descr>
 
-  <link id="GtkAda" home="http://libre.act-europe.fr/GtkAda/">
+  <link id="GtkAda" home="http://libre.adacore.com/GtkAda/">
    <descr lang="ru">
 GtkAda - библиотека привязки к Gtk+, служит для построения
 приложений работающих в графичиских оболочка Linux, Windows
@@ -760,10 +759,10 @@ the complete set of Gtk+ widgets using the Object-Oriented features
 of this language. GtkAda supports the latest 2.2 stable releases.
    </descr>
    <file id="GtkAda.src"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://libre.act-europe.fr/GtkAda/main.html" regexp="GtkAda-([0-9.]+)tgz"/>
+      <download type="regexp" url="http://libre.adacore.com/GtkAda/main.html" regexp="GtkAda-([0-9.]+)tgz"/>
    </file>
    <file id="GtkAda.win"><descr lang="ru">Дистрибутив для Windows</descr>
-      <download type="regexp" url="http://libre.act-europe.fr/GtkAda/main.html" regexp="gtkada-([0-9.]+)exe"/>
+      <download type="regexp" url="http://libre.adacore.com/GtkAda/main.html" regexp="gtkada-([0-9.]+)exe"/>
    </file>
     <file id="gtkada-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-([0-9.-]+)\.i386\.rpm"/>
@@ -786,7 +785,7 @@ of this language. GtkAda supports the latest 2.2 stable releases.
 An Ada binding for the POSIX 1003.5 API.
    </descr>
     <file id="florist-src"><descr lang="ru">Florist sources</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/GNAT/main.html" regexp=".*florist-([0-9.p]+)-src\.tgz"/>
+     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*florist-([0-9.p]+)-src\.tgz"/>
     </file>
     <file id="florist-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
 
@@ -829,7 +828,7 @@ and LGPL.
    </file>
   </link>
 
-  <link id="polyorb" home="http://libre.act-europe.fr/polyorb/">
+  <link id="polyorb" home="http://libre.adacore.com/polyorb/">
    <descr lang="ru">
 PolyORB является набором средств и библиотек, которые могут быть
 использованы для разработки приложений CORBA средствами языка Ада.
@@ -846,7 +845,7 @@ Oriented Middleware (MOM), or to implement application-specific
 middleware.
     </descr>
    <file id="polyorb"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.act-europe.fr/polyorb/main.html" regexp=".*polyorb-([0-9.]+[a-z]?).tar.gz"/>
+     <download type="regexp" url="http://libre.adacore.com/polyorb/main.html" regexp=".*polyorb-([0-9.]+[a-z]?).tar.gz"/>
    </file>
     <file id="polyorb-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-([0-9].+)\.i386\.rpm"/>

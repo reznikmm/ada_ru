@@ -9,6 +9,7 @@
 <!ENTITY old-news  SYSTEM "../build/old_news.xml" NDATA XML>
 <!ENTITY conf      SYSTEM "conf.xml"     NDATA XML>
 <!ENTITY ada-200y  SYSTEM "ada-200y.xml" NDATA XML>
+<!ENTITY src_xw    SYSTEM "src_xw.xml"   NDATA XML>
 ]>
 <webpage id="home">
 <config param="desc" value="Ada.Ru Comunity"/>
