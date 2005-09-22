@@ -2,6 +2,8 @@
 <!DOCTYPE webpage [
 <!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
 <!ENTITY smpl-ssqrt    SYSTEM "smpl-ssqrt.xml"    NDATA XML>
+<!ENTITY smpl-astr     SYSTEM "smpl-astr.xml"     NDATA XML>
+<!ENTITY smpl-famly    SYSTEM "smpl-famly.xml"    NDATA XML>
 %last_mod;
 ]>
 <webpage id="samples">
@@ -21,6 +23,12 @@
 <itemizedlist mark='opencircle'>
  <listitem><para>
    <olink targetdocent="smpl-ssqrt">Параллельные вычисления</olink>
+ </para></listitem>
+ <listitem><para>
+   <olink targetdocent="smpl-astr">Асинхронная передача управления</olink>
+ </para></listitem>
+ <listitem><para>
+   <olink targetdocent="smpl-famly">Семейства входов</olink>
  </para></listitem>
 </itemizedlist>
  

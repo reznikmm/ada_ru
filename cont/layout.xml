@@ -46,6 +46,8 @@
     </tocentry>
     <tocentry page="../cont/samples.xml" filename="samples.html" revisionflag="added">
        <tocentry page="../cont/smpl-ssqrt.xml"  filename="smpl-ssqrt.html"/>
+       <tocentry page="../cont/smpl-astr.xml"   filename="smpl-astr.html"/>
+       <tocentry page="../cont/smpl-famly.xml"  filename="smpl-famly.html"/>
     </tocentry>
 
     <tocentry page="../cont/soft.xml" filename="soft_list.html"/>

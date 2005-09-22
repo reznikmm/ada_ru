@@ -4,8 +4,9 @@ with Ada_Links.Files.List; use Ada_Links.Files.List;
 
 procedure Ada_Links.Run is
 begin
-   if Argument_Count /= 2 then
-      Ada.Text_IO.Put_Line ("Usage: ada_links-run input_file output_file");
+   if Argument_Count /= 3 then
+      Ada.Text_IO.Put_Line
+        ("Usage: ada_links-run input_file output_file sf.net");
       Set_Exit_Status (Failure);
       return;
    end if;

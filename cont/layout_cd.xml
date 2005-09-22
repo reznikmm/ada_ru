@@ -46,6 +46,8 @@
 
     <tocentry page="../cont/samples.xml" filename="www.ada-ru.org/samples.html">
        <tocentry page="../cont/smpl-ssqrt.xml"  filename="www.ada-ru.org/smpl-ssqrt.html"/>
+       <tocentry page="../cont/smpl-astr.xml"   filename="www.ada-ru.org/smpl-astr.html"/>
+       <tocentry page="../cont/smpl-famly.xml"  filename="www.ada-ru.org/smpl-famly.html"/>
     </tocentry>
 
     <tocentry page="../cont/soft_cd.xml" filename="www.ada-ru.org/soft_list.html"/>

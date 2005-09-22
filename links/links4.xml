@@ -27,20 +27,21 @@
 An Ada 95 compiler.
    </descr>
     <file id="gnat-nt"><descr lang="ru">GNAT for Windows</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-nt\.exe"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-nt\.exe"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/winnt/gnat-3.15p-nt.exe"/>
     </file>
     <file id="gnatwin"><descr lang="ru">WIN32 API and utilities for Windows</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnatwin-([0-9.p]+)\.exe"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnatwin-([0-9.p]+)\.exe"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/winnt/gnatwin-3.15p.exe"/>
     </file>
     <file id="gnat-linux-tgz"><descr lang="ru">GNAT for Linux i686</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-i686-pc-redhat71-gnu-bin.tar.gz"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*gnat-([0-9.p]+)-i686-pc-redhat71-gnu-bin.tar.gz"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/gnat-3.15p-i686-pc-redhat71-gnu-bin.tar.gz"/>
     </file>
     <file id="gnat-linux-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-([0-9.p-]+)\.i386\.rpm"/>
     </file>
     <file id="gnat-linux-rtl-rpm"><descr lang="ru">runtime RPM</descr>
-
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-[0-9.p-]+runtime-([0-9-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -140,7 +141,7 @@ tests to provide flexibility in determining what tests to run for a
 given purpose.
    </descr>
    <file id="aunit"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.adacore.com/aunit/main.html"
+     <download type="regexp" url="https://libre2.adacore.com/aunit/main.html"
       regexp=".*aunit-([0-9.p]+)-src.zip"/>
    </file>
     <file id="aunit-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
@@ -265,10 +266,10 @@ test suite used for Ada processor conformity testing.
      <download type="regexp" url="http://www.ada-auth.org/acats.html"
      regexp=".*/mod_(2_5[a-z])\.tar\.Z"/>
     </file>
-    <file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
+    <!--file id="acats4gnat"><descr lang="ru">ACATS для GNAT</descr>
      <download type="regexp" url="http://www.guerby.org/ftp/"
      regexp="acats4gnat-([0-9.]+).tgz"/>
-    </file>
+    </file-->
   </link>
 
  </folder>
@@ -298,7 +299,7 @@ Explorer or Netscape Communicator for example. Around this Web server
 a lot of services have been developed.
    </descr>
    <file id="aws"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.adacore.com/aws/main.html" regexp="aws-([0-9.p]+)tgz"/>
+     <download type="regexp" url="https://libre2.adacore.com/aws/main.html" regexp="aws-([0-9.p]+)tgz"/>
    </file>
     <file id="aws-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-([0-9.-]+)\.i386\.rpm"/>
@@ -308,7 +309,7 @@ a lot of services have been developed.
     </file>
   </link>
 
-  <link id="bush" home="http://www.pegasoft.ca/bush.html">
+  <!--link id="bush" home="http://www.pegasoft.ca/bush.html">
    <descr lang="ru">
 BUSH (Business Shell) это командный интерпретатор Linux/UNIX предназначенный
 для разработки надежных скриптов командного интерпретатора, которые позже
@@ -335,7 +336,7 @@ processing, sound and database access.
     <file id="bush-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*bush-([0-9.-]+)\.i386\.rpm"/>
     </file>
-  </link>
+  </link-->
 
   <link id="webcheck" home="http://www.toadmail.com/~ada_wizard/ada/webcheck.html">
    <descr lang="ru">
@@ -377,17 +378,17 @@ that streamlines the interaction between developers and their
 software...
    </descr>
    <file id="GPS.linux"><descr lang="ru">Дистрибутив для Linux</descr>
-      <download type="regexp" url="http://libre.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-linux.tgz"/>
+      <download type="regexp" url="https://libre2.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-linux.tgz"/>
    </file>
    <file id="GPS.win"><descr lang="ru">Дистрибутив для Windows</descr>
-      <download type="regexp" url="http://libre.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-windows.exe"/>
+      <download type="regexp" url="https://libre2.adacore.com/gps/main.html" regexp="gps-([0-9.]+)-academic-x86-windows.exe"/>
    </file>
     <file id="gps-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gps-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
-  <link id="tia" home="http://www.pegasoft.ca/tia.html">
+  <!--link id="tia" home="http://www.pegasoft.ca/tia.html">
    <descr lang="ru">
 TIA (Tiny IDE for Ada) является консольным IDE для gnat.
 TIA написана с использованием GPL пакета texttools.
@@ -396,13 +397,13 @@ TIA написана с использованием GPL пакета texttools.
 Linux/UNIX Console IDE. Supports several languages and CVS.
    </descr>
    <file id="tia"><descr lang="ru">Исходные тексты</descr>
-      <!--download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/-->
-      <download type="regexp" url="http://66.11.182.223/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/>
+      <!- -download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/- ->
+      <download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/>
    </file>
     <file id="tia-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*tia-([0-9.-]+)\.i386\.rpm"/>
     </file>
-  </link>
+  </link-->
 
   <link id="adagoop" home="ftp://ftp.usafa.af.mil/pub/dfcs/carlisle/usafa/adagoop/index.html">
    <descr lang="ru">
@@ -643,10 +644,12 @@ It allows parts of a single program to run concurrently on different
 machines and communicate with each other.
    </descr>
     <file id="glade-src"><descr lang="ru">Glade sources</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-src\.tgz"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-src\.tgz"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/glade/glade-3.15p-src.tgz"/>
     </file>
     <file id="glade-doc"><descr lang="ru">Glade documentation</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-docs.tar.gz"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*glade-([0-9.p]+)-docs.tar.gz"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/glade/glade-3.15p-docs.tar.gz"/>
     </file>
     <file id="glade-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
 
@@ -664,10 +667,10 @@ ASIS-for-GNAT is an implementation of the ASIS standard for use with
 the GNAT Ada 95 development environment and toolset.
    </descr>
     <file id="asis-src"><descr lang="ru">ASIS sources</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*asis-([0-9.p]+)-src\.tgz"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*asis-([0-9.p]+)-src\.tgz"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/asis/asis-3.15p-src.tgz"/>
     </file>
     <file id="asis-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*asis-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -691,7 +694,7 @@ In addition, It includes a module to manipulate Unicode
 streams, since this is required by the XML standard.
    </descr>
    <file id="xmlada"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.adacore.com/xmlada/main.html" regexp="XmlAda-([0-9.]+)tgz"/>
+     <download type="regexp" url="https://libre2.adacore.com/xmlada/main.html" regexp="XmlAda-([0-9.]+)tgz"/>
    </file>
     <file id="xmlada-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-([0-9.-]+)\.i386\.rpm"/>
@@ -759,10 +762,10 @@ the complete set of Gtk+ widgets using the Object-Oriented features
 of this language. GtkAda supports the latest 2.2 stable releases.
    </descr>
    <file id="GtkAda.src"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://libre.adacore.com/GtkAda/main.html" regexp="GtkAda-([0-9.]+)tgz"/>
+      <download type="regexp" url="https://libre2.adacore.com/GtkAda/main.html" regexp="GtkAda-([0-9.]+)tgz"/>
    </file>
    <file id="GtkAda.win"><descr lang="ru">Дистрибутив для Windows</descr>
-      <download type="regexp" url="http://libre.adacore.com/GtkAda/main.html" regexp="gtkada-([0-9.]+)exe"/>
+      <download type="regexp" url="https://libre2.adacore.com/GtkAda/main.html" regexp="gtkada-([0-9.]+)exe"/>
    </file>
     <file id="gtkada-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-([0-9.-]+)\.i386\.rpm"/>
@@ -785,10 +788,10 @@ of this language. GtkAda supports the latest 2.2 stable releases.
 An Ada binding for the POSIX 1003.5 API.
    </descr>
     <file id="florist-src"><descr lang="ru">Florist sources</descr>
-     <download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*florist-([0-9.p]+)-src\.tgz"/>
+     <!--download type="regexp" url="http://libre.adacore.com/GNAT/main.html" regexp=".*florist-([0-9.p]+)-src\.tgz"/-->
+     <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/florist-3.15p-src.tgz"/>
     </file>
     <file id="florist-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*florist-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
@@ -845,7 +848,7 @@ Oriented Middleware (MOM), or to implement application-specific
 middleware.
     </descr>
    <file id="polyorb"><descr lang="ru">Исходные тексты</descr>
-     <download type="regexp" url="http://libre.adacore.com/polyorb/main.html" regexp=".*polyorb-([0-9.]+[a-z]?).tar.gz"/>
+     <download type="regexp" url="https://libre2.adacore.com/polyorb/main.html" regexp=".*polyorb-([0-9.]+[a-z]?).tar.gz"/>
    </file>
     <file id="polyorb-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-([0-9].+)\.i386\.rpm"/>

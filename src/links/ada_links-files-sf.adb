@@ -1,4 +1,5 @@
 with Ada.Text_IO;
+with Ada.Command_Line;
 with Ada_Links.Downloads;
 
 package body Ada_Links.Files.Sf is
@@ -49,6 +50,7 @@ package body Ada_Links.Files.Sf is
       Suffix : constant String := "\?download";
       Regexp : String := Prefix & To_String (Object.Regexp) & Suffix;
       Broken_Page : exception;
+      SF_Net : constant String := Ada.Command_Line.Argument (3);
    begin
       Find_Max_Version (Page, Regexp, Ver, Url);
       if Ver = Null_Unbounded_String then
@@ -62,10 +64,10 @@ package body Ada_Links.Files.Sf is
         (Slice (Url, Prefix'Length + 1, Length (Url) - Suffix'Length + 1));
       Object.Url     := Url;
       Object.Version := Ver;
-      File :=
+      File := SF_Net
 --        "http://belnet.dl.sourceforge.net/sourceforge/"
 --        "http://easynews.dl.sourceforge.net/sourceforge/"
-        "http://mesh.dl.sourceforge.net/sourceforge/"
+--        "http://mesh.dl.sourceforge.net/sourceforge/"
          & To_String (Object.Project) & "/" & Object.File;
       Object.Size :=
          To_Unbounded_String (Downloads.Get_Size (To_String (File)));
