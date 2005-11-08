@@ -5,14 +5,13 @@
           altval="Home Banner"/>
   <config param="banner-tabular" value="www.ada-ru.org/graphics/ada_.png"
           altval="Banner"/>
-  <!--config param="feedback.href" value="http://guestbook.chat.ru/gbook.html?uname=ada_rm" /-->
   <config param="feedback.href" value="mailto:reznikmm@front.ru" />
   <config param="navbgcolor" value="#634421" />
   <config param="navtocwidth" value="205" />
   <style src="www.ada-ru.org/test.css" type="text/css"/>
 
   <copyright>
-      <year>2004</year>
+      <year>2005</year>
       <holder><ulink url="mailto:reznikmm@front.ru">Maxim Reznik</ulink>
       </holder>
   </copyright>
@@ -27,7 +26,7 @@
     <tocentry page="../cont/tutorial.xml"
        filename="www.ada-ru.org/Lovelace/lovelace.htm"/>
     <tocentry page="../cont/docs.xml" filename="www.ada-ru.org/docs.html">
-       <tocentry page="../cont/ada-200y.xml" filename="www.ada-ru.org/ada-200y.html" revisionflag="added"/>
+       <tocentry page="../cont/ada-200y.xml" filename="www.ada-ru.org/ada-200y.html"/>
        <tocentry page="../cont/asis.xml"  filename="www.ada-ru.org/asis.html"/>
        <tocentry page="../cont/comp_gnat.xml"  filename="www.ada-ru.org/comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="www.ada-ru.org/ada83.html"/>
@@ -37,11 +36,12 @@
     <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html">
       <tocentry page="../cont/conf-2004.xml" filename="www.ada-ru.org/conf-2004.html"/>
     </tocentry>
-    <!--   revisionflag="added" -->
     <tocentry page="../cont/src.xml" filename="www.ada-ru.org/src.html">
        <tocentry page="../cont/src_asissq.xml"  filename="www.ada-ru.org/src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="www.ada-ru.org/src_ais.html"/>
-       <tocentry page="../cont/src_xw.xml"     filename="www.ada-ru.org/src_xw.html"/>
+       <tocentry page="../cont/src_xw.xml"      filename="www.ada-ru.org/src_xw.html"/>
+       <tocentry page="../cont/src_acr.xml"     filename="www.ada-ru.org/src_acr.html"/>
+       <tocentry page="../cont/src_csiv.xml"    filename="www.ada-ru.org/src_csiv.html"/>
     </tocentry>
 
     <tocentry page="../cont/samples.xml" filename="www.ada-ru.org/samples.html">

@@ -12,7 +12,7 @@ mkisofs -J -R -f -o$BUILD/ada-ru.iso $CD
 
 cat > $BUILD/ada-ru.jigdo << EOF
 [Servers]
-SF=http://belnet.dl.sourceforge.net/sourceforge/
+SF=$SF
 SF=http://twtelecom.dl.sourceforge.net/sourceforge/
 SF=http://cesnet.dl.sourceforge.net/sourceforge/
 ADA_RU=http://www.ada-ru.org/

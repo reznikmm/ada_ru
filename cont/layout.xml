@@ -5,14 +5,13 @@
           altval="Home Banner"/>
   <config param="banner-tabular" value="graphics/ada_.png"
           altval="Banner"/>
-  <!--config param="feedback.href" value="http://guestbook.chat.ru/gbook.html?uname=ada_rm" /-->
   <config param="feedback.href" value="mailto:reznikmm&lt;at>front.ru" />
   <config param="navbgcolor" value="#634421" />
   <config param="navtocwidth" value="205" />
   <style src="test.css" type="text/css"/>
 
   <copyright>
-      <year>2004</year>
+      <year>2005</year>
       <holder><ulink url="mailto:reznikmm&lt;at>front.ru">Maxim Reznik</ulink>
       </holder>
   </copyright>
@@ -27,7 +26,7 @@
     <tocentry page="../cont/tutorial.xml" filename="lovelace.htm"
          dir="Lovelace"   />
     <tocentry page="../cont/docs.xml" filename="docs.html">
-       <tocentry page="../cont/ada-200y.xml" filename="ada-200y.html" revisionflag="added"/>
+       <tocentry page="../cont/ada-200y.xml" filename="ada-200y.html"/>
        <tocentry page="../cont/asis.xml"  filename="asis.html"/>
        <tocentry page="../cont/comp_gnat.xml" filename="comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="ada83.html"/>
@@ -38,13 +37,14 @@
       <tocentry page="../cont/conf-2004.xml" filename="conf-2004.html"/>
     </tocentry>
     <!--  revisionflag="changed" revisionflag="added" -->
-    <tocentry page="../cont/src.xml" filename="src.html">
+    <tocentry page="../cont/src.xml" filename="src.html" revisionflag="changed">
        <tocentry page="../cont/src_asissq.xml"  filename="src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="src_ais.html"/>
        <tocentry page="../cont/src_xw.xml"      filename="src_xw.html"/>
        <tocentry page="../cont/src_acr.xml"     filename="src_acr.html"/>
+       <tocentry page="../cont/src_csiv.xml"    filename="src_csiv.html" revisionflag="added"/>
     </tocentry>
-    <tocentry page="../cont/samples.xml" filename="samples.html" revisionflag="added">
+    <tocentry page="../cont/samples.xml" filename="samples.html">
        <tocentry page="../cont/smpl-ssqrt.xml"  filename="smpl-ssqrt.html"/>
        <tocentry page="../cont/smpl-astr.xml"   filename="smpl-astr.html"/>
        <tocentry page="../cont/smpl-famly.xml"  filename="smpl-famly.html"/>

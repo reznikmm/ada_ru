@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="src-csiv" lang="ru">
+  <config param="desc" value="ASIS queries"/>
+  <config param="rcsdate" value="&last_mod_src_csiv;"/>
+  <head>
+    <title>Реализация CORBA Secure Interoperability для PolyORB
+    </title>
+    <titleabbrev>CSIV</titleabbrev>
+  </head>
+  <para>
+    Предварительная версия реализации 
+    CORBA Common Secure
+    Interoperability Specification Version 2 
+    (<ulink url="http://www.omg.org/technology/documents/formal/corba_2.htm"
+    >CORBA 3.0 глава 24</ulink>).
+  </para>
+  <para>
+    Пока реализована только GSSUP идентификациия клиента.
+    В дальнейшем планируется добавить транспортный механизм SSL/TLS,
+    проверку идентичности и делегирование на основе X.509 сертификатов
+    и поддержку ATLAS услуг.
+  </para>
+  <para>
+    Комментарии, сообщения об ошибках и вопросы - преветствуются.
+    Свяжитесь с автором по адресу
+    <email>godunko@strela.donpac.ru</email>.
+  </para>
+    
+  <para>
+    <ulink url="files/csiv2-20051101.tar.gz">Архив с исходным кодом</ulink>.
+  </para>
+</webpage>

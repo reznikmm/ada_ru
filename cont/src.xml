@@ -5,6 +5,7 @@
 <!ENTITY src-ais    SYSTEM "src_ais.xml"    NDATA XML>
 <!ENTITY src-xw     SYSTEM "src_xw.xml"     NDATA XML>
 <!ENTITY src-acr    SYSTEM "src_acr.xml"    NDATA XML>
+<!ENTITY src-csiv   SYSTEM "src_csiv.xml"   NDATA XML>
 %last_mod;
 ]>
 <webpage id="src">
@@ -35,6 +36,11 @@
  </para></listitem>
  <listitem><para>
   <olink targetdocent="src-acr">Порт Coco/R под Аду
+  </olink>
+ </para></listitem>
+ <listitem><para>
+  <olink targetdocent="src-csiv">Реализация CORBA Secure 
+  Interoperability для PolyORB
   </olink>
  </para></listitem>
 </itemizedlist>
