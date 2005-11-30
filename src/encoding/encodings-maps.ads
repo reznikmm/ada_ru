@@ -24,13 +24,11 @@ package Encodings.Maps is
    function Decode
      (Char     : Character;
       Forward  : Forward_Map) return Wide_Character;
-   pragma Inline (Decode);
 
    function Encode
      (Char     : Wide_Character;
       Ranges   : Wide_Ranges;
       Backward : Backward_Map) return Character;
-   pragma Inline (Encode);
 
    procedure Decode
      (Text        : in     Raw_String;
@@ -46,5 +44,8 @@ package Encodings.Maps is
       Result_Last :    out Natural;
       Ranges      : in     Wide_Ranges;
       Backward    : in     Backward_Map);
+
+   pragma Inline (Decode);
+   pragma Inline (Encode);
 
 end Encodings.Maps;

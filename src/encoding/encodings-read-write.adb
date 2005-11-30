@@ -50,6 +50,9 @@ begin
    P ("");
    P ("package Encodings.Maps." & Image & " is");
    P ("");
+   P ("   function Decode (Char : Character) return Wide_Character;");
+   P ("   pragma Inline (Decode);");
+   P ("");
    P ("   procedure Encode");
    P ("     (Text        : in     Wide_String;");
    P ("      Text_Last   :    out Natural;");
@@ -126,6 +129,12 @@ begin
       end if;
    end loop;
 
+
+   P ("");
+   P ("   function Decode (Char : Character) return Wide_Character is");
+   P ("   begin");
+   P ("      return Decode (Char, Forward);");
+   P ("   end Decode;");
    P ("");
    P ("   procedure Decode");
    P ("     (Text        : in     Raw_String;");
