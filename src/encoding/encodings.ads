@@ -53,6 +53,8 @@ package Encodings is
       Result_Last :    out Natural;
       Map         : in     Encoding);
 
+   function To_Encoding (Name : String) return Encoding;
+
    Invalid_Encoding : exception;
 
 private

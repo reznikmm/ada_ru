@@ -1,3 +1,6 @@
+with Ada.Strings.Maps;
+with Ada.Strings.Fixed;
+with Ada.Characters.Handling;
 with Encodings.Maps.Linked;
 
 package body Encodings is
@@ -97,6 +100,37 @@ package body Encodings is
          Encoder_List (Map).all (Text, Text_Last, Result, Result_Last, Map);
       end if;
    end Encode;
+
+   -----------------
+   -- To_Encoding --
+   -----------------
+
+   Dash_To_Underscore : constant Ada.Strings.Maps.Character_Mapping :=
+     Ada.Strings.Maps.To_Mapping ("-", "_");
+
+   function To_Encoding (Name : String) return Encoding is
+      use Ada.Strings.Fixed;
+      use Ada.Characters.Handling;
+
+      function Fix (Name : String) return String is
+      begin
+         if Index (Name, "WINDOWS") = Name'First then
+            return Replace_Slice (Name, Name'First, Name'First + 6, "CP");
+         else
+            return Name;
+         end if;
+      end Fix;
+
+      Upper  : constant String :=
+        Fix (Translate (To_Upper (Name), Dash_To_Underscore));
+      Result : Encoding;
+   begin
+      Result := Encoding'Value (Upper);
+      return Result;
+   exception
+      when Constraint_Error =>
+         raise Invalid_Encoding;
+   end To_Encoding;
 
 end Encodings;
 
