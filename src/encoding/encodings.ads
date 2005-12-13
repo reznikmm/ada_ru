@@ -4,7 +4,7 @@
 -- Tools for convertion strings between Unicode and   --
 -- national/vendor character sets.                    --
 --                - - - - - - - - -                   --
--- Read copyright and license and the end of file     --
+-- Read copyright and license at the end of this file --
 --------------------------------------------------------
 
 package Encodings is

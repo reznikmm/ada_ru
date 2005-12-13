@@ -30,6 +30,9 @@ package Encodings.Maps is
       Ranges   : Wide_Ranges;
       Backward : Backward_Map) return Character;
 
+   pragma Inline (Decode);
+   pragma Inline (Encode);
+
    procedure Decode
      (Text        : in     Raw_String;
       Text_Last   :    out Natural;
@@ -44,8 +47,5 @@ package Encodings.Maps is
       Result_Last :    out Natural;
       Ranges      : in     Wide_Ranges;
       Backward    : in     Backward_Map);
-
-   pragma Inline (Decode);
-   pragma Inline (Encode);
 
 end Encodings.Maps;
