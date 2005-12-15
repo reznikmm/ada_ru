@@ -6,6 +6,8 @@
 <!ENTITY src-xw     SYSTEM "src_xw.xml"     NDATA XML>
 <!ENTITY src-acr    SYSTEM "src_acr.xml"    NDATA XML>
 <!ENTITY src-csiv   SYSTEM "src_csiv.xml"   NDATA XML>
+<!ENTITY src-xslt   SYSTEM "src_xslt.xml"   NDATA XML>
+<!ENTITY src-adbi   SYSTEM "src_adbi.xml"   NDATA XML>
 %last_mod;
 ]>
 <webpage id="src">
@@ -41,6 +43,16 @@
  <listitem><para>
   <olink targetdocent="src-csiv">Реализация CORBA Secure 
   Interoperability для PolyORB
+  </olink>
+ </para></listitem>
+ <listitem><para>
+  <olink targetdocent="src-xslt">Связка для использования
+  XSLT преобразований (libxslt или Sablotron).
+  </olink>
+ </para></listitem>
+ <listitem><para>
+  <olink targetdocent="src-adbi">
+    Унифицированный интерфейс к базам данных
   </olink>
  </para></listitem>
 </itemizedlist>

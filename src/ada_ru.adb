@@ -17,7 +17,7 @@ begin
 
    AWS.Server.Start (WS, "Ada_Ru Public",
                      Max_Connection => 5,
-                     Port           => 80,
+                     Port           => 8080,
                      Callback       => Callbacks.Public_Service'Access);
 
    --  Wait for 'q' key pressed...

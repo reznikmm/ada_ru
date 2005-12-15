@@ -42,7 +42,9 @@
        <tocentry page="../cont/src_ais.xml"     filename="src_ais.html"/>
        <tocentry page="../cont/src_xw.xml"      filename="src_xw.html"/>
        <tocentry page="../cont/src_acr.xml"     filename="src_acr.html"/>
-       <tocentry page="../cont/src_csiv.xml"    filename="src_csiv.html" revisionflag="added"/>
+       <tocentry page="../cont/src_csiv.xml"    filename="src_csiv.html"/>
+       <tocentry page="../cont/src_xslt.xml"    filename="src_xslt.html"/>
+       <tocentry page="../cont/src_adbi.xml"    filename="src_adbi.html" revisionflag="added"/>
     </tocentry>
     <tocentry page="../cont/samples.xml" filename="samples.html">
        <tocentry page="../cont/smpl-ssqrt.xml"  filename="smpl-ssqrt.html"/>

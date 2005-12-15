@@ -2,6 +2,7 @@
 <!DOCTYPE webpage [
 <!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
 <!ENTITY docs  SYSTEM "docs.xml"  NDATA XML>
+<!ENTITY conf  SYSTEM "conf.xml"  NDATA XML>
 %last_mod;
 ]>
 <webpage id="src-acr">
@@ -53,6 +54,17 @@ Coco/R над аналогичными программами:
 грамматику (в сравнении с табличными анализаторами).
  </listitem>
 </itemizedlist>
+
+<para>
+На 
+<olink targetdocent="conf">конференции при симпозиуме МДОЗМФ-2005</olink>
+был заслушан доклад
+<ulink url="files/mdo-Havva_A-E-article.pdf">
+"Программная реализация языковых средств поддержки
+вычислительных экспериментов".
+А. Е. Гавва, В. О. Мищенко</ulink> в котором рассматривалась
+возможность использования Coco/R.
+</para>
 
 <para>
 Текущая версия библиотеки находится

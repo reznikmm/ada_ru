@@ -10,6 +10,7 @@
 <!ENTITY conf      SYSTEM "conf.xml"     NDATA XML>
 <!ENTITY ada-200y  SYSTEM "ada-200y.xml" NDATA XML>
 <!ENTITY src_xw    SYSTEM "src_xw.xml"   NDATA XML>
+<!ENTITY src_adbi  SYSTEM "src_adbi.xml"   NDATA XML>
 ]>
 <webpage id="home">
 <config param="desc" value="Ada.Ru Comunity"/>
@@ -62,10 +63,10 @@ Java байткод.
     Архив html версии, размером 395К, находится
     <ulink url="files/ada_prog-0.4w.zip">здесь</ulink>.
     Есть также
-    <ulink url="http://reznikmm.front.ru/files/ADA_RU.pdf.gz"
+    <ulink url="files/ADA_RU.pdf.gz"
     >Acrobat PDF</ulink>
     и
-    <ulink url="http://reznikmm.front.ru/files/ADA_RU.ps.gz"
+    <ulink url="files/ADA_RU.ps.gz"
     >PostScript</ulink>
     версии книги.
     </para>
