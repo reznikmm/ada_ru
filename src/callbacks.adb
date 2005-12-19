@@ -17,11 +17,13 @@ with Users;
 
 package body Callbacks is
 
-
-   Web_Root : constant String := "./www";
-   Old_Root : constant String := "./old/";  --  Backup place
-
    use AWS;
+
+   function Get_WWW_Root (Host : in String) return String;
+   pragma Inline (Get_WWW_Root);
+
+   function Get_File_Name (URI : in String) return String;
+   pragma Inline (Get_File_Name);
 
    function Get (Request : in Status.Data) return Response.Data;
    function Put (Request : in Status.Data) return Response.Data;
@@ -33,13 +35,10 @@ package body Callbacks is
       Data      : Ada.Streams.Stream_Element_Array);
 
    function Get (Request : in Status.Data) return Response.Data is
-      URI    : constant String := Status.URI (Request);
-      File   : constant String := Web_Root & URI;
+      File : constant String := Get_WWW_Root (Status.Host (Request))
+                              & Get_File_Name (Status.URI (Request));
    begin
-      if URI = "/" then
-         return Response.File (Content_Type => "text/html",
-                               Filename     => Web_Root & "/index.html");
-      elsif AWS.Resources.Is_Regular_File (File) then
+      if AWS.Resources.Is_Regular_File (File) then
          return Response.File (Content_Type => MIME.Content_Type (File),
                                Filename     => File);
       elsif OS_Lib.Is_Directory (File) then
@@ -52,16 +51,43 @@ package body Callbacks is
 
       return Response.Acknowledge
         (Messages.S404,
-         "Page '" & URI & "' Not found.");
+         "File '" & File & "' not found.");
 
    end Get;
+
+   ------------------
+   -- Get_WWW_Root --
+   ------------------
+
+   function Get_WWW_Root (Host : in String) return String is
+   begin
+      if Host = "" then
+         return "www";
+      else
+         return Host;
+      end if;
+   end Get_WWW_Root;
+
+   -------------------
+   -- Get_File_Name --
+   -------------------
+
+   function Get_File_Name (URI : in String) return String is
+   begin
+      if URI = "/" then
+         return "/index.html";
+      else
+         return URI;
+      end if;
+   end Get_File_Name;
+
 
    function Put (Request : in Status.Data) return Response.Data is
       use AWS.Status;
       use AWS.Digest;
 
-      URI     : constant String := Status.URI (Request);
-      File    : constant String := Web_Root & URI;
+      File    : constant String := Get_WWW_Root (Status.Host (Request))
+                                 & Get_File_Name (Status.URI (Request));
       Stale   : Boolean := not Check_Nonce (Authorization_Nonce (Request));
 
       User : constant String := Authorization_Name (Request);
@@ -82,7 +108,7 @@ package body Callbacks is
       if Is_Folder (File) then
          GNAT.Directory_Operations.Make_Dir (File);
       else
-         Write_File (URI, Binary_Data (Request));
+         Write_File (File, Binary_Data (Request));
       end if;
 
       return Response.Build
@@ -135,9 +161,7 @@ package body Callbacks is
          return Name & Img (2 .. Img'Last);
       end Versioned_Name;
 
-      Target  : constant String := Web_Root & File_Name;
-      Backup  : constant String := Old_Root & Base_Name (File_Name);
-      Temp    : constant String := Target & '_';
+      Temp    : constant String := File_Name & '_';
       Success : Boolean := True;
       Version : Positive := 1;
       File    : File_Type;
@@ -148,36 +172,36 @@ package body Callbacks is
       Write (File, Data);
       Close (File);
 
-      if Is_Regular_File (Target) then
-         while Is_Regular_File (Versioned_Name (Backup, Version)) loop
+      if Is_Regular_File (File_Name) then
+         while Is_Regular_File (Versioned_Name (File_Name, Version)) loop
             Version := Version + 1;
          end loop;
 
          GNAT.OS_Lib.Rename_File
-           (Old_Name => Target,
-            New_Name => Versioned_Name (Backup, Version),
+           (Old_Name => File_Name,
+            New_Name => Versioned_Name (File_Name, Version),
             Success  => Success);
 
          if not Success then
             Ada.Exceptions.Raise_Exception
              (Write_Error'Identity,
-              "Can't backup " & Target & " to " &
-              Versioned_Name (Backup, Version));
+              "Can't backup " & File_Name & " to " &
+              Versioned_Name (File_Name, Version));
             return;
          end if;
 
-         GNAT.OS_Lib.Delete_File (Versioned_Name (Backup, Version), Success);
+         GNAT.OS_Lib.Delete_File (Versioned_Name (File_Name, Version), Success);
 
       end if;
 
       GNAT.OS_Lib.Rename_File
         (Old_Name => Temp,
-         New_Name => Target,
+         New_Name => File_Name,
          Success  => Success);
 
       if not Success then
          Ada.Exceptions.Raise_Exception
-          (Write_Error'Identity, "Can't move " & Temp & " to " & Target);
+          (Write_Error'Identity, "Can't move " & Temp & " to " & File_Name);
          return;
       end if;
 
@@ -188,8 +212,8 @@ package body Callbacks is
 
       --  Restore file
       GNAT.OS_Lib.Rename_File
-        (Old_Name => Versioned_Name (Backup, Version),
-         New_Name => Target,
+        (Old_Name => Versioned_Name (File_Name, Version),
+         New_Name => File_Name,
          Success  => Success);
 
       Ada.Exceptions.Reraise_Occurrence (E);
