@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name='mar2005'>
+  <descr lang='ru'>Выпуск mar2005</descr>
+  <link id='mar2005.'
+        home='http://www.acm.org/sigada/ada_letters/mar2005/'>
+    <descr lang="ru">Выпуск mar2005</descr>
+    <file id='mar2005.March05-Chair-Msg.raw'>
+      <descr lang="ru">
+        Предисловие председателя. (Letter from the Chair. Currie Colket)
+      </descr>
+      <descr lang="en">
+        Letter from the Chair. Currie Colket
+      </descr>
+      <download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/March05-Chair-Msg.pdf' />
+    </file>
+
+<file id='mar2005.2004-SIGAda-Awards.raw'>
+<descr lang="ru">
+Награды SIGAda за 2004
+</descr>
+<descr lang="en">
+2004 SIGAda Awards - Awarded at SIGAda2004 Conference in Atlanta, GA
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/2004-SIGAda-Awards.pdf' />
+</file>
+
+<file id='mar2005.Student-Awards.raw'>
+<descr lang="ru">
+Награда "Выдающаяся студенческая работа" SIGAda за 2004
+</descr>
+<descr lang="en">
+2004 Outstanding Student Paper Award - 
+Awarded at SIGAda2004 Conference, Atlanta GA
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/Student-Awards.pdf' />
+</file>
+
+<file id='mar2005.APIWG-WS-04-Report.raw'>
+<descr lang="ru">
+Отчет рабочей группы API WG.
+(API Working Group BOF Session Summary. Clyde Roby)
+</descr>
+<descr lang="en">
+API Working Group BOF Session Summary. Clyde Roby
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/APIWG-WS-04-Report.pdf' />
+</file>
+
+<file id='mar2005.Pri-Inv-GustafNaeser.raw'>
+<descr lang="ru">
+Инверсия приоритетов в мультипроцессорной системе в результате
+защищенных вызовов.
+(Priority Inversion in Multi Processor Systems due to Protected Actions.
+Gustaf Naeser)
+</descr>
+<descr lang="en">
+Priority Inversion in Multi Processor Systems due to Protected Actions.
+Gustaf Naeser
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/Pri-Inv-GustafNaeser.pdf' />
+</file>
+
+<file id='mar2005.Task-Locks-Tojo-Cheng.raw'>
+<descr lang="ru">
+Взаимные блокировки в программах на языке Ада 95.
+(Tasking Deadlocks in Programs with the Full Ada95.
+ Y. Tojo, S. Nara, Y. Goto, J. Cheng)
+</descr>
+<descr lang="en">
+Tasking Deadlocks in Programs with the Full Ada95.
+ Y. Tojo, S. Nara, Y. Goto, J. Cheng
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/Task-Locks-Tojo-Cheng.pdf' />
+</file>
+
+<file id='mar2005.Re-SW-Comp-TLevine.raw'>
+<descr lang="ru">
+Програмные компоненты повторного использования.
+(Reusable Software Components. Trudy Levine)
+</descr>
+<descr lang="en">
+Reusable Software Components. Trudy Levine
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/Re-SW-Comp-TLevine.pdf' />
+</file>
+
+<file id='mar2005.SIGAdaElection2005.raw'>
+<descr lang="ru">
+Анонс выборов SIGAda 2005
+(SIGAda Elections 2005)
+</descr>
+<descr lang="en">
+SIGAda Elections 2005
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/mar2005/SIGAdaElection2005.pdf' />
+</file>
+
+</link>
+</folder>

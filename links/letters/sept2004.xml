@@ -2,7 +2,7 @@
 <folder name='sept2004'>
 <descr lang='ru'>Спецвыпуск по библиотекам контейнеров, sept2004</descr>
 <link id='sept2004.'
- home='http://www.sigada.org/ada_letters/issues/sept2004/'>
+ home='http://www.sigada.org/ada_letters/sept2004/'>
 <file id='sept2004.editor.raw'>
 <descr lang="ru">
 От редактора.
@@ -12,7 +12,7 @@
 From the Editor
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/editor.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/editor.pdf' />
 </file>
 
 <file id='sept2004.Pages.raw'>
@@ -24,7 +24,7 @@ From the Editor
 Newsletter Information.
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/Pages%20from%20newsletter_info.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/Pages%20from%20newsletter_info.pdf' />
 </file>
 
 <file id='sept2004.SIGAda_Annual_Report.raw'>
@@ -36,7 +36,7 @@ Newsletter Information.
 SIGAda Annual Report. Currie Colket
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/SIGAda_Annual_Report.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/SIGAda_Annual_Report.pdf' />
 </file>
 
 <file id='sept2004.AdaLetters-SIGAda2004f_scaled.raw'>
@@ -48,7 +48,7 @@ SIGAda Annual Report. Currie Colket
 SIGAda 2004 Information.
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/AdaLetters-SIGAda2004f_scaled.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/AdaLetters-SIGAda2004f_scaled.pdf' />
 </file>
 
 <file id='sept2004.ada_europe_scaled.raw'>
@@ -60,7 +60,7 @@ SIGAda 2004 Information.
 Ada Europe 2005 CFP.
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/ada_europe_scaled.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/ada_europe_scaled.pdf' />
 </file>
 
 <file id='sept2004.charles.raw'>
@@ -72,7 +72,7 @@ Charles: Библиотека Стандартных Шаблонов (STL) для языка Ада 95.
 Charles: An STL for Ada 95. Matthew Heaney
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/charles.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/charles.pdf' />
 </file>
 
 <file id='sept2004.sal_ada_letters_2004.raw'>
@@ -84,7 +84,7 @@ Charles: An STL for Ada 95. Matthew Heaney
 Introduction to Stephe's Ada Library. Stephen Leake
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/sal_ada_letters_2004.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/sal_ada_letters_2004.pdf' />
 </file>
 
 <file id='sept2004.PragmARCs.raw'>
@@ -96,7 +96,7 @@ PragmAda компоненты повторного использования.
 The PragmAda Reusable Components. Jeffrey Carter
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/PragmARCs.PDF' />
+ url='http://www.sigada.org/ada_letters/sept2004/PragmARCs.PDF' />
 </file>
 
 <file id='sept2004.levine.raw'>
@@ -108,7 +108,7 @@ The PragmAda Reusable Components. Jeffrey Carter
 Reusable Software Components. Trudy Levine
 </descr>
 <download type='file'
- url='http://www.sigada.org/ada_letters/issues/sept2004/levine.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2004/levine.pdf' />
 </file>
 
 </link>

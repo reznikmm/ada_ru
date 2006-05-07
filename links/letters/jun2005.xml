@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name='jun2005'>
+<descr lang='ru'>Выпуск jun2005</descr>
+<link id='jun2005.'
+ home='http://www.acm.org/sigada/ada_letters/jun2005/'>
+    <descr lang="ru">Выпуск jun2005</descr>
+<file id='jun2005.newsletter_General_info_June-05.raw'>
+<descr lang="ru">
+От редактора.
+(From the Editor)
+</descr>
+<descr lang="en">
+From the Editor
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/newsletter_General_info_June-05.pdf' />
+</file>
+
+<file id='jun2005.SIGAda%20Annual%20Report%202004.raw'>
+<descr lang="ru">
+Годовой отчет SIGAda.
+(SIGAda Annual Report. Currie Colket)
+</descr>
+<descr lang="en">
+SIGAda Annual Report. Currie Colket
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/SIGAda%20Annual%20Report%202004.pdf' />
+</file>
+
+<file id='jun2005.SIGAdaByLaws%202005.raw'>
+<descr lang="ru">
+Устав SIGAda
+(SIGAda Bylaws)
+</descr>
+<descr lang="en">
+SIGAda Bylaws
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/SIGAdaByLaws%202005.pdf' />
+</file>
+
+<file id='jun2005.Election%20Results%202005.raw'>
+<descr lang="ru">
+Результаты выборов SIGAda
+(SIGAda Election Results)
+</descr>
+<descr lang="en">
+SIGAda Election Results
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/Election%20Results%202005.pdf' />
+</file>
+
+<file id='jun2005.Dynamic_plugin_loading_with-Pat%20Rogers.raw'>
+<descr lang="ru">
+Динамическая загрузка плагинов в Ада 95 и Ада 2005.
+(On Dynamic Plug-in Loading with Ada 95 and Ada 2005 - Cyrille Comar. Pat Rogers)
+</descr>
+<descr lang="en">
+On Dynamic Plug-in Loading with Ada 95 and Ada 2005 - Cyrille Comar. Pat Rogers
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/Dynamic_plugin_loading_with-Pat%20Rogers.pdf' />
+</file>
+
+<file id='jun2005.Windows%20Disk%20Drive%20Recovery%20Karl%20Nyberg.raw'>
+<descr lang="ru">
+Востановление FAT32 дискас помощью Ада 95.
+(Windows Disk Drive Recovery with Ada95 - An Application Note. Karl Nyberg)
+</descr>
+<descr lang="en">
+Windows Disk Drive Recovery with Ada95 - An Application Note. Karl Nyberg
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/Windows%20Disk%20Drive%20Recovery%20Karl%20Nyberg.pdf' />
+</file>
+
+<file id='jun2005.Reusable%20SW%20Components-Trudy%20Levine.raw'>
+<descr lang="ru">
+Програмные компоненты повторного использования.
+(Reusable Software Components. Trudy Levine)
+</descr>
+<descr lang="en">
+Reusable Software Components. Trudy Levine
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/jun2005/Reusable%20SW%20Components-Trudy%20Levine.pdf' />
+</file>
+
+</link>
+</folder>

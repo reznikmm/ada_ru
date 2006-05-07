@@ -5,6 +5,8 @@
 <!ENTITY asis  SYSTEM "asis.xml"  NDATA XML>
 <!ENTITY ada-200y   SYSTEM "ada-200y.xml"  NDATA XML>
 <!ENTITY comp_gnat  SYSTEM "comp_gnat.xml"  NDATA XML>
+<!ENTITY tg_guide  SYSTEM "tg_guide.xml"  NDATA XML>
+<!ENTITY gui       SYSTEM "gui.xml"  NDATA XML>
 %last_mod;
 ]>
 <webpage id="docs" lang="ru">
@@ -176,6 +178,18 @@
  </entry>
 </row>
 
+<row>
+ <entry>
+  <olink targetdocent="tg_guide"
+  >Руководство по TG</olink>
+ </entry>
+ <entry>
+TG (Test Generator) - программа быстрого создания набора тестов,
+позволяет компактно и просто описывать любые тесты и создает
+программу для их исполнения.
+ </entry>
+</row>
+
 </tbody></tgroup>
 </informaltable>
 
@@ -184,6 +198,45 @@
 <informaltable frame="none">
 <tgroup cols='2' tgroupstyle="odd">
 <tbody valign="top">
+
+<row>
+ <entry>
+    <ulink url="files/quality.htm">
+Ада 95. Качество и стиль. (Главы 1-4)
+    </ulink>
+ </entry>
+ <entry>
+    <para>
+      <anchor id="quality"/>
+      Перевод книги
+      <ulink url=
+       "http://www.iste.uni-stuttgart.de/ps/ada-doc/style_guide/cover.html">
+        "Ada 95 Quality and Style"
+      </ulink>,
+      оригинал которой легко найти в интернете, важен как для прогроммистов,
+      перешедших на Аду с других языков программирования,
+      так и для начинающих программистов.
+      Первым он поможет использовать язык правильным способом, а не как
+      язык Си (к примеру) с другим синтаксисом, 
+      вторым - разобраться в разнообразии
+      языковых средств и способах их использования.
+      Опытные Ада-программисты также найдут эту книгу полезной,
+      пересмотрев свои методы программирования и сравнив их с рекомендуемыми.
+      Возможно, эту книгу и не очень увлекательно читать, но затраченные усилия
+      с лихвой окупятся при правильном использовании описанных приемов.
+    </para>
+    <para>
+      Большое спасибо Андрею Огороднику за потраченное на перевод
+      книги время. Свои замечания и мнения о переводе вы можете высказать
+      в нашей конференции.
+    </para>
+    <para>
+      Вы можете скачать
+      <ulink url="files/quality.zip">архив</ulink> с PDF, HTML и DOC
+      версиями перевода.
+    </para>
+ </entry>
+</row>
 
 <row>
  <entry>
@@ -301,6 +354,17 @@
 
 <row>
  <entry>
+  <olink targetdocent="gui">
+   Построители GUI
+  </olink>
+ </entry>
+ <entry>
+   О построении интерфейсов пользователя с использованием языка Ада.
+ </entry>
+</row>
+
+<row>
+ <entry>
   <olink targetdocent="ada-200y">
    Обзор стандарта Ада 2005
   </olink>
@@ -325,6 +389,37 @@
   Сокращенная версия статьи была опубликована в журнале
   <ulink url="http://www.osp.ru/os/2003/10/063.htm"
   >"Открытые Системы"</ulink>
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink 
+      url="http://comsys.ntu-kpi.kiev.ua/~library/visnik/32/pdf/p199903216.pdf"
+      >
+   Параллельные вычисления: Ада и Java
+  </ulink>
+ </entry>
+ <entry>
+   А. В. Корочкин, Мустафа Акрам.
+   Небольшое сравнение средств параллельного программирования в языках
+   Ада и Java.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink 
+      url="http://comsys.ntu-kpi.kiev.ua/~library/visnik/36/pdf/p200103613.pdf"
+      >
+   Защищенные модули как универсальный механизм синхронизации 
+   процессов в SMP-системах
+  </ulink>
+ </entry>
+ <entry>
+   А. Корочкин, М. Жужель, А. Авдеев, Д. Корочкин. 
+   Практическая проверка эфективности механизма защищенных модулей 
+   в SMP системах.
  </entry>
 </row>
 

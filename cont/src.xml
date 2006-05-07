@@ -8,6 +8,7 @@
 <!ENTITY src-csiv   SYSTEM "src_csiv.xml"   NDATA XML>
 <!ENTITY src-xslt   SYSTEM "src_xslt.xml"   NDATA XML>
 <!ENTITY src-adbi   SYSTEM "src_adbi.xml"   NDATA XML>
+<!ENTITY english    SYSTEM "english.xml"   NDATA XML>
 %last_mod;
 ]>
 <webpage id="src">
@@ -56,5 +57,9 @@
   </olink>
  </para></listitem>
 </itemizedlist>
+
+<para>
+  <olink targetdocent="english">Read this in English</olink>.
+</para>
  
 </webpage>

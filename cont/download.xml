@@ -79,7 +79,7 @@
         <row>
          <entry>
            <para>
-             ada-ru.iso (228Mb)
+             ada-ru.iso (376Mb)
            </para>
          </entry>
          <entry>
@@ -104,6 +104,25 @@
     </tgroup>
   </informaltable>
  </para>
+</section>
+
+
+<section id="gnat-mirror">
+ <title>Зеркало GNAT GPL 2005</title>
+<para>
+  Способ загрузки последней версии 
+  <ulink url="https://libre2.adacore.com/dynamic/gnat_gpl_edition.html"
+         >Gnat GPL 2005</ulink>
+  не позволяет использовать "докачку", что часто ставит
+  в тупик пользователей отечественных низкоскоростных
+  интернет каналов.
+  Олег Самойлов сюбезно предоставил
+  <ulink url="ftp://ftp.mipt.ru/ada/gnat.gpl"
+         >зеркало на ftp сайте ftp://ftp.mipt.ru</ulink>.
+  Не забудте зарегистрироваться на 
+  <ulink url="https://libre2.adacore.com/dynamic/gnat_gpl_edition.html"
+         >сайте AdaCore</ulink>.
+</para>
 </section>
 
 <section id="3">

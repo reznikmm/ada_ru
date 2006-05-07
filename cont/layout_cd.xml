@@ -26,12 +26,14 @@
     <tocentry page="../cont/tutorial.xml"
        filename="www.ada-ru.org/Lovelace/lovelace.htm"/>
     <tocentry page="../cont/docs.xml" filename="www.ada-ru.org/docs.html">
+       <tocentry page="../cont/gui.xml" filename="www.ada-ru.org/gui.html"/>
        <tocentry page="../cont/ada-200y.xml" filename="www.ada-ru.org/ada-200y.html"/>
        <tocentry page="../cont/asis.xml"  filename="www.ada-ru.org/asis.html"/>
        <tocentry page="../cont/comp_gnat.xml"  filename="www.ada-ru.org/comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="www.ada-ru.org/ada83.html"/>
        <tocentry page="../cont/dict_ru.xml" filename="www.ada-ru.org/dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="www.ada-ru.org/fnotes.html"/>
+       <tocentry page="../cont/tg_guide.xml" filename="www.ada-ru.org/tg_guide.html"/>
     </tocentry>
     <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html">
       <tocentry page="../cont/conf-2004.xml" filename="www.ada-ru.org/conf-2004.html"/>
@@ -60,6 +62,7 @@
 
   <notoc page="../build/soft.xml" filename="www.ada-ru.org/soft.html"/>
   <notoc page="../build/old_news.xml" filename="www.ada-ru.org/old_news.html"/>
+  <notoc page="../cont/english.xml" filename="www.ada-ru.org/english.html"/>
 
 <notoc page="../build/soft_bin.xml2" filename="bin/index.html"/>
 <notoc page="../build/soft_bin_compiler.xml2" filename="bin/compiler/index.html"/>
@@ -68,15 +71,17 @@
 <notoc page="../build/soft_bin_app.xml2" filename="bin/app/index.html"/>
 <notoc page="../build/soft_bin_devel.xml2" filename="bin/devel/index.html"/>
 <notoc page="../build/soft_bin_os.xml2" filename="bin/os/index.html"/>
-<!--notoc page="../build/soft_doc.xml2" filename="doc/index.html"/>
+<notoc page="../build/soft_doc.xml2" filename="doc/index.html"/>
 <notoc page="../build/soft_doc_en.xml2" filename="doc/en/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters.xml2" filename="doc/en/ada_letters/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_jun2005.xml2" filename="doc/en/ada_letters/jun2006/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_mar2005.xml2" filename="doc/en/ada_letters/mar2006/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2004.xml2" filename="doc/en/ada_letters/sept2004/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_jun2004.xml2" filename="doc/en/ada_letters/jun2004/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_dec2003.xml2" filename="doc/en/ada_letters/dec2003/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2003.xml2" filename="doc/en/ada_letters/sept2003/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_june2003.xml2" filename="doc/en/ada_letters/june2003/index.html"/>
--->
+<!-- -->
 <notoc page="../build/soft_lib.xml2" filename="lib/index.html"/>
 <notoc page="../build/soft_lib_pure.xml2" filename="lib/pure/index.html"/>
 <notoc page="../build/soft_lib_bindings.xml2" filename="lib/bindings/index.html"/>

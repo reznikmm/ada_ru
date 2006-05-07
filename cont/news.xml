@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="koi8-r"?>
 <news>
 
+<item day="09" month="04" year="2006">
+  Андрей Огородник прислал перевод первых четырех глав книги
+  <olink targetdocent="docs" localinfo="quality"
+         >"Ада 95 Качество и Стиль"</olink>. Лично мне эта книга
+  очень помогла в освоении и правильном использовании языка Ада. 
+  Рекомендую всем!
+</item>
+
+<item day="12" month="03" year="2006">
+  Олег Самойлов сюбезно предоставил
+  <olink targetdocent="download" localinfo="gnat-mirror"
+         >зеркало Gnat GPL 2005</olink>,
+  что позволило легко скачивать новый GNAT GPL и добавить его в наш 
+  <olink targetdocent="soft" localinfo="gnat"
+         >Каталог свободно распространяемого ПО</olink>,
+  доведя размер компакт диска до 376 Мб.
+</item>
+
+<item day="09" month="02" year="2006">
+Перевод руководства пользователя по TG (Test Generator)
+<olink targetdocent="tg_guide">TG Guide</olink>.
+</item>
+
 <item day="13" month="12" year="2005">
 Давно хотел выложить свою работу по созданию унифицированного
 интерфейса доступа к базам данных из программ на Аде и вот,
@@ -16,7 +39,7 @@
 языка, быстрое переключение между файлами ads/adb, 
 переход к спецификации/реализации фунцкии/процедуры одним
 щелчком мыши, удобный отладчик с навигацией по исходникам и пр.
-  <ulink url="http://reznikmm.front.ru/files/AdaIDE-V0.1.0.10-Setup.exe"
+  <ulink url="files/AdaIDE-V0.1.0.10-Setup.exe"
   >Скачать можно здесь</ulink>.
 Поделитесь вашими впечатлениями в рассылке ada_ru.
 </item>

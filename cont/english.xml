@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="english" lang="en">
+<config param="desc" value="Ada_Ru Developments"/>
+<config param="rcsdate" value="&last_mod_english;"/>
+<head>
+<title>Ada_Ru Resources</title>
+</head>
+
+<para>
+We are proud to present open-source software developed by
+people of Ada_Ru community.
+</para>
+
+<informaltable><tgroup cols='3' tgroupstyle="odd">
+<tbody valign="top">
+
+<row>
+ <entry>
+Title
+ </entry>
+ <entry>
+Description
+ </entry>
+ <entry>
+Author
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="files/asissq.tar.gz">asissq</ulink>
+ </entry>
+ <entry>
+Small library over ASIS to categorize Ada library units with queries like
+Is_Declared_Pure, Is_Shared_Passive, Is_Preelaborated and etc.
+ </entry>
+ <entry>
+Vadim Godunko
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/ais-0.0.1.tar.gz">ais 0.0.1</ulink>
+ </entry>
+ <entry>
+True Unicode support in Ada.
+ </entry>
+ <entry>
+Vadim Godunko
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/xmada-0.3w-20060302.tar.gz"
+ >xmada 0.3w 2006/03/02</ulink>
+ </entry>
+ <entry>
+   Ada binding for X Window System and OpenMotif/OSF Motif.
+   It includes preliminary version of GUI builder.
+   Small example
+   <ulink url="http://www.ada-ru.org/files/hello_world.tar.gz"
+          >here</ulink>.
+ </entry>
+ <entry>
+Vadim Godunko
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/cocor_ada-1.53.1.tar.gz"
+ >cocor_ada 1.53.1</ulink>
+ </entry>
+ <entry>
+   Port of powerful
+   <ulink url="http://www.ssw.uni-linz.ac.at/Research/Projects/Coco/"
+          >Compiler Generator Coco/R</ulink> to Ada.
+ </entry>
+ <entry>
+Alex Havva
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/csiv2-20051101.tar.gz"
+ >csiv2 2005/11/01</ulink>
+ </entry>
+ <entry>
+   <ulink url="http://www.omg.org/technology/documents/formal/corba_2.htm"
+          >CORBA Secure Interoperability</ulink> implementation for PolyORB.
+ </entry>
+ <entry>
+Vadim Godunko
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/xslt-20051128.zip"
+ >xslt 2005/11/28</ulink>
+ </entry>
+ <entry>
+Binding of two XSLT library: libxslt form GNOME project and Sablotron.
+ </entry>
+ <entry>
+Maxim Reznik
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="http://www.ada-ru.org/files/adbi-0.1.zip"
+ >adbi 0.1</ulink>
+ </entry>
+ <entry>
+Unified Database Interface for Ada.
+ </entry>
+ <entry>
+Maxim Reznik
+ </entry>
+</row>
+
+</tbody></tgroup></informaltable>
+
+<para>
+  if you have questions or propositions please contact us by
+  e-mail <ulink url="mailto:ada_ru-owner@yahoogroups.com"
+  >ada_ru-owner@yahoogroups.com</ulink>
+</para>
+
+</webpage>

@@ -1,13 +1,14 @@
 #!/bin/sh
-issue=sept2004
+issue=mar2005
 base=~/download/adaletter/
-download=$base/www.sigada.org/ada_letters/issues/$issue/
+download=$base/www.acm.org/sigada/ada_letters/$issue/
 echo '<?xml version="1.0" encoding="koi8-r"?>'
 echo "<folder name='$issue'>"
 echo "<descr lang='ru'>Выпуск $issue</descr>"
 echo "<link id='$issue.$file'"
 dir=`echo $download|sed -e 's#.*//##'`
 echo " home='http://$dir'>"
+echo "<descr lang='ru'>Выпуск $issue</descr>"
 for I in `find $download -iname *.pdf | sed -e 's/ /%20/g'`
 do
    url=`echo $I|sed -e 's#.*//##'`

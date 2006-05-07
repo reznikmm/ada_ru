@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE webpage [
+<!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
+%last_mod;
+]>
+<webpage id="tg_guide" lang="ru">
+<config param="desc" value="TG Guide"/>
+<config param="rcsdate" value="&last_mod_tg_guide;"/>
+<head>
+<title>TG: Test Driver Generator. </title>
+<titleabbrev>Tg Guide</titleabbrev>
+</head>
+
+ <para>
+TG помогает вам тестировать программные компоненты,
+генерируя программы, которые автоматически проводят тесты.
+ </para>
+ <para>
+Эта документация соответствует версии TG 3.1.
+ </para>
+<section><title>
+1. Введение.
+</title>
+
+ <para>
+Test Driver это программа, которая тестирует часть программного обеспечения.
+ </para>
+ <para>
+Когда вы хотите оттестировать что-то, например, какой-то пакет на языке Ада,
+обычно вам приходится написать большое число отдельных элементарных тестов,
+которые выполняются один за другим. Каждый тест обычно состоит из вызова, 
+который передает какие-то данные в подпрограмму пакета, и последующего анализа
+получаемого результата. Назовем этот элементарный тест - испытанием
+(test case).
+ </para>
+ <para>
+Обычно Test Driver простая, но очень длинная программа.
+В основном она состоит из бесконечного повторения похожих кусочков - испытаний.
+Желательно бы иметь программу строящую подобные тесты (Test driver-ы).
+ </para>
+ <para>
+TG как раз и является такой программой. Вы передаете ей описания тестов
+в специальном формате, называемом тестовым скриптом, а tg преобразует
+его в текст на языке Ада, который затем может быть скомпилирован и
+собран в готовую программу. TG работает с языком Ада 95.
+ </para>
+
+<section><title>
+1.1 Небольшой пример
+</title>
+
+ <para>
+Предположим вам нужно проверить функцию, которая подсчитывает 
+символы '&amp;' в строке.
+ </para>
+
+ <informalexample>
+   <programlisting>
+function Count_Ampersand (Str : in String) return Natural;
+   </programlisting>
+ </informalexample>
+
+ <para>
+Одним из испытаний, может быть вызов этой функции с
+аргументом "bc&amp;&amp;&amp;abc" и проверка, что результат равен трем.
+Этот код может выглядеть как:
+ </para>
+
+
+ <informalexample>
+   <programlisting>
+Put ("Testing three ampersands in the middle... ");
+begin
+  Count := Count_Ampersand ("abc&amp;&amp;&amp;abc");
+  if Count = 3 then
+    Put_Line ("pass.");
+  else
+    Put_Line ("fail.");
+  end if;
+exception
+  when others =>
+    Put_Line ("fail.");
+end;
+   </programlisting>
+ </informalexample>
+
+ <para>
+Слишком много кода для одного теста. На языке TG это выглядит как
+ </para>
+
+ <informalexample>
+   <programlisting>
+***** Testing three ampersands in the middle...
+test Count := Count_Ampersand ("abc&amp;&amp;&amp;abc");
+pass Count = 3
+
+   </programlisting>
+ </informalexample>
+
+<para>
+TG преобразует это в текст, приведенный ранее и получает готовую
+к выполнению программу.
+</para>
+</section>
+<section><title>
+1.2 Терминология
+</title>
+
+<para>
+Как объяснялось ранее TG рассматривает ТЕСТ как последовательность
+испытаний. ТЕСТ подготавливается как файл с тестовым скриптом.
+Вы готовите тестовый скрипт в формате описываемом в данном документе.
+То, что вы тестируете, называется тестируемый элемент (test item). 
+Это может быть одной подпрограммой, пакетом или целой системой.
+</para>
+<para>
+
+Мы говорим, что тест выполняется прогоном Test Drive программы.
+Аналогично, единичное испытание проходит как выполнение кода
+получаемого из описания испытания.
+</para>
+<para>
+
+Важнейшим моментом является вызов тестируемого элемента.
+Мы называем это "тестовым вызовом". Test driver-у может потребоваться
+некоторая подготовительная работа перед выполнением "тестового вызова",
+а затем он анализирует полученные результаты.
+</para>
+<para>
+
+Есть три типа результата: результат тестового вызова,
+результат испытания и результат всего теста.
+<itemizedlist>
+<listitem>
+<para>
+ результат тестового вызова это то, что возвращается Test Driver-у.
+Это может быть значением функции, значением out параметров, но это
+также может быть каким-то эффектом типа установки глобальной 
+переменной или записи данных в файл. Результат тестового вызова
+также включает программный путь - либо нормальное завершение
+ вызова, либо возбуждение какого-нибудь исключения.
+</para>
+</listitem>
+<listitem>
+<para>
+- driver получает свой результат сравнивая результат тестового вызова
+с ожидаемым. Если результаты совпали, то тестируемый элемент прошел, иначе
+потерпел неудачу. Аналогично, говорится, что испытание прошло или
+провалилось.
+</para>
+<para>
+
+Есть третья возможность, когда что-то случается вне тестового вызова.
+Например, вы желаете протестировать функцию,
+возвращающую длину списка. Для этого вам нужно построить
+некоторый список. Если в процессе построения списка что-то
+пошло не так, то испытание не провалилось, а ошибочно завершилось.
+</para>
+<para>
+
+Ошибочное завершение более точно можно определить, как
+возбуждение исключения в любой части испытания,
+кроме тестового вызова.
+
+</para>
+</listitem>
+<listitem>
+<para>
+- наконец, общим результатом теста будет "прошел", если 
+каждое испытание прошло и "потерпел неудачу" в противном случае.
+Либо "не определен", если какое-либо испытание завершилось ошибочно.
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+</section>
+</section>
+
+<section><title>
+2. Тестовый скрипт
+</title>
+
+<para>
+В терминах TG "тестовый скрипт" означает машинно-обрабатываемое
+законченное описание теста. Это описание включает только самое
+необходимое для построения test driver-а. TG по данному описанию
+формирует готовую Ада программу. Написание тестового скрипта
+вместо написания test driver-а вручную, не только упрощает
+построение теста, но и делает описание тестов более единообразным.
+</para>
+<para>
+
+В тестовом скрипте можно выделить две секции - глобальную и
+секцию испытаний. Естественно, параметры для всего теста
+описаны в глобальной секции, а в секции испытаний
+описаны отдельные испытания.
+</para>
+<section><title>
+2.1 Основы тестового скрипта
+</title>
+
+<para>
+Файл содержащий тестовый скрипт имеет расширение ".ts".
+Тестовый скрипт в основном состоит из кусочков Ада кода 
+в вперемешку со специальными словами, которые говорят TG 
+куда эти кусочки надо поместить в готовом test driver.
+Основная идея в том, что специальные слова должны начинаться
+в первой позиции строки. Затем идет код на языке Ада, который
+может продолжаться любое количество строк, при условии, что
+эти строки начинаются с пробела. Строка, которая не начинается
+с пробела, обозначает окончание кусочка. Например 
+</para>
+
+ <informalexample>
+   <programlisting>
+prepare Result := 0;
+        Done   := False;
+
+        if not Initialized then
+          Initialize;
+        end if;
+test ...
+   </programlisting>
+ </informalexample>
+
+<para>
+Кусочек, который будет подготовительной частью (prepare)
+начинается с "Result :=" и кончается "end if;", занимая
+6 строк. За ним следует часть теста (test). Значение
+этих частей обьясняется далее.
+</para>
+<para>
+
+TG не чувствителен к регистру, так же как и язык Ада.
+Это значит, вы можете писать ключевые слова TG в любом
+регистре. Комментарии начинаются с '--' как и в языке
+Ада. Однако, если комментарий начинается не с первой
+позиции TG воспримет это, как чать текста на Аде и
+перенесет его в генерируемую программу.
+</para>
+</section>
+<section><title>
+2.2 Глобальная секция
+</title>
+<para>
+В глобальной секции возможны следующие элементы:
+fail_handling, error_handling, context, exceptions и define.
+Мы опишем их последовательно, хотя в скрипте из порядок не 
+играет роли. Кроме части context, другие части не являются 
+обязательными.
+</para>
+<para>
+
+Напомним, что ключевые слова должны начинаться с первой позиции
+строки.
+</para>
+
+<itemizedlist>
+<listitem>
+<para>
+- fail_handling ( stop | continue )
+Определяет что должен делать driver если 
+какой-то test case провалился. Это либо остановка теста
+на провалившемся испытании, либо продолжение.
+По умолчанию действует вариант continue.
+</para>
+</listitem>
+<listitem>
+<para>
+- error_handling ( stop | continue )
+Аналогично для ошибочного завершения. По умолчанию stop.
+</para>
+</listitem>
+
+
+<listitem>
+<para>
+- context clauses
+Где clauses любое число спецификаторов with и use, которые
+будут использованы для test driver. Для работы driver-а необходимо
+чтобы были видимы подпрограммы Put_Line и New_Line, аналогичные тем,
+что определены в пакете Ada.Text_IO. Таким образом, вы обычно
+указываете 
+</para>
+
+<para>
+context with Ada.Text_IO; use Ada.Text_IO;
+</para>
+
+<para>
+хотя можно использовать и свои процедуры с теми же именами.
+</para>
+</listitem>
+
+<listitem>
+<para>
+- exceptions list
+
+Список возможных исключений. Устаревшая часть, т.к. Ада 95
+может перехватить все исключения при помощи when others.
+</para>
+</listitem>
+
+<listitem>
+<para>
+- define lines
+перечень глобальных определений. Строки lines будут
+расположены в декларативной части driver-а. Этой
+директивой вы обычно описываете глобальные объекты и
+подпрограммы необходимые для работы испытаний.
+Хотя каждое испытание может иметь собственную часть define,
+действующую в течении выполнения test case-а. Например
+</para>
+ <informalexample>
+   <programlisting>
+define Exit_Status : Integer;  -- used by all the test cases
+
+       function Result_Is_Correct (R : Result_Type) : Boolean is
+       begin
+         ...
+       end Result_Is_Correct;
+   </programlisting>
+ </informalexample>
+</listitem>
+</itemizedlist>
+</section>
+
+<section><title>
+2.3 Секция описаний испытаний
+</title>
+
+<para>
+Каждое описание испытания описывает одно испытание.
+Для TG испытание характеризуется, как
+</para>
+
+<itemizedlist>
+<listitem>
+<para>
+1) Испытаний формируется как блочный оператор языка Ада и
+может иметь свои данные и подпрограммы необходимые для выполнения.
+Вы можете определить их при помощи define части (аналогично
+части из глобальной секции).
+</para>
+</listitem>
+
+
+<listitem>
+<para>
+2) Вам может понадобится некоторая подготовительная работа.
+Она описывается в части prepare и выполняется до
+тестового вызова.
+</para>
+</listitem>
+
+<listitem>
+<para>
+3) тестовая часть выглядит как единичный оператор на языке Ада,
+обычно вызов подпрограммы. Записывается как test часть.
+</para>
+</listitem>
+
+<listitem>
+<para>
+4) После тестового вызова driver проверяет результат, который
+состоит из двух частей
+</para>
+<itemizedlist>
+<listitem>
+<para>
+ 1) Путь выполнения, который может принять форму нормального
+    продолжения исполнения или возбуждения исключения.
+    Test driver сам определяет путь исполнения и сохраняет
+    его в строковую переменную. Вам не нужно определять
+    обработчики исключения.
+</para>
+</listitem>
+
+<listitem>
+<para>
+ 2) Значение любого выражения. Вы можете определить любое
+    логическое выражение, которое driver будет проверять
+    после тестового вызова. Это может быть простое условие,
+    либо вызов сложной функции, вычисляющей значение Boolean.
+</para>
+</listitem>
+</itemizedlist>
+</listitem>
+
+<listitem>
+<para>
+5) Driver печатает результат испытания в стандартный поток
+вывода. Вы можете управлять объемом вывода, от полного 
+подавления до вывода подробного отчета, что случилось на
+провалившемся испытании.
+</para>
+</listitem>
+
+
+<listitem>
+<para>
+6) В заключении испытания могут быть выполнены 
+некоторые действия по очистке. Вы можете указать их в cleanup
+части.
+</para>
+</listitem>
+</itemizedlist>
+
+<para>
+Шаблон одного испытания может быть описан как
+</para>
+
+ <informalexample>
+   <programlisting>
+*****    заголовок test-case
+define   definitions
+prepare  preparations
+test     test-statement
+pass     [ path ] [ ,  predicate ]
+cleanup  cleanup-code
+   </programlisting>
+ </informalexample>
+
+<para>
+Значения частей define, prepare и cleanup мы уже описали.
+Их наличие не обязательно. Части с заголовком испытания,
+test и pass необходимы. Опишем их подробнее.
+</para>
+
+<section><title>
+2.3.1.1 Заголовок испытания
+</title>
+
+<para>
+Начало испытания определяется "словом" *****, которое
+играет роль визуального маркера в скрипте.
+Остаток строки это название испытания. Оно должно вкратце
+описывать что будет тестироваться. Например
+</para>
+
+ <informalexample>
+   <programlisting>
+***** function List_Length: List of length zero
+   </programlisting>
+ </informalexample>
+
+<para>
+TG нумерует испытания начиная с единицы. Вы можете
+нумеровать испытания в заголовке, чтобы легче было найти
+нужное. TG распознает номер испытания в круглых скобках
+в начале заголовка, например
+</para>
+
+ <informalexample>
+   <programlisting>
+***** (17) function List_Length: List of length zero
+   </programlisting>
+ </informalexample>
+
+<para>
+Конечно, легко сбиться с правильного счет, поэтому
+есть специальный режим Test Script Mode для редактора Emacs.
+</para>
+
+<para>
+Если введенные цифры не соответствуют порядку TG
+предупреждает об этом во время трансляции.
+</para>
+</section>
+
+<section><title>
+2.3.1.2 Тестовый вызов
+</title>
+
+<para>
+Любой код за языке Ада может быть тестовым вызовом.
+Но всеже лучше, если будет единственный оператор.
+Это позволит точно определить, что пошло не так во время
+теста. Результат лучше расположить в переменной, чтобы потом
+проверить на корректность. Например
+</para>
+
+ <informalexample>
+   <programlisting>
+test  Result := Test_Item (Some_Parameter);
+   </programlisting>
+ </informalexample>
+</section>
+
+<section><title>
+2.3.1.3 Проверка
+</title>
+
+<para>
+Может быть любое число проверок результата тестового вызова.
+Тест проходит если ЛЮБАЯ из проверок выполнилась.
+Проверка может быть записана в одной из следующих форм
+</para>
+
+ <informalexample>
+   <programlisting>
+pass  path
+pass  predicate
+pass  path, predicate
+   </programlisting>
+ </informalexample>
+
+<para>
+Где path определяет путь программы. => обозначает выполнение
+без исключений. exception exception-name возбуждение
+исключения exception-name (имя исключения должно быть определено
+заранее). Отсутствие path равнозначно =>.
+</para>
+
+<para>
+predicate должно быть логическим выражением и может занимать 
+несколько строк. Если не задано, то равно True.
+</para>
+
+<para>
+Если заданы и path и predicate, то тест проходит, если
+выполняется predicate и путь программы заданный path.
+Пример:
+</para>
+
+ <informalexample>
+   <programlisting>
+pass Number_Of_Elements = 5
+
+pass exception Constraint_Error
+
+pass exception IO_Exceptions.Name_Error, Analyze_Result
+
+pass Status = True
+     and then Is_Empty (List)
+
+pass =>, Max = 10.23  -- `=>' is not required here
+
+pass =>               -- the simplest pass-clause
+   </programlisting>
+ </informalexample>
+
+</section>
+</section>
+
+<section><title>
+2.3.2 Промежуточный код
+</title>
+
+<para>
+Вы можете вставлять любой код между испытаниями при помощи
+части code. Например, можно инициализировать пакет перед
+тестированием. Синтаксис прост:
+</para>
+
+ <informalexample>
+   <programlisting>
+code lines
+   </programlisting>
+ </informalexample>
+
+<para>
+TG заключает строки кода в блок, перехватывая исключения.
+Если возбуждается исключение, driver генерирует состояние
+ошибки. Глобальная настройка error_handling указывает
+будет-ли продолжаться выполнение после такого исключения.
+Пример:
+</para>
+
+ <informalexample>
+   <programlisting>
+code Init;
+     Put_Line ("Package initialized.");
+
+     if Tasking_Status /= Running then
+       Put_Line ("Tasking is off.");
+     end if;
+
+     Put_Line ("Now continuing/starting with the test cases.");
+
+   </programlisting>
+ </informalexample>
+</section>
+</section>
+
+<section><title>
+3 Команда tg 
+</title>
+
+<para>
+Синтаксис команды следующий
+</para>
+
+ <informalexample>
+   <programlisting>
+tg [options] script_file [driver_file]
+   </programlisting>
+ </informalexample>
+
+<para>
+В простейшем варианте tg воспринимает .ts скрипт как единственный
+аргумент. TG транслирует скрит в программу на Аде и сохраняет ее
+в файле с таким же именем и расширением .adb.
+Например 
+</para>
+
+ <informalexample>
+   <programlisting>
+tg demo.ts
+   </programlisting>
+ </informalexample>
+
+<para>
+Производит файл demo.adb. Но вы можете явно указать выходной файл
+</para>
+
+ <informalexample>
+   <programlisting>
+tg demo.ts driver.adb
+   </programlisting>
+ </informalexample>
+
+<para>
+Опции задают вывод driver-а:
+
+<informaltable frame="none"><tgroup cols='2' tgroupstyle="odd">
+<tbody valign="top">
+<row>
+ <entry>
+-p setting
+ </entry>
+ <entry>
+ Определяет как отображаются тесты, которые прошли.
+<itemizedlist>
+ <listitem>
+  <para>
+off  без вывода.
+  </para>
+ </listitem>
+
+ <listitem>
+  <para>
+numbers - номер теста, затем слово PASS
+  </para>
+ </listitem>
+
+ <listitem>
+  <para>
+titles - Номер, заголовок и слово PASS
+  </para>
+ </listitem>
+
+ <listitem>
+  <para>
+full -  Номер, заголовок и слово PASS
+     и с новой строки объяснение.
+  </para>
+ </listitem>
+</itemizedlist>
+ </entry>
+</row>
+
+<row>
+ <entry>
+-f setting
+ </entry>
+ <entry>
+  аналогично для провалившихся тестов
+  По умолчанию full.
+ </entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+Примеры:
+</para>
+
+ <informalexample>
+   <programlisting>
+tg -p full -f full demo.ts
+
+tg -p off demo.ts
+   </programlisting>
+ </informalexample>
+</section>
+
+<section><title>
+4 Drivers
+</title>
+
+<para>
+Результатом работы TG является исходный код программы на языке Ада,
+так называемый test driver. Вы компилируете его, собираете с тестируемым 
+элементом и выполняете полученную программу для проведения теста.
+</para>
+
+<para>
+Вы можете заглянуть внутрь этого исходного кода, чтобы узнать как
+TG собирает ваш тест, но это не обязательно. Результат работы TG
+не предназначен чтобы быть легко читаемым. Если вам понадобится
+что-то изменить, вы должны менять исходный текст скрипта, а не
+сгенерированный TG текст.
+</para>
+
+<para>
+Однако есть некоторые внутренние функции и особенности, которые
+могут вам пригодится при написании тестов. Они описаны далее.
+</para>
+
+<section><title>
+4.1 Структура
+</title>
+
+<para>
+Test driver генерируемый TG имеет следующую структуру:
+</para>
+
+ <informalexample>
+   <programlisting>
+  -- заголовочный комментарий
+
+  with ...;  use  ...;  -- из спецификаторов контекста
+
+  procedure &lt;Имя_Скрипта> is
+
+      package Driver_Internals is
+          -- ...
+      end Driver_Internals;
+
+      -- ...
+      -- глобальные описания
+      -- ...
+
+      package body Driver_Internals is
+          -- ...
+      end Driver_Internals;
+
+  begin
+
+      -- ...
+      -- код испытаний
+      -- ...
+
+  exception
+     
+      -- обработчики исключений
+
+  end &lt;Имя_Скрипта>;
+
+   </programlisting>
+ </informalexample>
+
+<para>
+Вложенный пакет Driver_Internals содержит переменные состояния и 
+подпрограммы для доступа к ним. Мы перечислим и расскажем о них в
+следующей секции.
+</para>
+</section>
+
+<section><title>
+4.2 Информация состояния
+</title>
+
+<para>
+Пакет Driver_Internals, расположенный в тестовой программе экспортирует
+следующие описания:
+</para>
+
+ <informalexample>
+   <programlisting>
+- function Passed return Boolean;
+  function Failed return Boolean;
+   </programlisting>
+ </informalexample>
+
+<para>
+Эти функции предоставляют результат текущего испытания. Вы можете
+использовать из в секции cleanup и последующих секциях, чтобы выбрать
+различные действия в зависимости от результата теста.
+</para>
+
+ <informalexample>
+   <programlisting>
+- function Taken_Path return String;
+   </programlisting>
+ </informalexample>
+
+<para>
+Пусть выполнения программы в последнем тесте,
+возвращает "=>" при отсутствии
+исключений, либо имя исключения если оно произошло.
+</para>
+
+ <informalexample>
+   <programlisting>
+- function Path_Was (Path : in String) return Boolean;
+   </programlisting>
+ </informalexample>
+
+<para>
+Функция сравнивающая путь выполнения (см выше) с данным.
+</para>
+
+ <informalexample>
+   <programlisting>
+- Program_Terminate : exception;
+   </programlisting>
+ </informalexample>
+
+<para>
+Это исключение возбуждается в обработчиках и перехватывается в самом
+конце. Вы можете возбудить его, если хотите.
+</para>
+
+<para>
+Другие процедуры пакета Driver_Internals предназначены только для
+внутреннего использования.
+</para>
+
+</section>
+
+<section><title>
+4.3 Пример
+</title>
+
+<para>
+TG преобразует скрипт
+</para>
+
+ <informalexample>
+   <programlisting>
+***** X = 3
+define Result : Positive;
+test   Result := Subject(3);
+pass   exception Another_Error
+   </programlisting>
+ </informalexample>
+
+<para>
+в следующую программу
+</para>
+
+ <informalexample>
+   <programlisting>
+-- Test Case (3)   X = 3
+  declare
+    Result : Positive;
+  begin    -- test case
+    begin  -- test part
+      Result := Subject(3);
+      Driver_Internals.Set_Path ("=>");
+    exception
+      when Another_Error =>
+        Driver_Internals.Set_Path ("Another_Error");
+      when E: others =>
+        Driver_Internals.Set_Path (Ada.Exceptions.Exception_Name (E));
+    end;   -- test part
+    begin  -- result part
+      if Driver_Internals.Path_Was ("Another_Error") then
+        Driver_Internals.Test_Case_Passed := True;
+        Put_Line ("(3) pass.");
+      else
+        Driver_Internals.Test_Case_Passed := False;
+        Driver_Internals.Fail_Result := True;
+        Put_Line ("(3)  X = 3");
+        Put_Line ("      ...FAIL.");
+        Put_Line ("         (" &amp; "path `"
+          &amp; Driver_Internals.Taken_Path 
+          &amp; "' when `Another_Error' was expected"
+          &amp; ")");
+      end if;
+    exception
+      when Driver_Internals.Program_Terminate =>
+        raise;
+      when E: others =>
+        Driver_Internals.Unexpected_Error := True;
+        Put_Line ("ERROR: exception "
+          &amp; Ada.Exceptions.Exception_Name (E)
+          &amp; " raised in result part of test case 3.");
+    end;  -- result part
+  end;  -- test case
+   </programlisting>
+ </informalexample>
+
+</section>
+<section><title>
+5 Законченный пример
+</title>
+
+<para>
+Допустим мы хотим оттестировать функцию Subject из пакета Under_Test.
+</para>
+
+ <informalexample>
+   <programlisting>
+package Under_Test is
+
+  Strange_Error, 
+  Another_Error, 
+  Illegal_Parameter : exception;
+
+  function Subject (X : in Positive) return Positive;
+
+end Under_Test;
+   </programlisting>
+ </informalexample>
+
+<para>
+Функция Subject должна вернуть единицу, если X = 1 и
+возбудить исключение Strange_Error, Another_Error или Illegal_Parameter
+если X равен 2, 3 или болше трех соответственно.
+</para>
+
+<para>
+Следующий тест описывает эту функциональность:
+</para>
+
+ <informalexample>
+   <programlisting>
+-- FILE: example.ts
+
+context with Text_IO;    use Text_IO;
+        with Under_Test; use Under_Test;
+
+exceptions Strange_Error, Another_Error, Illegal_Parameter;
+
+***** X = 1
+define Result : Positive;
+test   Result := Subject(1);
+pass   Result = 1
+
+***** X = 2
+define Result : Positive;
+test   Result := Subject(2);
+pass   exception Strange_Error
+
+***** X = 3
+define Result : Positive;
+test   Result := Subject(3);
+pass   exception Another_Error
+
+***** X = 4
+define Result : Positive;
+test   Result := Subject(4);
+pass   exception Illegal_Parameter
+
+***** X = Positive'Last
+define Result : Positive;
+test   Result := Subject(Positive'Last);
+pass   exception Illegal_Parameter
+   </programlisting>
+ </informalexample>
+
+<para>
+Вы транслируете файл example.ts командой
+<command>tg example.ts</command>
+и получаете в результате файл example.adb.
+Затем вы компилируете этот файл и собираете с пакетом Under_Test.
+Исполнение полученной программы дает следующий результат
+</para>
+
+ <informalexample>
+   <programlisting>
+(1) pass.
+(2) pass.
+(3) pass.
+(4) pass.
+(5) pass.
+
+Total test result: pass.
+   </programlisting>
+ </informalexample>
+
+<para>
+Теперь предположим при исполнении test case (3)
+функция Subject возбуждает Illegal_Parameter. 
+Тогда результат выполнения будет 
+</para>
+
+ <informalexample>
+   <programlisting>
+(1) pass.
+(2) pass.
+(3) X = 3
+     ...FAIL.
+        (path `Illegal_Parameter' when `Another_Error' was expected)
+(4) pass.
+(5) pass.
+
+Total test result: FAIL.
+   </programlisting>
+ </informalexample>
+
+</section>
+</section>
+
+</webpage>

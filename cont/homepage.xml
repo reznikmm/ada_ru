@@ -11,6 +11,7 @@
 <!ENTITY ada-200y  SYSTEM "ada-200y.xml" NDATA XML>
 <!ENTITY src_xw    SYSTEM "src_xw.xml"   NDATA XML>
 <!ENTITY src_adbi  SYSTEM "src_adbi.xml"   NDATA XML>
+<!ENTITY tg_guide  SYSTEM "tg_guide.xml"  NDATA XML>
 ]>
 <webpage id="home">
 <config param="desc" value="Ada.Ru Comunity"/>

@@ -44,9 +44,13 @@ X Window (включая библиотеки Xlib, X Print Extension, X Input Extension).
   </para>
 <para>
 Текущая версия библиотеки находится
-  <ulink url="files/xmada-0.2.tar.gz">здесь</ulink>.
+  <ulink url="files/xmada-0.3w-20060302.tar.gz">здесь</ulink>.
 Пример использования
   <ulink url="files/hello_world.tar.gz">Hello World</ulink>
+</para>
+
+<para>
+  В последнюю версию вклечен также построитель GUI (пока в начальной стадии).
 </para>
 
 <para>
