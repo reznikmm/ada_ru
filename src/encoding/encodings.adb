@@ -116,6 +116,10 @@ package body Encodings is
       begin
          if Index (Name, "WINDOWS") = Name'First then
             return Replace_Slice (Name, Name'First, Name'First + 6, "CP");
+         elsif Index (Name, "CP") = Name'First 
+           and then Name (Name'First + 2) in '0' .. '9'
+         then
+            return "CP_" & Name (Name'First + 2 .. Name'Last);
          else
             return Name;
          end if;
@@ -129,7 +133,7 @@ package body Encodings is
       return Result;
    exception
       when Constraint_Error =>
-         raise Invalid_Encoding;
+         return Unknown;
    end To_Encoding;
 
 end Encodings;
