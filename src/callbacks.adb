@@ -1,17 +1,29 @@
 with Ada.Exceptions;
 with Ada.Text_IO;
+with Ada.Calendar;
 with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 with Ada.Streams.Stream_IO;
 
 with AWS.MIME;
+with AWS.Utils;
 with AWS.Digest;
+with AWS.Config;
 with AWS.Messages;
 with AWS.OS_Lib;
 with AWS.Resources;
+with AWS.Parameters;
+with AWS.Translator;
+with AWS.Response.Set;
+with AWS.Server.HTTP_Utils;
 with AWS.Services.Directory;
+with AWS.Services.Page_Server;
 
 with GNAT.OS_Lib;
 with GNAT.Directory_Operations;
+
+with Wiki.Parser;
+with Wiki.HTML_Output;
 
 with Users;
 
@@ -25,35 +37,125 @@ package body Callbacks is
    function Get_File_Name (URI : in String) return String;
    pragma Inline (Get_File_Name);
 
-   function Get (Request : in Status.Data) return Response.Data;
-   function Put (Request : in Status.Data) return Response.Data;
-
    function Is_Folder (URI : String) return Boolean;
 
    procedure Write_File
      (File_Name : String;
       Data      : Ada.Streams.Stream_Element_Array);
 
-   function Get (Request : in Status.Data) return Response.Data is
-      File : constant String := Get_WWW_Root (Status.Host (Request))
-                              & Get_File_Name (Status.URI (Request));
+   function Read_File (Name : String) return String;
+
+   function Expand_Wiki (Text : String) return String;
+
+   -------------
+   -- Default --
+   -------------
+
+   function Default (Request : in AWS.Status.Data) return AWS.Response.Data is
+      File : constant String :=
+        Get_WWW_Root (Status.Host (Request)) & "/index.html";
    begin
-      if AWS.Resources.Is_Regular_File (File) then
-         return Response.File (Content_Type => MIME.Content_Type (File),
-                               Filename     => File);
-      elsif OS_Lib.Is_Directory (File) then
-         return AWS.Response.Build
-           (Content_Type => "text/html",
-            Message_Body =>
-              AWS.Services.Directory.Browse
-              (File, "aws_directory.thtml", Request));
+      return AWS.Response.File (Content_Type => AWS.MIME.Text_HTML,
+                                Filename     => File);
+   end Default;
+
+   Wiki_Prefix : Ada.Strings.Unbounded.Unbounded_String;
+   Wiki_Suffix : Ada.Strings.Unbounded.Unbounded_String;
+
+   ----------------------
+   -- Read_Wiki_Prefix --
+   ----------------------
+
+   procedure Read_Wiki_Prefix (Root : String) is
+      use Ada.Strings.Unbounded;
+   begin
+      if Wiki_Prefix = "" then
+         Wiki_Prefix
+           := To_Unbounded_String (Read_File (Root & "/wiki.prefix"));
+         Wiki_Suffix
+           := To_Unbounded_String (Read_File (Root & "/wiki.suffix"));
       end if;
+   end Read_Wiki_Prefix;
 
-      return Response.Acknowledge
-        (Messages.S404,
-         "File '" & File & "' not found.");
+   -----------------
+   -- Expand_Wiki --
+   -----------------
 
-   end Get;
+   function Expand_Wiki (Text : String) return String is
+      procedure Parse is new Wiki.Parser.Parse
+        (Context       => Wiki.HTML_Output.Context,
+         Start_Element => Wiki.HTML_Output.Start_Element,
+         End_Element   => Wiki.HTML_Output.End_Element,
+         Characters    => Wiki.HTML_Output.Characters);
+
+      Data    : Wiki.HTML_Output.Context;
+   begin
+      Wiki.HTML_Output.Initialize (Data, "/wiki/");
+      Parse (ASCII.LF & Text, Data);
+
+      return Wiki.HTML_Output.Get_Text (Data);
+   end Expand_Wiki;
+
+   ---------------
+   -- Edit_Wiki --
+   ---------------
+
+   function Edit_Wiki (URI, Text : in String) return AWS.Response.Data is
+      use Ada.Strings.Unbounded;
+
+      Preview_Start : constant String :=
+        "<div class='wiki.preview'>";
+
+      Preview_End : constant String :=
+        "</div'>";
+
+      Edit_Start : constant String :=
+        "<form method='post' action='/edit_wiki/'>"
+        & "<input type='hidden' name='uri' value='" & URI
+        & "'><textarea name='text' rows='30' cols='80'>";
+
+      Edit_End : constant String :=
+        "</textarea><p><input type='submit' name='post' value='Post'/>"
+        & "<input type='submit' name='post' value='Preview'/>"
+        & "</p></form>";
+
+      Content : constant String := To_String (Wiki_Prefix)
+        & Preview_Start
+        & Expand_Wiki (Text)
+        & Preview_End
+        & Edit_Start
+        & Text
+        & Edit_End
+        & To_String (Wiki_Suffix);
+
+      Result : AWS.Response.Data
+        := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
+                               Message_Body => Content);
+   begin
+      return Result;
+   end Edit_Wiki;
+
+   ---------------
+   -- Edit_Wiki --
+   ---------------
+
+   function Edit_Wiki
+     (Request : in AWS.Status.Data) return AWS.Response.Data
+   is
+      use Ada.Strings.Unbounded;
+      URI     : constant String :=
+        Wiki.Parser.Replace (Status.URI (Request), "/edit_wiki/", "/wiki/");
+      Root    : constant String := Get_WWW_Root (Status.Host (Request));
+      File    : constant String := Root & URI & ".wiki";
+      Text    : constant String := Read_File (File);
+   begin
+      Read_Wiki_Prefix (Root);
+
+      return Edit_Wiki (URI, Text);
+   exception
+      when E : Ada.Text_IO.Name_Error =>
+         return Edit_Wiki (URI, "");
+   end Edit_Wiki;
 
    ------------------
    -- Get_WWW_Root --
@@ -62,7 +164,7 @@ package body Callbacks is
    function Get_WWW_Root (Host : in String) return String is
    begin
       if Host = "" then
-         return "www";
+         return AWS.Config.WWW_Root (AWS.Config.Get_Current);
       else
          return Host;
       end if;
@@ -81,6 +183,101 @@ package body Callbacks is
       end if;
    end Get_File_Name;
 
+   --------------
+   -- Get_Wiki --
+   --------------
+
+   function Get_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data is
+      use Ada.Strings.Unbounded;
+
+      Root    : constant String := Get_WWW_Root (Status.Host (Request));
+      File    : constant String := Root
+        & Get_File_Name (Status.URI (Request))
+        & ".wiki";
+      Time    : constant Ada.Calendar.Time
+        := AWS.Resources.File_Timestamp (File);
+
+      function Changed return Boolean is
+         use AWS.Status;
+         use AWS.Messages;
+         use AWS.Server.HTTP_Utils;
+         use type Ada.Calendar.Time;
+
+         Since : constant String := If_Modified_Since (Request);
+      begin
+         if not Is_Valid_HTTP_Date (Since) or else Time /= To_Time (Since) then
+            return True;
+         else
+            return False;
+         end if;
+      end Changed;
+   begin
+      if not Changed then
+         return AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
+                                    Message_Body => "",
+                                    Status_Code  => Messages.S304);
+      end if;
+
+      Read_Wiki_Prefix (Root);
+
+      declare
+         Text   : String := To_String (Wiki_Prefix)
+           & Expand_Wiki (Read_File (File)) & To_String (Wiki_Suffix);
+         Result : AWS.Response.Data
+           := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
+                                  Message_Body => Text);
+      begin
+         AWS.Response.Set.Add_Header
+           (Result,
+            AWS.Messages.Last_Modified_Token,
+            AWS.Messages.To_HTTP_Date (Time));
+
+         return Result;
+      end;
+   end Get_Wiki;
+
+   ----------------------
+   -- Has_Write_Access --
+   ----------------------
+
+   function Has_Write_Access (File_Name : String)return Boolean is
+   begin
+      return not Utils.Is_Regular_File (File_Name & ".ro");
+   end Has_Write_Access;
+
+   ---------------
+   -- Post_Wiki --
+   ---------------
+
+   function Post_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data
+   is
+      use AWS.Parameters;
+      use Ada.Strings.Unbounded;
+
+      P    : constant AWS.Parameters.List := AWS.Status.Parameters (Request);
+      URI  : constant String := Get (P, "uri");
+      Text : constant String :=
+        Wiki.Parser.Replace (Get (P, "text"), (1 => ASCII.CR), "");
+      Post : constant String := Get (P, "post");
+      Root : constant String := Get_WWW_Root (Status.Host (Request));
+      File : constant String := Root & URI & ".wiki";
+   begin
+      if not Has_Write_Access (File) then
+         return Response.Acknowledge (AWS.Messages.S404);
+      end if;
+
+      if Post = "Post" then
+         Write_File (File, AWS.Translator.To_Stream_Element_Array (Text));
+
+         return Response.URL (Location => URI);
+      else
+         return Edit_Wiki (URI, Text);
+      end if;
+   end Post_Wiki;
+
+   ---------
+   -- Put --
+   ---------
 
    function Put (Request : in Status.Data) return Response.Data is
       use AWS.Status;
@@ -88,7 +285,8 @@ package body Callbacks is
 
       File    : constant String := Get_WWW_Root (Status.Host (Request))
                                  & Get_File_Name (Status.URI (Request));
-      Stale   : Boolean := not Check_Nonce (Authorization_Nonce (Request));
+      Stale   : constant Boolean :=
+        not Check_Nonce (Authorization_Nonce (Request));
 
       User : constant String := Authorization_Name (Request);
       Pwd  : constant String := Users.Password (User);
@@ -103,10 +301,12 @@ package body Callbacks is
       then
          return Response.Authenticate
                   ("Ada_Ru private", Response.Digest, Stale);
-      end if;
-
-      if Is_Folder (File) then
+      elsif Status.URI (Request) = "/edit_wiki/" then
+         return Post_Wiki (Request);
+      elsif Is_Folder (File) then
          GNAT.Directory_Operations.Make_Dir (File);
+      elsif not Has_Write_Access (File) then
+         return Response.Acknowledge (AWS.Messages.S404);
       else
          Write_File (File, Binary_Data (Request));
       end if;
@@ -123,26 +323,35 @@ package body Callbacks is
             Message_Body => Ada.Exceptions.Exception_Information (E));
    end Put;
 
-   --------------------
-   -- Public_Service --
-   --------------------
+   ---------------------
+   -- Private_Service --
+   ---------------------
 
-   function Public_Service (Request : in AWS.Status.Data)
+   function Private_Service (Request : in AWS.Status.Data)
       return AWS.Response.Data
    is
-      use type Status.Request_Method;
+      use AWS.Status;
+      use AWS.Digest;
+
+      Stale : constant Boolean
+        := not Check_Nonce (Authorization_Nonce (Request));
+      User : constant String := Authorization_Name (Request);
+      Pwd  : constant String := Users.Password (User);
+      Mode : constant AWS.Status.Authorization_Type
+        := Authorization_Mode (Request);
    begin
-      case Status.Method (Request) is
-         when Status.GET | Status.HEAD =>
-            return Get (Request);
-         when Status.POST =>
-            return Put (Request);
-         when others =>
-            return Response.Acknowledge
-              (Messages.S405,
-               Message_Body => "Unknown Request method");
-      end case;
-   end Public_Service;
+      if Mode /= AWS.Status.Digest
+        or else User = ""
+        or else Pwd = ""
+        or else not Check_Digest (Request, Pwd)
+        or else Stale
+      then
+         return Response.Authenticate
+           ("Ada_Ru private", Response.Digest, Stale);
+      else
+         return AWS.Services.Page_Server.Callback (Request);
+      end if;
+   end Private_Service;
 
    ----------------
    -- Write_File --
@@ -172,8 +381,8 @@ package body Callbacks is
       Write (File, Data);
       Close (File);
 
-      if Is_Regular_File (File_Name) then
-         while Is_Regular_File (Versioned_Name (File_Name, Version)) loop
+      if Utils.Is_Regular_File (File_Name) then
+         while Utils.Is_Regular_File (Versioned_Name (File_Name, Version)) loop
             Version := Version + 1;
          end loop;
 
@@ -190,7 +399,8 @@ package body Callbacks is
             return;
          end if;
 
-         GNAT.OS_Lib.Delete_File (Versioned_Name (File_Name, Version), Success);
+         GNAT.OS_Lib.Delete_File
+           (Versioned_Name (File_Name, Version), Success);
 
       end if;
 
@@ -216,7 +426,11 @@ package body Callbacks is
          New_Name => File_Name,
          Success  => Success);
 
-      Ada.Exceptions.Reraise_Occurrence (E);
+      Ada.Exceptions.Raise_Exception
+        (Name_Error'Identity,
+         "Write_File " & File_Name & ":"
+         & Ada.Exceptions.Exception_Information (E));
+      --      Ada.Exceptions.Reraise_Occurrence (E);
    end Write_File;
 
    ---------------
@@ -231,6 +445,42 @@ package body Callbacks is
          return False;
       end if;
    end Is_Folder;
+
+   ---------------
+   -- Read_File --
+   ---------------
+
+   function Read_File (Name : String) return String is
+      use Ada.Text_IO;
+      use Ada.Exceptions;
+      use Ada.Strings.Unbounded;
+      Input : File_Type;
+      Line  : String (1 .. 80);
+      Last  : Natural;
+      Text  : Unbounded_String;
+   begin
+      Open (Input, In_File, Name);
+
+      while not End_Of_File (Input) loop
+         Get_Line (Input, Line, Last);
+
+         Text := Text & Line (1 .. Last);
+
+         if Last /= Line'Last or End_Of_Line (Input) then
+            Text := Text & ASCII.LF;
+         end if;
+      end loop;
+
+      Close (Input);
+
+      return To_String (Text);
+   exception
+      when E : Name_Error =>
+         Raise_Exception
+           (Name_Error'Identity,
+            "Read_File " & Name & ":" & Exception_Information (E));
+
+   end Read_File;
 
 end Callbacks;
 
