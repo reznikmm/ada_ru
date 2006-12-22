@@ -18,8 +18,9 @@
 <xsl:param name="toc.spacer.image">graphics/blank.gif</xsl:param>
 
 <xsl:template name="home.navhead">
-<table width="100%" border="0">
-<img src="graphics/ada2_.png"/>
+<table width="100%" border="0"><tr><td>
+<img src="graphics/ada2_.png" alt="Ada - the best"/>
+</td></tr>
 </table>
 </xsl:template>
 

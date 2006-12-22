@@ -35,10 +35,10 @@
 
   <para>
     На данный момент реализован драйвер доступа только к базам 
-    данных Firebird (Interbase).
+    данных Firebird (Interbase) и Oracle.
   </para>
 
   <para>
-    <ulink url="files/adbi-0.1.zip">Архив с исходным кодом</ulink>.
+    <ulink url="files/adbi-0.2.tar.bz2">Архив с исходным кодом</ulink>.
   </para>
 </webpage>

@@ -8,7 +8,8 @@
 <!ENTITY src-csiv   SYSTEM "src_csiv.xml"   NDATA XML>
 <!ENTITY src-xslt   SYSTEM "src_xslt.xml"   NDATA XML>
 <!ENTITY src-adbi   SYSTEM "src_adbi.xml"   NDATA XML>
-<!ENTITY english    SYSTEM "english.xml"   NDATA XML>
+<!ENTITY src-fib    SYSTEM "src_fib.xml"    NDATA XML>
+<!ENTITY english    SYSTEM "english.xml"    NDATA XML>
 %last_mod;
 ]>
 <webpage id="src">
@@ -54,6 +55,11 @@
  <listitem><para>
   <olink targetdocent="src-adbi">
     Унифицированный интерфейс к базам данных
+  </olink>
+ </para></listitem>
+ <listitem><para>
+  <olink targetdocent="src-fib">
+    Библиотека взаимодействия с базами данных Borland InterBase и Firebird.
   </olink>
  </para></listitem>
 </itemizedlist>

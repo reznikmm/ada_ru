@@ -10,8 +10,10 @@
 <!ENTITY conf      SYSTEM "conf.xml"     NDATA XML>
 <!ENTITY ada-200y  SYSTEM "ada-200y.xml" NDATA XML>
 <!ENTITY src_xw    SYSTEM "src_xw.xml"   NDATA XML>
-<!ENTITY src_adbi  SYSTEM "src_adbi.xml"   NDATA XML>
-<!ENTITY tg_guide  SYSTEM "tg_guide.xml"  NDATA XML>
+<!ENTITY src_adbi  SYSTEM "src_adbi.xml" NDATA XML>
+<!ENTITY tg_guide  SYSTEM "tg_guide.xml" NDATA XML>
+<!ENTITY src-fib   SYSTEM "src_fib.xml"  NDATA XML>
+<!ENTITY src-csiv  SYSTEM "src_csiv.xml" NDATA XML>
 ]>
 <webpage id="home">
 <config param="desc" value="Ada.Ru Comunity"/>
@@ -75,24 +77,31 @@ Java байткод.
 
 <section id="2">
   <title>Список рассылки</title>
-     <para>
+  <para>
     Для обсуждения вопросов языка Ада создана почтовая
     конференция Ada_Ru. Участвуя в ней, вы можете получить
     ответы на интересующие вас вопросы, касающиеся Ады,
     узнать новости из мира Ады, пообщаться с единомышленниками.
     Конференция насчитывает более 70 человек, трафик
     около 30 сообщений в месяц.
-     </para>
-     <para>
+  </para>
+  <para>
     Подписаться на конференцию и посмотреть архив можно
     <ulink url="http://groups.yahoo.com/group/ada_ru/"
-    >на страничке groups.yahoo.com</ulink>. 
+           >на страничке groups.yahoo.com</ulink>. 
     Также можно подисаться и послав письмо
     по адресу 
     <ulink url="mailto:ada_ru-subscribe@yahoogroups.com">
-    ada_ru-subscribe@yahoogroups.com
-    </ulink>.
-     </para>
+      ada_ru-subscribe@yahoogroups.com
+      </ulink>.
+  </para>
+  <para>
+    Рассылка также архивируется на сервере
+      <ulink url="http://news.gmane.org/gmane.comp.lang.ada.russian/"
+             >gmane.org</ulink>, где есть
+      доступ по NNTP протоколу, удобный поиск и
+      возможность читать обычным веб-клиентом.
+  </para>
 </section>
   
 

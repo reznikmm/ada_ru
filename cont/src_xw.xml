@@ -43,11 +43,25 @@ X Window (включая библиотеки Xlib, X Print Extension, X Input Extension).
    <ulink url="vgodunko@rost.ru">vgodunko@rost.ru</ulink>.
   </para>
 <para>
-Текущая версия библиотеки находится
-  <ulink url="files/xmada-0.3w-20060302.tar.gz">здесь</ulink>.
-Пример использования
-  <ulink url="files/hello_world.tar.gz">Hello World</ulink>
+  Текущая версия библиотеки находится
+  <ulink url="files/xmada-0.3.tar.gz">здесь</ulink>.
+  Пример использования
+  <ulink url="files/hello_world.tar.gz">Hello World</ulink>.
+  С последней версии изменилось следующее:
 </para>
+
+  <itemizedlist mark='opencircle'>
+    <listitem><para>
+      В состав пакета включена библиотека Microline, предоставляющая виджеты
+      XmLGrid (таблица), XmLProgress (полоска прогресса) и др.
+    </para></listitem>
+    <listitem><para>
+      Добавлена связка для таблицы.
+    </para></listitem>
+    <listitem><para>
+      Добавлены отсутствующие связки для функций X11/Xt.
+    </para></listitem>
+  </itemizedlist>
 
 <para>
   В последнюю версию вклечен также построитель GUI (пока в начальной стадии).

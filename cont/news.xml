@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="koi8-r"?>
 <news>
 
+<item day="02" month="11" year="2006">
+  Мы углубились в ретроспективную тему и появился перевод статьи Рыбина С.И.
+  <ulink url="wiki/ada83_in_rus">Ада 83 в России: Обзор</ulink>
+  из журнала 
+  <ulink url="http://www.acm.org/sigada/ada_letters/">Ada Letters</ulink>
+  за 1994г.
+</item>
+
+<item day="26" month="10" year="2006">
+  Рыбин Сергей Игоревич любезно согласился ответить на наши вопросы.
+  Получилось 
+  <ulink url="wiki/rybin">очень интересное интервью</ulink>.
+  Специально для сайта
+  <ulink url="http://www.ada-ru.org/">Ada Ru</ulink>!
+</item>
+
+<item day="14" month="10" year="2006">
+  Вадим Годунко прислал новые версии проектов
+  <olink targetdocent="src-csiv">SecurePolyORB</olink> и
+  <olink targetdocent="src_xw">XmAda</olink>.
+</item>
+
+<item day="11" month="10" year="2006">
+  Андрей Огородник выпустил первую версию своей библиотеки
+  взаимодействия с базами данных Borland InterBase и Firebird
+  <olink targetdocent="src-fib">FIBPlus</olink>.
+</item>
+
+<item day="14" month="06" year="2006">
+Вышла новая публичная версия компилятора GNAT:
+<ulink url="https://libre2.adacore.com/">GNAT GPL 2006</ulink>.
+Улучшена поддержка грядущего стандарта Ада 2005.
+Включает свежие версии GPS 3.1.3 and PolyORB.
+</item>
+
+<item day="9" month="06" year="2006">
+Перевод второй части презентаций под названием
+  <ulink url="http://reznikmm.front.ru/files/02-languages-ru.ppt"
+  >Языки программирования и конструирование программного обеспечения</ulink>.
+  Спасибо Владиславу!
+</item>
+
+<item day="31" month="05" year="2006">
+  Владислав Козловский прислал перевод презентации
+  <ulink url="http://reznikmm.front.ru/files/01-intro-ru.ppt"
+         >Введение в конструирование программного обеспечения</ulink>. 
+  В презентации особое внимание уделено вопросам надежности 
+  программного обеспечения.
+  Размер файла 1.1Мб, формат Power Point.
+</item>
+
 <item day="09" month="04" year="2006">
   Андрей Огородник прислал перевод первых четырех глав книги
   <olink targetdocent="docs" localinfo="quality"

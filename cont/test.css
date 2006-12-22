@@ -49,3 +49,10 @@ table.last-ver td a:hover {
   color: yellow;
 }
 
+pre.programlisting, pre {
+ background: #fdf7d0;
+ border: 1px solid #d7d7d7;
+ margin: 1em 1.75em;
+ padding: .25em;
+}
+     

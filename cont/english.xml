@@ -57,8 +57,8 @@ Vadim Godunko
 
 <row>
  <entry>
-  <ulink url="http://www.ada-ru.org/files/xmada-0.3w-20060302.tar.gz"
- >xmada 0.3w 2006/03/02</ulink>
+  <ulink url="http://www.ada-ru.org/files/xxmada-0.3.tar.gz"
+ >xmada 0.3w</ulink>
  </entry>
  <entry>
    Ada binding for X Window System and OpenMotif/OSF Motif.
@@ -89,12 +89,13 @@ Alex Havva
 
 <row>
  <entry>
-  <ulink url="http://www.ada-ru.org/files/csiv2-20051101.tar.gz"
- >csiv2 2005/11/01</ulink>
+  <ulink url="http://www.ada-ru.org/files/securepolyorb-0.2w.tar.gz"
+ >SecurePolyORB 0.2w</ulink>
  </entry>
  <entry>
    <ulink url="http://www.omg.org/technology/documents/formal/corba_2.htm"
-          >CORBA Secure Interoperability</ulink> implementation for PolyORB.
+          >CORBA Secure Interoperability</ulink> implementation for
+   <ulink url="http://en.wikipedia.org/wiki/PolyORB">PolyORB</ulink>.
  </entry>
  <entry>
 Vadim Godunko
@@ -116,11 +117,11 @@ Maxim Reznik
 
 <row>
  <entry>
-  <ulink url="http://www.ada-ru.org/files/adbi-0.1.zip"
- >adbi 0.1</ulink>
+  <ulink url="http://www.ada-ru.org/files/adbi-0.2.tar.bz2"
+ >adbi 0.2</ulink>
  </entry>
  <entry>
-Unified Database Interface for Ada.
+Unified Database Interface for Ada. Works with Firebird and Oracle RDBMS.
  </entry>
  <entry>
 Maxim Reznik
@@ -131,8 +132,7 @@ Maxim Reznik
 
 <para>
   if you have questions or propositions please contact us by
-  e-mail <ulink url="mailto:ada_ru-owner@yahoogroups.com"
-  >ada_ru-owner@yahoogroups.com</ulink>
+  e-mail ada_ru-owner&lt;at&gt;yahoogroups.com
 </para>
 
 </webpage>

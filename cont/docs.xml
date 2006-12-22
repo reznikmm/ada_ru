@@ -354,6 +354,30 @@ TG (Test Generator) - программа быстрого создания набора тестов,
 
 <row>
  <entry>
+  <ulink url="wiki/rybin">
+   Интервью
+  </ulink>
+ </entry>
+ <entry>
+   Рыбин Сергей Викторович любезно согласился ответить на наши вопросы.
+ </entry>
+</row>
+
+<row>
+ <entry>
+  <ulink url="wiki/ada83_in_rus">
+    Ада 83 в России: Обзор. 1994г.
+  </ulink>
+ </entry>
+ <entry>
+   Перевод статью Рыбина Сергея Викторовича из журнала Ada Letters
+   за 1994г. Статья освещает развитие языка Ада в Советском Союзе и
+   состояние дел России и СНГ к 1994г.
+ </entry>
+</row>
+
+<row>
+ <entry>
   <olink targetdocent="gui">
    Построители GUI
   </olink>
@@ -540,6 +564,27 @@ Ada и Zonnon. Автор обещает, что данная статья будет началом
 </row-->
 </tbody></tgroup>
 </informaltable>
+</section>
+
+<section id="3">
+  <title>Слайды</title>
+  <para>
+    Презентация
+  <ulink url="http://reznikmm.front.ru/files/01-intro-ru.ppt"
+         >Введение в конструирование программного обеспечения</ulink>. 
+  В презентации особое внимание уделено вопросам надежности 
+  программного обеспечения.
+  Перевод Владислава Козловского.
+  Размер файла 1.1Мб, формат Power Point.
+  </para>
+
+  <para>
+    Презентация
+  <ulink url="http://reznikmm.front.ru/files/02-languages-ru.ppt"
+   >Языки программирования и конструирование программного обеспечения</ulink>.
+  Перевод Владислава Козловского.
+  Размер файла 1.0Мб, формат Power Point.
+  </para>
 </section>
 
 </webpage>

@@ -147,11 +147,10 @@ package body Callbacks is
         Wiki.Parser.Replace (Status.URI (Request), "/edit_wiki/", "/wiki/");
       Root    : constant String := Get_WWW_Root (Status.Host (Request));
       File    : constant String := Root & URI & ".wiki";
-      Text    : constant String := Read_File (File);
    begin
       Read_Wiki_Prefix (Root);
 
-      return Edit_Wiki (URI, Text);
+      return Edit_Wiki (URI, Read_File (File));
    exception
       when E : Ada.Text_IO.Name_Error =>
          return Edit_Wiki (URI, "");

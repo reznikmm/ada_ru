@@ -25,22 +25,22 @@
     </tocentry>
     <tocentry page="../cont/tutorial.xml" filename="lovelace.htm"
          dir="Lovelace"   />
-    <tocentry page="../cont/docs.xml" filename="docs.html" revisionflag="changed">
-       <tocentry page="../cont/gui.xml" filename="gui.html" revisionflag="added"/>
+    <tocentry page="../cont/docs.xml" filename="docs.html">
+       <tocentry page="../cont/gui.xml" filename="gui.html"/>
        <tocentry page="../cont/ada-200y.xml" filename="ada-200y.html"/>
        <tocentry page="../cont/asis.xml"  filename="asis.html"/>
        <tocentry page="../cont/comp_gnat.xml" filename="comp_gnat.html"/>
        <tocentry page="../cont/ada83.xml" filename="ada83.html"/>
        <tocentry page="../cont/dict_ru.xml" filename="dict_ru.html"/>
        <tocentry page="../cont/fnotes.xml" filename="fnotes.html"/>
-       <tocentry page="../cont/tg_guide.xml" filename="tg_guide.html" 
-        revisionflag="added"/>
+       <tocentry page="../cont/tg_guide.xml" filename="tg_guide.html"/>
     </tocentry>
     <tocentry page="../cont/conf.xml" filename="conf.html">
+      <tocentry page="../cont/conf-2005.xml" filename="conf-2005.html"/>
       <tocentry page="../cont/conf-2004.xml" filename="conf-2004.html"/>
     </tocentry>
     <!--  revisionflag="changed" revisionflag="added" -->
-    <tocentry page="../cont/src.xml" filename="src.html">
+    <tocentry page="../cont/src.xml" filename="src.html" revisionflag="changed">
        <tocentry page="../cont/src_asissq.xml"  filename="src_asissq.html"/>
        <tocentry page="../cont/src_ais.xml"     filename="src_ais.html"/>
        <tocentry page="../cont/src_xw.xml"      filename="src_xw.html"/>
@@ -48,6 +48,7 @@
        <tocentry page="../cont/src_csiv.xml"    filename="src_csiv.html"/>
        <tocentry page="../cont/src_xslt.xml"    filename="src_xslt.html"/>
        <tocentry page="../cont/src_adbi.xml"    filename="src_adbi.html"/>
+       <tocentry page="../cont/src_fib.xml" filename="src_fib.html" revisionflag="added"/>
     </tocentry>
     <tocentry page="../cont/samples.xml" filename="samples.html">
        <tocentry page="../cont/smpl-ssqrt.xml"  filename="smpl-ssqrt.html"/>
@@ -75,6 +76,8 @@
 <notoc page="../build/soft_doc.xml" filename="soft_doc.html"/>
 <notoc page="../build/soft_doc_en.xml" filename="soft_doc_en.html"/>
 <notoc page="../build/soft_doc_en_ada_letters.xml" filename="soft_doc_en_ada_letters.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_apr2006.xml" filename="soft_doc_en_ada_letters_apr2006.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_sept2005.xml" filename="soft_doc_en_ada_letters_sept2005.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_jun2005.xml" filename="soft_doc_en_ada_letters_jun2005.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_mar2005.xml" filename="soft_doc_en_ada_letters_mar2005.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2004.xml" filename="soft_doc_en_ada_letters_sept2004.html"/>

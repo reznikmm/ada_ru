@@ -12,6 +12,7 @@ do
   diff --brief $loc ../ref/$loc
   if [ $? != 0 ]
   then
+    echo post http://www.ada-ru.org $1 $2 $loc
     if ../bin/post http://www.ada-ru.org $1 $2 $loc
     then
        mv -f $loc ../ref/$loc

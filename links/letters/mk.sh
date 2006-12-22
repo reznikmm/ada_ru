@@ -1,5 +1,5 @@
 #!/bin/sh
-issue=mar2005
+issue=apr2006
 base=~/download/adaletter/
 download=$base/www.acm.org/sigada/ada_letters/$issue/
 echo '<?xml version="1.0" encoding="koi8-r"?>'

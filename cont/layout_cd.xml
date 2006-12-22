@@ -36,6 +36,7 @@
        <tocentry page="../cont/tg_guide.xml" filename="www.ada-ru.org/tg_guide.html"/>
     </tocentry>
     <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html">
+      <tocentry page="../cont/conf-2005.xml" filename="www.ada-ru.org/conf-2005.html"/>
       <tocentry page="../cont/conf-2004.xml" filename="www.ada-ru.org/conf-2004.html"/>
     </tocentry>
     <tocentry page="../cont/src.xml" filename="www.ada-ru.org/src.html">
@@ -46,6 +47,7 @@
        <tocentry page="../cont/src_csiv.xml"    filename="www.ada-ru.org/src_csiv.html"/>
        <tocentry page="../cont/src_xslt.xml"    filename="www.ada-ru.org/src_xslt.html"/>
        <tocentry page="../cont/src_adbi.xml"    filename="www.ada-ru.org/src_adbi.html"/>
+       <tocentry page="../cont/src_fib.xml"    filename="www.ada-ru.org/src_fib.html"/>
     </tocentry>
 
     <tocentry page="../cont/samples.xml" filename="www.ada-ru.org/samples.html">
@@ -74,6 +76,8 @@
 <notoc page="../build/soft_doc.xml2" filename="doc/index.html"/>
 <notoc page="../build/soft_doc_en.xml2" filename="doc/en/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters.xml2" filename="doc/en/ada_letters/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_apr2006.xml2" filename="doc/en/ada_letters/apr2006/index.html"/>
+<notoc page="../build/soft_doc_en_ada_letters_sept2005.xml2" filename="doc/en/ada_letters/sept2006/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_jun2005.xml2" filename="doc/en/ada_letters/jun2006/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_mar2005.xml2" filename="doc/en/ada_letters/mar2006/index.html"/>
 <notoc page="../build/soft_doc_en_ada_letters_sept2004.xml2" filename="doc/en/ada_letters/sept2004/index.html"/>
