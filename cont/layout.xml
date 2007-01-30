@@ -36,6 +36,8 @@
        <tocentry page="../cont/tg_guide.xml" filename="tg_guide.html"/>
     </tocentry>
     <tocentry page="../cont/conf.xml" filename="conf.html">
+      <tocentry page="../cont/conf-2007.xml" filename="conf-2007.html"
+       revisionflag="added"/>
       <tocentry page="../cont/conf-2005.xml" filename="conf-2005.html"/>
       <tocentry page="../cont/conf-2004.xml" filename="conf-2004.html"/>
     </tocentry>

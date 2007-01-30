@@ -3,6 +3,7 @@
 <!ENTITY % last_mod SYSTEM "../build/last_mod.ent">
 <!ENTITY conf-2004   SYSTEM "conf-2004.xml"  NDATA XML>
 <!ENTITY conf-2005   SYSTEM "conf-2005.xml"  NDATA XML>
+<!ENTITY conf-2007   SYSTEM "conf-2007.xml"  NDATA XML>
 %last_mod;
 ]>
 <webpage id="conf">
@@ -15,6 +16,11 @@
 <para>
   Организационные мероприятия:
   <itemizedlist mark='opencircle'>
+    <listitem>
+      <olink targetdocent="conf-2007">
+        Школа-семинар ВИТ-Ада 2007. Спешите зарегистрироваться!
+      </olink>
+    </listitem>
     <listitem>
       <olink targetdocent="conf-2005">
         Школа-семинар ВИТ-Ада 2005

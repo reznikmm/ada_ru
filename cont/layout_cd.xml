@@ -36,6 +36,7 @@
        <tocentry page="../cont/tg_guide.xml" filename="www.ada-ru.org/tg_guide.html"/>
     </tocentry>
     <tocentry page="../cont/conf.xml" filename="www.ada-ru.org/conf.html">
+      <tocentry page="../cont/conf-2007.xml" filename="www.ada-ru.org/conf-2007.html"/>
       <tocentry page="../cont/conf-2005.xml" filename="www.ada-ru.org/conf-2005.html"/>
       <tocentry page="../cont/conf-2004.xml" filename="www.ada-ru.org/conf-2004.html"/>
     </tocentry>
