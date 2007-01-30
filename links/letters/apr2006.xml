@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name='apr2006'>
+<descr lang='ru'>Выпуск apr2006</descr>
+<link id='apr2006.'
+ home='http://www.acm.org/sigada/ada_letters/apr2006/'>
+<descr lang='ru'>Выпуск apr2006</descr>
+
+<file id='apr2006.newsletter_General-info-April2006.raw'>
+<descr lang="ru">
+Информация о журнале
+(Newsletter Information)
+</descr>
+<descr lang="en">
+Newsletter Information
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/newsletter_General-info-April2006.pdf' />
+</file>
+
+<file id='apr2006.Chairs-Letter-April06.raw'>
+<descr lang="ru">
+Официальная колонка
+(Letters from SIGAda Officials)
+</descr>
+<descr lang="en">
+Letters from SIGAda Officials
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/Chairs-Letter-April06.pdf' />
+</file>
+
+<file id='apr2006.SIGAda2005-Awards.raw'>
+<descr lang="ru">
+Награды SIGAda за 2005
+</descr>
+<descr lang="en">
+2005 SIGAda Awards - 
+Awarded at SIGAda 2005 in Atlanta
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/SIGAda2005-Awards.pdf' />
+</file>
+
+<file id='apr2006.Workshop_Commercializing_Ad-R-Leif.raw'>
+<descr lang="ru">
+Комерциализируя Аду.
+(Commercializing Ada. Robert C. Leif)
+</descr>
+<descr lang="en">
+Commercializing Ada. Robert C. Leif
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/Workshop_Commercializing_Ad-R-Leif.pdf' />
+</file>
+
+<file id='apr2006.Martin-ada2005_ada_letters.raw'>
+<descr lang="ru">
+Как Ада 2005 повлияет на изучение языка
+(How Ada 2005 Impacts CS1/2. Martin C. Carlisle)
+</descr>
+<descr lang="en">
+How Ada 2005 Impacts CS1/2. Martin C. Carlisle
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/Martin-ada2005_ada_letters.pdf' />
+</file>
+
+
+<file id='apr2006.AdaMPHF-Trono.raw'>
+<descr lang="ru">
+Оптимальное определение зарезервированных слов языка Ада 2005.
+(Optimal Table Lookup for Reserved Words in Ada. John A. Trono)
+</descr>
+<descr lang="en">
+Optimal Table Lookup for Reserved Words in Ada. John A. Trono 
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/AdaMPHF-Trono.pdf' />
+</file>
+
+<file id='apr2006.AI-00307.raw'>
+<descr lang="ru">
+AI 307 - Часы времени исполнения
+(Ada Issue 307 - Execution-Time Clocks)
+</descr>
+<descr lang="en">
+Ada Issue 307 - Execution-Time Clocks
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00307.pdf' />
+</file>
+
+<file id='apr2006.AI-00321.raw'>
+<descr lang="ru">
+AI 321 - Определение политик планирования задач
+(Ada Issue 321 - Definition of Dispatching Policies)
+</descr>
+<descr lang="en">
+Ada Issue 321 - Definition of Dispatching Policies 
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00321.pdf' />
+</file>
+
+<file id='apr2006.AI-00327.raw'>
+<descr lang="ru">
+AI 327 - Динамические граничные приоритеты
+(Ada Issue 327 - Dynamic Ceiling Priorities)
+</descr>
+<descr lang="en">
+Ada Issue 327 - Dynamic Ceiling Priorities
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00327.pdf' />
+</file>
+
+<file id='apr2006.AI-00333.raw'>
+<descr lang="ru">
+AI 333 - Дополнительные политики блокировок с FIFO_Within_Priorities
+(Ada Issue 333 - Additional Locking Policies with FIFO_Within_Priorities)
+</descr>
+<descr lang="en">
+Ada Issue 333 - Additional Locking Policies with FIFO_Within_Priorities 
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00333.pdf' />
+</file>
+
+</link>
+</folder>

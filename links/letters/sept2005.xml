@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<folder name='sept2005'>
+<descr lang='ru'>Выпуск sept2005</descr>
+<link id='sept2005.'
+ home='http://www.acm.org/sigada/ada_letters/sept2005/'>
+<descr lang='ru'>Выпуск sept2005</descr>
+
+<file id='sept2005.NewsInfo.raw'>
+<descr lang="ru">
+Информация о журнале
+(Newsletter Information)
+</descr>
+<descr lang="en">
+Newsletter Information
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/NewsInfo.pdf' />
+</file>
+
+<file id='sept2005.Official-Letters.raw'>
+<descr lang="ru">
+Официальная колонка
+(Letters from SIGAda Officials)
+</descr>
+<descr lang="en">
+Letters from SIGAda Officials
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/Official-Letters.pdf' />
+</file>
+
+<file id='sept2005.Endian-Independent%20Paper.raw'>
+<descr lang="ru">
+"Оптовое" преоброзование порядка следования байт для целых записей
+в целях достижения независимости от архитектуры в системах коммуникаций.
+(Wholesale Byte Reversal of the Outermost Ada Record Object to Achieve
+Endian Independence for Communicated Data Types - Randal P. Andress)
+</descr>
+<descr lang="en">
+Wholesale Byte Reversal of the Outermost Ada Record Object to Achieve
+Endian Independence for Communicated Data Types - Randal P. Andress
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/Endian-Independent%20Paper.pdf' />
+</file>
+
+<file id='sept2005.Dead%20Live%20Longer-Grein.raw'>
+<descr lang="ru">
+"Мертвые живут дольще". Драма.
+(Dead Live Longer - A Dramoletto - Christoph Grein)
+</descr>
+<descr lang="en">
+Dead Live Longer - A Dramoletto - Christoph Grein
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/Dead%20Live%20Longer-Grein.pdf' />
+</file>
+
+<file id='sept2005.Intrusion%20in%20Ada-Levine.raw'>
+<descr lang="ru">
+Ада и контроль надо вторжением
+(Ada and the Control of Intrusion - Gertrude Levine)
+</descr>
+<descr lang="en">
+Ada and the Control of Intrusion - Gertrude Levine
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/Intrusion%20in%20Ada-Levine.pdf' />
+</file>
+
+<file id='sept2005.Reusable%20SW%20Components-%20Trudy%20Levine.raw'>
+<descr lang="ru">
+Програмные компоненты повторного использования.
+(Reusable Software Components. Gertrude (Trudy) Levine)
+</descr>
+<descr lang="en">
+Reusable Software Components - Gertrude (Trudy) Levine
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/Reusable%20SW%20Components-%20Trudy%20Levine.pdf' />
+</file>
+
+<file id='sept2005.AI-00249.raw'>
+<descr lang="ru">
+AI 00249 - Ravenscar профайл для высоконадежных систем
+(Ravenscar Profile for High-Integrity Systems)
+</descr>
+<descr lang="en">
+AI 00249 - Ravenscar Profile for High-Integrity Systems
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00249.pdf' />
+</file>
+
+<file id='sept2005.AI-00297.raw'>
+<descr lang="ru">
+AI 00297 - События таймера
+(Timing events)
+</descr>
+<descr lang="en">
+AI 00297 - Timing events
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00297.pdf' />
+</file>
+
+<file id='sept2005.AI-00298.raw'>
+<descr lang="ru">
+AI 00298 - Равноправное планирование
+(Non-Preemptive Dispatching)
+</descr>
+<descr lang="en">
+AI 00298 - Non-Preemptive Dispatching
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00298.pdf' />
+</file>
+
+<file id='sept2005.AI-00303.raw'>
+<descr lang="ru">
+AI 00303 - Удаление требования к обработчикам прерываний 
+быть объектами уровня библиотеки
+(Removal of library-level requirement for interrupt handler objects)
+</descr>
+<descr lang="en">
+AI 00303 - Removal of library-level requirement for interrupt handler objects
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00303.pdf' />
+</file>
+
+<file id='sept2005.AI-00305.raw'>
+<descr lang="ru">
+AI 00305 - Новая директива компилятору и дополнительные идентификаторы 
+ограничений для систем реального времени
+(New pragma and additional restriction identifiers for 
+real-time systems)
+</descr>
+<descr lang="en">
+AI 00305 - New pragma and additional restriction identifiers for 
+real-time systems
+</descr>
+<download type='file'
+ url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00305.pdf' />
+</file>
+
+</link>
+</folder>
