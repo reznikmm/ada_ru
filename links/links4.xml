@@ -52,10 +52,10 @@ An Ada 95 compiler.
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/gnat-3.15p-i686-pc-redhat71-gnu-bin.tar.gz"/>
     </file>
     <file id="gnat-linux-rpm"><descr lang="ru">Gnat 3.15p RPM для RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-([0-9.p-]+)\.i386\.rpm"/>
     </file>
     <file id="gnat-linux-rtl-rpm"><descr lang="ru">Gnat 3.15p runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-[0-9.p-]+runtime-([0-9-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-[0-9.p-]+runtime-([0-9-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -110,7 +110,7 @@ the GNU General Public License.
      <download type="regexp" url="http://home.tiscalinet.ch/t_wolf/tw/ada95/adabrowse/" regexp="adabrowse_([0-9.]+)_src\.tar\.gz"/>
     </file>
     <file id="adabrowse-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabrowse-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabrowse-([0-9-.]+)\.i386\.rpm"/>
     </file>
 
   </link>
@@ -166,7 +166,7 @@ given purpose.
      <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/aunit/aunit-1.05-src.tgz"/>
    </file>
     <file id="aunit-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aunit-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aunit-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -185,7 +185,7 @@ rules from the Ada 95 Quality and Style document.
      <download type="file" url="http://www.kolumbus.fi/vitali.kaufman/gch/gch.tar.gz"/>
    </file>
     <file id="gch-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gch-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gch-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -219,7 +219,7 @@ back or printed out later for off-line review and analysis.
       regexp="DTraq(.)pdf"/>
    </file>
     <file id="dtraq-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dtraq-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dtraq-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -324,10 +324,10 @@ a lot of services have been developed.
         url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/aws/aws-gpl-2.2.0-src.tgz"/>
    </file>
     <file id="aws-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="aws-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -356,7 +356,7 @@ processing, sound and database access.
      <download type="regexp" url="http://www.pegasoft.ca/bush-down.html" regexp=".*bush-([0-9.]+)-src.tgz"/>
    </file>
     <file id="bush-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*bush-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*bush-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -377,7 +377,7 @@ can use to bring up the source html files to be fixed.
      <download type="regexp" url="http://stephe-leake.org/ada/webcheck.html" regexp="webcheck-([0-9.]+).tar.gz"/>
    </file>
     <file id="webcheck-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*webcheck-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*webcheck-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -404,7 +404,7 @@ software...
       <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/sources/gps-3.1.3-gpl-src.tgz"/>
    </file>
     <file id="gps-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gps-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gps-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -420,7 +420,7 @@ Linux/UNIX Console IDE. Supports several languages and CVS.
       <download type="regexp" url="http://www.pegasoft.ca/tia-down.html" regexp=".*tia-([0-9.]+)-src.tgz"/>
    </file>
     <file id="tia-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*tia-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*tia-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -440,7 +440,7 @@ an object-oriented parse tree.
       <download type="regexp" url="http://adagoop.martincarlisle.com/" regexp="adagoop(.)zip"/>
    </file>
     <file id="adagoop-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adagoop-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adagoop-([0-9-.]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -462,10 +462,10 @@ arcane error-prone regular expression language to learn.
      <download type="regexp" url="http://www.telepath.com/~dennison/Ted/OpenToken/OpenToken.html" regexp="OpenToken_([0-9_a-f]+).zip"/>
    </file>
     <file id="OpenToken-rpm-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*OpenToken-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*OpenToken-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="OpenToken-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*OpenToken-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*OpenToken-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -481,7 +481,7 @@ Aflex and ayacc are similar to the Unix tools lex and yacc,
 but they are written in Ada and generate Ada output.
    </descr>
     <file id="afay-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html"
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html"
      regexp=".*aflex_ayacc-([-0-9.a]+)\.i386\.rpm"/>
     </file>
    <!--file id="afay"><descr lang="ru">Исходные тексты</descr>
@@ -549,7 +549,7 @@ the spec.
       <download type="regexp" url="http://www.stephe-leake.org/ada/auto_text_io.html" regexp="auto_text_io-([0-9.]+).tar.gz"/>
    </file>
     <file id="auto_io-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*auto_text_io-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*auto_text_io-([0-9-.]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -677,7 +677,7 @@ machines and communicate with each other.
     </file>
     <file id="glade-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
 
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-glade-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gnat-glade-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -697,7 +697,7 @@ the GNAT Ada 95 development environment and toolset.
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/asis/asis-3.15p-src.tgz"/>
     </file>
     <file id="asis-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*asis-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*asis-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -723,14 +723,14 @@ streams, since this is required by the XML standard.
      <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/xmlada/xmlada-gpl-2.2.0-src.tgz"/>
    </file>
     <file id="xmlada-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="xmlada-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
-  <link id="open_image" home="http://open-image.sourceforge.net/">
+  <!--link id="open_image" home="http://open-image.sourceforge.net/">
    <descr lang="ru">
 Open_Image - переносимый пакет ввода/вывода и редактирования
 графических данных. Для начала реализует чтение/запись
@@ -744,7 +744,7 @@ the library will be able to read and write Portable Pixmap (PPM) files.
    <file id="open_image"><descr lang="ru">Исходные тексты</descr>
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=12296" regexp="open_image_([0-9_]+).tar.gz" project="open-image"/>
    </file>
-  </link>
+  </link-->
 
   <link id="adacgi" home="http://www.dwheeler.com/adacgi/">
    <descr lang="ru">
@@ -765,7 +765,7 @@ processing by request from a WWW user.
       <download type="regexp" url="http://www.dwheeler.com/adacgi/" regexp=".*adacgi-([0-9.-]+).zip"/>
    </file>
     <file id="adacgi-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adacgi-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adacgi-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -794,10 +794,10 @@ of this language. GtkAda supports the latest 2.2 stable releases.
       <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-windows/tools/gtkada/gtkada-gpl-2.8.0-nt.exe"/>
    </file>
     <file id="gtkada-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="gtkada-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -820,7 +820,7 @@ An Ada binding for the POSIX 1003.5 API.
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/florist-3.15p-src.tgz"/>
     </file>
     <file id="florist-linux-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*florist-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*florist-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -835,10 +835,10 @@ This interface lets you use BSD sockets from Ada.
      <download type="regexp" url="http://www.rfc1149.net/devel/adasockets" regexp=".*adasockets-([0-9.]+)tar.gz"/>
    </file>
     <file id="adasockets-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasockets-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasockets-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="adasockets-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasockets-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasockets-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -879,10 +879,10 @@ middleware.
      <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/polyorb/polyorb-gpl-2.1.0-src.tgz"/>
    </file>
     <file id="polyorb-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-([0-9].+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-([0-9].+)\.i386\.rpm"/>
     </file>
     <file id="polyorb-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-runtime-([0-9].+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-runtime-([0-9].+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -900,10 +900,10 @@ The PostgreSQL/MySQL APQ 2.1 Thick Binding
      <download type="regexp" url="http://home.cogeco.ca/~ve3wwg/software.html" regexp="apq-([0-9.]+)tar.gz"/>
    </file>
     <file id="apq-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*apq-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*apq-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="apq-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*apq-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*apq-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -937,10 +937,10 @@ if available) routines.
      <download type="regexp" url="http://home.arcor.de/hfvogt/programming.html" regexp="adabindx-([0-9.]+)tar.gz"/>
    </file>
     <file id="adabindx-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabindx-([0-9.a-h-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabindx-([0-9.a-h-]+)\.i386\.rpm"/>
     </file>
     <file id="adabindx-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabindx-runtime-([0-9.a-h-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adabindx-runtime-([0-9.a-h-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -973,10 +973,10 @@ library ZLib. It is providing Ada style access to the ZLib C library.
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=71282" regexp="zlib-ada-([0-9.]+).tar.gz" project="zlib-ada"/>
    </file>
     <file id="zlib-ada-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*zlibada-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*zlibada-([0-9.p-]+)\.i386\.rpm"/>
     </file>
     <file id="zlib-ada-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*zlibada-runtime-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*zlibada-runtime-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -998,10 +998,10 @@ library formats known to Linux.
      <download type="regexp" url="http://www.cyberdanx.co.uk/ada95/dlibs.html" regexp="dlibs-([0-9.p-]+).tar.bz2"/>
     </file>
     <file id="dlibs-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dlibs-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dlibs-([0-9.p-]+)\.i386\.rpm"/>
     </file>
     <file id="dlibs-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dlibs-runtime-([0-9.p-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*dlibs-runtime-([0-9.p-]+)\.i386\.rpm"/>
     </file>
   </link-->
 
@@ -1042,10 +1042,10 @@ The Ada 95 Booch Components is a port C++ components library.
          regexp="bc-([0-9]+)\.zip" project="booch95"/>
    </file>
     <file id="booch-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*ada_booch-([0-9-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*ada_booch-([0-9-]+)\.i386\.rpm"/>
     </file>
     <file id="booch-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*ada_booch-runtime-([0-9-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*ada_booch-runtime-([0-9-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -1071,10 +1071,10 @@ PragmAda Reusable Components (PragmARCs)
       <download type="regexp" url="http://pragmada.home.mchsi.com/pragmarc.htm" regexp="pragmarc(\.)zip"/>
    </file>
     <file id="pragmarc-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*pragmarc-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*pragmarc-([0-9.-]+)\.i386\.rpm"/>
     </file>
     <file id="pragmarc-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*pragmarc-runtime-([0-9.-]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*pragmarc-runtime-([0-9.-]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -1119,10 +1119,10 @@ a lot of different modes.
      <download type="sf" url="http://sourceforge.net/project/showfiles.php?group_id=28789" regexp="adasl-([0-9.]+).tar.gz" project="adasl"/>
    </file>
     <file id="adasl-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasl-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasl-([0-9-.]+)\.i386\.rpm"/>
     </file>
     <file id="adasl-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasl-runtime-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*adasl-runtime-([0-9-.]+)\.i386\.rpm"/>
     </file>
   </link>
 
@@ -1150,10 +1150,10 @@ math operations for kinematics and dynamics of masses in
      <download type="regexp" url="http://www.stephe-leake.org/ada/sal.html" regexp="sal-([0-9-.]+).tar.gz"/>
    </file>
     <file id="sal-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*sal-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*sal-([0-9-.]+)\.i386\.rpm"/>
     </file>
     <file id="sal-rt-rpm"><descr lang="ru">runtime RPM</descr>
-     <download type="regexp" url="http://www.prz.rzeszow.pl/ada/ru/GNAT-3.15p_rpms_RU.html" regexp=".*sal-runtime-([0-9-.]+)\.i386\.rpm"/>
+     <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*sal-runtime-([0-9-.]+)\.i386\.rpm"/>
     </file>
   </link>
 

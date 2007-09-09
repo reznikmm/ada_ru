@@ -7,7 +7,7 @@ package Wiki is
       Strike, Superscript, Subscript, Monospace, Monospace_2,
       Heading_3, Heading_2, Heading_1,
       Paragraph, Break, Ordered_List, Numbered_List, List_Item,
-      Table_Row, Table_Cell, HTTP_Link, Boxed_HTTP_Link, Boxed_Wiki_Link,
+      Table_Row, Table_Cell, HTTP_Link, Boxed_Wiki_Link, Boxed_Link,
       Horizontal_Line);
 
    subtype Heading is Element_Kinds range Heading_3 .. Heading_1;
@@ -19,7 +19,7 @@ package Wiki is
          when Table_Row =>
             Table_Boundary : Boolean := False;
          when HTTP_Link
-           | Boxed_HTTP_Link
+           | Boxed_Link
            | Boxed_Wiki_Link =>
             Link  : Ada.Strings.Unbounded.Unbounded_String;
             Title : Ada.Strings.Unbounded.Unbounded_String;

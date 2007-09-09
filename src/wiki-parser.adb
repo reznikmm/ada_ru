@@ -326,7 +326,7 @@ package body Wiki.Parser is
 
                Start_Element (Info, Data);
                End_Element (Info, Data);
-            when Boxed_HTTP_Link | Boxed_Wiki_Link =>
+            when Boxed_Link | Boxed_Wiki_Link =>
                Open_Para;
                Next := Find (Text, "]") + 1;
 
@@ -515,7 +515,7 @@ package body Wiki.Parser is
             return Index (Text, ASCII.LF & ASCII.LF);
          when Break =>
             return Index (Text, "[[BR]]");
-         when Ordered_List =>
+        when Ordered_List =>
             return At_Start_Line (Text, " * ");
          when Numbered_List =>
             return At_Start_Line (Text, " 1. ");
@@ -528,8 +528,41 @@ package body Wiki.Parser is
             return Index (Text, "||");
          when HTTP_Link =>
             return Index (Text, "http://");
-         when Boxed_HTTP_Link =>
-            return Index (Text, "[http:");
+         when Boxed_Link =>
+            declare
+               Pos    : Natural := Text'First;
+               Colon  : Natural;
+               Failed : Boolean;
+            begin
+               loop
+                  Pos := Index (Text (Pos .. Text'Last), "[");
+
+                  if Pos = 0 then
+                     return 0;
+                  end if;
+
+                  Colon := Index (Text (Pos .. Text'Last), ":");
+
+                  if Colon = 0 then
+                     return 0;
+                  end if;
+
+                  Failed := (Colon - Pos = 1);
+
+                  for J in Pos + 1 .. Colon - 1 loop
+                     if Text (J) not in 'a' .. 'z' then
+                        Failed := True;
+                        exit;
+                     end if;
+                  end loop;
+
+                  if Failed then
+                     Pos := Pos + 1;
+                  else
+                     return Pos;
+                  end if;
+               end loop;
+            end;
          when Boxed_Wiki_Link =>
             return Index (Text, "[wiki:");
          when Horizontal_Line =>

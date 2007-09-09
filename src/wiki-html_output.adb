@@ -60,7 +60,7 @@ package body Wiki.HTML_Output is
             Data.Buffer := Data.Buffer & "<tr>";
          when Table_Cell =>
             Data.Buffer := Data.Buffer & "<td>";
-         when HTTP_Link | Boxed_HTTP_Link | Boxed_Wiki_Link =>
+         when HTTP_Link | Boxed_Link | Boxed_Wiki_Link =>
             Data.Buffer := Data.Buffer &
               Link (To_String (Info.Link), To_String (Info.Title), Data);
          when Horizontal_Line =>
@@ -119,7 +119,7 @@ package body Wiki.HTML_Output is
             end if;
          when Table_Cell =>
             Data.Buffer := Data.Buffer & "</td>";
-         when HTTP_Link | Boxed_HTTP_Link | Boxed_Wiki_Link =>
+         when HTTP_Link | Boxed_Link | Boxed_Wiki_Link =>
             null;
          when Horizontal_Line =>
             null;

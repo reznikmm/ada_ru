@@ -45,9 +45,10 @@ package body Ada_Links.Files.Sf is
       Ver    : Unbounded_String;
       Url    : Unbounded_String;
       File   : Unbounded_String;
-      Prefix : constant String := "http://prdownloads.sourceforge.net/"
+      Prefix : constant String := "http://downloads.sourceforge.net/"
         & To_String (Object.Project) & "/";
-      Suffix : constant String := "\?download";
+      Suffix : constant String := "\?modtime=..........&amp;big_mirror=0";
+--      Suffix : constant String := "\?download";
       Regexp : String := Prefix & To_String (Object.Regexp) & Suffix;
       Broken_Page : exception;
       SF_Net : constant String := Ada.Command_Line.Argument (3);
