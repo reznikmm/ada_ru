@@ -30,16 +30,16 @@
    <descr lang="en">
 An Ada 95 compiler.
    </descr>
-    <file id="gnat-gpl-nt"><descr lang="ru">Gnat GPL 2006 под Windows</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-windows/gnat-gpl-2006-1-pentium-mingw32msv-bin.exe"/>
+    <file id="gnat-gpl-nt"><descr lang="ru">Gnat GPL 2007 под Windows</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-windows/gnat-gpl-2007-pentium-mingw32msv-bin.exe"/>
     </file>
 
-    <file id="gnatwin-gpl"><descr lang="ru">WIN32 API и утилиты для Gnat GPL 2006 под Windows</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-windows/tools/win32ada/win32ada-gpl-2006-1.exe"/>
+    <file id="gnatwin-gpl"><descr lang="ru">WIN32 API и утилиты для Gnat GPL 2007 под Windows</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-windows/tools/win32ada/win32ada-gpl-2007.exe"/>
     </file>
 
-    <file id="gnat-gpl-linux"><descr lang="ru">Gnat GPL 2006 под Linux</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/gnat-gpl-2006-i686-gnu-linux-libc2.3-bin.tar.gz"/>
+    <file id="gnat-gpl-linux"><descr lang="ru">Gnat GPL 2007 под Linux</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/gnat-gpl-2007-i686-gnu-linux-libc2.3-bin.tar.gz"/>
     </file>
 
     <file id="gnat-nt"><descr lang="ru">Gnat 3.15p под Windows</descr>
@@ -163,7 +163,7 @@ tests to provide flexibility in determining what tests to run for a
 given purpose.
    </descr>
    <file id="aunit"><descr lang="ru">Исходные тексты</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/aunit/aunit-1.05-src.tgz"/>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/aunit/aunit-gpl-2.01-src.tgz"/>
    </file>
     <file id="aunit-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aunit-([0-9.-]+)\.i386\.rpm"/>
@@ -319,9 +319,9 @@ be able to talk with a standard Web browser like Microsoft Internet
 Explorer or Netscape Communicator for example. Around this Web server
 a lot of services have been developed.
    </descr>
-   <file id="aws-gpl"><descr lang="ru">AWS GPL 2.2</descr>
+   <file id="aws-gpl"><descr lang="ru">AWS GPL 2.3</descr>
       <download type="file"
-        url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/aws/aws-gpl-2.2.0-src.tgz"/>
+        url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/aws/aws-gpl-2.3.0.tgz"/>
    </file>
     <file id="aws-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*aws-([0-9.-]+)\.i386\.rpm"/>
@@ -401,7 +401,7 @@ that streamlines the interaction between developers and their
 software...
    </descr>
    <file id="GPS.linux"><descr lang="ru">Исходные тексты</descr>
-      <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/sources/gps-3.1.3-gpl-src.tgz"/>
+      <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/sources/gps-4.0.2-gpl-src.tgz"/>
    </file>
     <file id="gps-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*gps-([0-9.-]+)\.i386\.rpm"/>
@@ -565,7 +565,7 @@ but with as much power and control as C++.
    </descr>
    <file id="gnatcom"><descr lang="ru">Исходные тексты</descr>
       <download type="regexp"
-         url="http://www.gnavi.org/gnatcom/"
+         url="http://www.gnavi.org/index.php?Command=Class&amp;ClassID=GNATCOM&amp;Title=GNATCOM"
        regexp=".*/gnatcom-([0-9]+\.[0-9a-d]+).zip"/>
    </file>
   </link>
@@ -608,7 +608,8 @@ the Minimal Real-Time POSIX.13 subset. Most of its code is written in
 Ada with some C and assembler parts.
    </descr>
    <file id="marte"><descr lang="ru">Исходные тексты</descr>
-      <download type="regexp" url="http://marte.unican.es/contents.html" regexp="marte-?([0-9.]+)t.*gz"/>
+      <download type="regexp" url="http://marte.unican.es/downloads.htm"
+  regexp="marte/marte-?([0-9]+.[6-9][0-9.]*)t.*gz"/>
    </file>
   </link>
 
@@ -666,8 +667,8 @@ GLADE is an implementation of the distributed Ada 95 programming model.
 It allows parts of a single program to run concurrently on different
 machines and communicate with each other.
    </descr>
-    <file id="glade-gpl"><descr lang="ru">Glade GPL 2006</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/glade/glade-gpl-2006-src.tgz"/>
+    <file id="glade-gpl"><descr lang="ru">Glade GPL 2007</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/glade/glade-gpl-2007-src.tgz"/>
     </file>
     <file id="glade-src"><descr lang="ru">Glade sources</descr>
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/glade/glade-3.15p-src.tgz"/>
@@ -690,8 +691,8 @@ machines and communicate with each other.
 ASIS-for-GNAT is an implementation of the ASIS standard for use with
 the GNAT Ada 95 development environment and toolset.
    </descr>
-    <file id="asis-gpl"><descr lang="ru">ASIS Gnat GPL 2006</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/asis/asis-gpl-2006-src.tgz"/>
+    <file id="asis-gpl"><descr lang="ru">ASIS Gnat GPL 2007</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/asis/asis-gpl-2007-src.tgz"/>
     </file>
     <file id="asis-src"><descr lang="ru">ASIS sources</descr>
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/asis/asis-3.15p-src.tgz"/>
@@ -719,8 +720,8 @@ associated with XML, like SAX and DOM.
 In addition, It includes a module to manipulate Unicode
 streams, since this is required by the XML standard.
    </descr>
-   <file id="xmlada-gpl"><descr lang="ru">версия GPL 2006 2.2.0</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/xmlada/xmlada-gpl-2.2.0-src.tgz"/>
+   <file id="xmlada-gpl"><descr lang="ru">версия GPL 2007 2.2.0</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/xmlada/xmlada-gpl-2.2.0.tgz"/>
    </file>
     <file id="xmlada-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*XmlAda-([0-9.-]+)\.i386\.rpm"/>
@@ -788,11 +789,11 @@ the complete set of Gtk+ widgets using the Object-Oriented features
 of this language. GtkAda supports the latest 2.2 stable releases.
    </descr>
    <file id="GtkAda.src"><descr lang="ru">Исходные тексты</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/gtkada/GtkAda-gpl-2.8.0.tgz"/>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/gtkada/GtkAda-gpl-2.10.0.tgz"/>
    </file>
-   <file id="GtkAda.win"><descr lang="ru">Дистрибутив для Windows</descr>
+   <!--file id="GtkAda.win"><descr lang="ru">Дистрибутив для Windows</descr>
       <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-windows/tools/gtkada/gtkada-gpl-2.8.0-nt.exe"/>
-   </file>
+   </file-->
     <file id="gtkada-rpm"><descr lang="ru">RPM for RedHat 7.x</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*GtkAda2-([0-9.-]+)\.i386\.rpm"/>
     </file>
@@ -813,8 +814,8 @@ of this language. GtkAda supports the latest 2.2 stable releases.
    <descr lang="en">
 An Ada binding for the POSIX 1003.5 API.
    </descr>
-    <file id="florist-gpl"><descr lang="ru">Версия GPL 2006</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/florist-gpl-2006-src.tgz"/>
+    <file id="florist-gpl"><descr lang="ru">Версия GPL 2007</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/florist-gpl-2007-src.tgz"/>
     </file>
     <file id="florist-src"><descr lang="ru">Версия GMGPL 3.15p</descr>
      <download type="file" url="ftp://ftp.cs.kuleuven.ac.be/pub/Ada-Belgium/mirrors/gnu-ada/3.15p/florist-3.15p-src.tgz"/>
@@ -875,8 +876,8 @@ distribution programming paradigms such as Web Services, Message
 Oriented Middleware (MOM), or to implement application-specific
 middleware.
     </descr>
-   <file id="polyorb-gpl"><descr lang="ru">Версия GPL 2006</descr>
-     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat.gpl/x86-linux/tools/polyorb/polyorb-gpl-2.1.0-src.tgz"/>
+   <file id="polyorb-gpl"><descr lang="ru">Версия GPL 2007</descr>
+     <download type="file" url="ftp://ftp.mipt.ru/ada/gnat-gpl-2007/x86-linux/tools/polyorb/polyorb-gpl-2007-src.tgz"/>
    </file>
     <file id="polyorb-rpm"><descr lang="ru">RPM for RedHat 7.2</descr>
      <download type="regexp" url="http://www.ada.prz.edu.pl/ru/GNAT-3.15p_rpms_RU.html" regexp=".*polyorb-([0-9].+)\.i386\.rpm"/>
@@ -1018,7 +1019,7 @@ this powerful framework, version 1.1
    </descr>
     <file id="gwindows"><descr lang="ru">Исходные тексты</descr>
      <download type="regexp"
-        url="http://www.gnavi.org/gwindows/"
+        url="http://www.gnavi.org/index.php?Command=Class&amp;ClassID=GWindowsWin32&amp;Title=GWindows"
       regexp=".*/gwindows-([0-9_a-f]+).zip"/>
     </file>
   </link>

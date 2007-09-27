@@ -16,4 +16,4 @@ SITE=$CD/www.ada-ru.org
 STORE=$MY_ROOT/store
 MISC=$MY_ROOT/misc
 REF=$MY_ROOT/ref
-WEBSITE="http://docbook.sourceforge.net/release/website/2.4.1/xsl/"
+WEBSITE="http://docbook.sourceforge.net/release/website/2.6.0/xsl/"

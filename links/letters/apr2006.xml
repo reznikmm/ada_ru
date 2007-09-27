@@ -2,7 +2,7 @@
 <folder name='apr2006'>
 <descr lang='ru'>Выпуск apr2006</descr>
 <link id='apr2006.'
- home='http://www.acm.org/sigada/ada_letters/apr2006/'>
+ home='http://www.sigada.org/ada_letters/apr2006/'>
 <descr lang='ru'>Выпуск apr2006</descr>
 
 <file id='apr2006.newsletter_General-info-April2006.raw'>
@@ -14,7 +14,7 @@
 Newsletter Information
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/newsletter_General-info-April2006.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/newsletter_General-info-April2006.pdf' />
 </file>
 
 <file id='apr2006.Chairs-Letter-April06.raw'>
@@ -26,7 +26,7 @@ Newsletter Information
 Letters from SIGAda Officials
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/Chairs-Letter-April06.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/Chairs-Letter-April06.pdf' />
 </file>
 
 <file id='apr2006.SIGAda2005-Awards.raw'>
@@ -38,7 +38,7 @@ Letters from SIGAda Officials
 Awarded at SIGAda 2005 in Atlanta
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/SIGAda2005-Awards.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/SIGAda2005-Awards.pdf' />
 </file>
 
 <file id='apr2006.Workshop_Commercializing_Ad-R-Leif.raw'>
@@ -50,7 +50,7 @@ Awarded at SIGAda 2005 in Atlanta
 Commercializing Ada. Robert C. Leif
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/Workshop_Commercializing_Ad-R-Leif.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/Workshop_Commercializing_Ad-R-Leif.pdf' />
 </file>
 
 <file id='apr2006.Martin-ada2005_ada_letters.raw'>
@@ -62,7 +62,7 @@ Commercializing Ada. Robert C. Leif
 How Ada 2005 Impacts CS1/2. Martin C. Carlisle
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/Martin-ada2005_ada_letters.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/Martin-ada2005_ada_letters.pdf' />
 </file>
 
 
@@ -75,7 +75,7 @@ How Ada 2005 Impacts CS1/2. Martin C. Carlisle
 Optimal Table Lookup for Reserved Words in Ada. John A. Trono 
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/AdaMPHF-Trono.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/AdaMPHF-Trono.pdf' />
 </file>
 
 <file id='apr2006.AI-00307.raw'>
@@ -87,7 +87,7 @@ AI 307 - Часы времени исполнения
 Ada Issue 307 - Execution-Time Clocks
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00307.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/AI-00307.pdf' />
 </file>
 
 <file id='apr2006.AI-00321.raw'>
@@ -99,7 +99,7 @@ AI 321 - Определение политик планирования задач
 Ada Issue 321 - Definition of Dispatching Policies 
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00321.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/AI-00321.pdf' />
 </file>
 
 <file id='apr2006.AI-00327.raw'>
@@ -111,7 +111,7 @@ AI 327 - Динамические граничные приоритеты
 Ada Issue 327 - Dynamic Ceiling Priorities
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00327.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/AI-00327.pdf' />
 </file>
 
 <file id='apr2006.AI-00333.raw'>
@@ -123,7 +123,7 @@ AI 333 - Дополнительные политики блокировок с FIFO_Within_Priorities
 Ada Issue 333 - Additional Locking Policies with FIFO_Within_Priorities 
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/apr2006/AI-00333.pdf' />
+ url='http://www.sigada.org/ada_letters/apr2006/AI-00333.pdf' />
 </file>
 
 </link>

@@ -457,6 +457,7 @@ package body Wiki.Parser is
 
    begin
       Expand (Text);
+      Close_Para;
    end Parse;
 
    -------------

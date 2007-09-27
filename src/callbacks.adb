@@ -22,7 +22,9 @@ with AWS.Services.Page_Server;
 with GNAT.OS_Lib;
 with GNAT.Directory_Operations;
 
+with Wiki.Utils;
 with Wiki.Parser;
+with Wiki.Sidebar;
 with Wiki.HTML_Output;
 
 with Users;
@@ -43,9 +45,12 @@ package body Callbacks is
      (File_Name : String;
       Data      : Ada.Streams.Stream_Element_Array);
 
-   function Read_File (Name : String) return String;
+   function Read_File (Name : String) return String
+     renames Wiki.Utils.Read_File;
 
    function Expand_Wiki (Text : String) return String;
+
+   Sidebar_File : constant String := "/wiki/layout.wiki";
 
    -------------
    -- Default --
@@ -100,7 +105,7 @@ package body Callbacks is
    -- Edit_Wiki --
    ---------------
 
-   function Edit_Wiki (URI, Text : in String) return AWS.Response.Data is
+   function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data is
       use Ada.Strings.Unbounded;
 
       Preview_Start : constant String :=
@@ -119,7 +124,14 @@ package body Callbacks is
         & "<input type='submit' name='post' value='Preview'/>"
         & "</p></form>";
 
+      Wiki_URI : constant String :=
+        Wiki.Parser.Replace (URI, "/edit_wiki/", "wiki:");
+
+      Sidebar : constant String :=
+        Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File);
+
       Content : constant String := To_String (Wiki_Prefix)
+        & Sidebar
         & Preview_Start
         & Expand_Wiki (Text)
         & Preview_End
@@ -150,10 +162,10 @@ package body Callbacks is
    begin
       Read_Wiki_Prefix (Root);
 
-      return Edit_Wiki (URI, Read_File (File));
+      return Edit_Wiki (URI, Read_File (File), Root);
    exception
       when E : Ada.Text_IO.Name_Error =>
-         return Edit_Wiki (URI, "");
+         return Edit_Wiki (URI, "", Root);
    end Edit_Wiki;
 
    ------------------
@@ -190,9 +202,8 @@ package body Callbacks is
       use Ada.Strings.Unbounded;
 
       Root    : constant String := Get_WWW_Root (Status.Host (Request));
-      File    : constant String := Root
-        & Get_File_Name (Status.URI (Request))
-        & ".wiki";
+      URI     : constant String := Status.URI (Request);
+      File    : constant String := Root & Get_File_Name (URI) & ".wiki";
       Time    : constant Ada.Calendar.Time
         := AWS.Resources.File_Timestamp (File);
 
@@ -220,9 +231,14 @@ package body Callbacks is
       Read_Wiki_Prefix (Root);
 
       declare
-         Text   : String := To_String (Wiki_Prefix)
+         Wiki_URI : constant String :=
+           Wiki.Parser.Replace (URI, "/wiki/", "wiki:");
+         Sidebar  : constant String :=
+           Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File);
+         Text     : constant String := To_String (Wiki_Prefix)
+           & Sidebar
            & Expand_Wiki (Read_File (File)) & To_String (Wiki_Suffix);
-         Result : AWS.Response.Data
+         Result  : AWS.Response.Data
            := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
                                   Message_Body => Text);
       begin
@@ -270,7 +286,7 @@ package body Callbacks is
 
          return Response.URL (Location => URI);
       else
-         return Edit_Wiki (URI, Text);
+         return Edit_Wiki (URI, Text, Root);
       end if;
    end Post_Wiki;
 
@@ -444,42 +460,6 @@ package body Callbacks is
          return False;
       end if;
    end Is_Folder;
-
-   ---------------
-   -- Read_File --
-   ---------------
-
-   function Read_File (Name : String) return String is
-      use Ada.Text_IO;
-      use Ada.Exceptions;
-      use Ada.Strings.Unbounded;
-      Input : File_Type;
-      Line  : String (1 .. 80);
-      Last  : Natural;
-      Text  : Unbounded_String;
-   begin
-      Open (Input, In_File, Name);
-
-      while not End_Of_File (Input) loop
-         Get_Line (Input, Line, Last);
-
-         Text := Text & Line (1 .. Last);
-
-         if Last /= Line'Last or End_Of_Line (Input) then
-            Text := Text & ASCII.LF;
-         end if;
-      end loop;
-
-      Close (Input);
-
-      return To_String (Text);
-   exception
-      when E : Name_Error =>
-         Raise_Exception
-           (Name_Error'Identity,
-            "Read_File " & Name & ":" & Exception_Information (E));
-
-   end Read_File;
 
 end Callbacks;
 

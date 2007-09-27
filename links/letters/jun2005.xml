@@ -2,7 +2,7 @@
 <folder name='jun2005'>
 <descr lang='ru'>Выпуск jun2005</descr>
 <link id='jun2005.'
- home='http://www.acm.org/sigada/ada_letters/jun2005/'>
+ home='http://www.sigada.org/ada_letters/jun2005/'>
     <descr lang="ru">Выпуск jun2005</descr>
 <file id='jun2005.newsletter_General_info_June-05.raw'>
 <descr lang="ru">
@@ -13,7 +13,7 @@
 From the Editor
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/newsletter_General_info_June-05.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/newsletter_General_info_June-05.pdf' />
 </file>
 
 <file id='jun2005.SIGAda%20Annual%20Report%202004.raw'>
@@ -25,7 +25,7 @@ From the Editor
 SIGAda Annual Report. Currie Colket
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/SIGAda%20Annual%20Report%202004.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/SIGAda%20Annual%20Report%202004.pdf' />
 </file>
 
 <file id='jun2005.SIGAdaByLaws%202005.raw'>
@@ -37,7 +37,7 @@ SIGAda Annual Report. Currie Colket
 SIGAda Bylaws
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/SIGAdaByLaws%202005.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/SIGAdaByLaws%202005.pdf' />
 </file>
 
 <file id='jun2005.Election%20Results%202005.raw'>
@@ -49,7 +49,7 @@ SIGAda Bylaws
 SIGAda Election Results
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/Election%20Results%202005.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/Election%20Results%202005.pdf' />
 </file>
 
 <file id='jun2005.Dynamic_plugin_loading_with-Pat%20Rogers.raw'>
@@ -61,7 +61,7 @@ SIGAda Election Results
 On Dynamic Plug-in Loading with Ada 95 and Ada 2005 - Cyrille Comar. Pat Rogers
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/Dynamic_plugin_loading_with-Pat%20Rogers.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/Dynamic_plugin_loading_with-Pat%20Rogers.pdf' />
 </file>
 
 <file id='jun2005.Windows%20Disk%20Drive%20Recovery%20Karl%20Nyberg.raw'>
@@ -73,7 +73,7 @@ On Dynamic Plug-in Loading with Ada 95 and Ada 2005 - Cyrille Comar. Pat Rogers
 Windows Disk Drive Recovery with Ada95 - An Application Note. Karl Nyberg
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/Windows%20Disk%20Drive%20Recovery%20Karl%20Nyberg.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/Windows%20Disk%20Drive%20Recovery%20Karl%20Nyberg.pdf' />
 </file>
 
 <file id='jun2005.Reusable%20SW%20Components-Trudy%20Levine.raw'>
@@ -85,7 +85,7 @@ Windows Disk Drive Recovery with Ada95 - An Application Note. Karl Nyberg
 Reusable Software Components. Trudy Levine
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/jun2005/Reusable%20SW%20Components-Trudy%20Levine.pdf' />
+ url='http://www.sigada.org/ada_letters/jun2005/Reusable%20SW%20Components-Trudy%20Levine.pdf' />
 </file>
 
 </link>

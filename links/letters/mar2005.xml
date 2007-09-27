@@ -2,7 +2,7 @@
 <folder name='mar2005'>
   <descr lang='ru'>Выпуск mar2005</descr>
   <link id='mar2005.'
-        home='http://www.acm.org/sigada/ada_letters/mar2005/'>
+        home='http://www.sigada.org/ada_letters/mar2005/'>
     <descr lang="ru">Выпуск mar2005</descr>
     <file id='mar2005.March05-Chair-Msg.raw'>
       <descr lang="ru">
@@ -12,7 +12,7 @@
         Letter from the Chair. Currie Colket
       </descr>
       <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/March05-Chair-Msg.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/March05-Chair-Msg.pdf' />
     </file>
 
 <file id='mar2005.2004-SIGAda-Awards.raw'>
@@ -23,7 +23,7 @@
 2004 SIGAda Awards - Awarded at SIGAda2004 Conference in Atlanta, GA
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/2004-SIGAda-Awards.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/2004-SIGAda-Awards.pdf' />
 </file>
 
 <file id='mar2005.Student-Awards.raw'>
@@ -35,7 +35,7 @@
 Awarded at SIGAda2004 Conference, Atlanta GA
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/Student-Awards.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/Student-Awards.pdf' />
 </file>
 
 <file id='mar2005.APIWG-WS-04-Report.raw'>
@@ -47,7 +47,7 @@ Awarded at SIGAda2004 Conference, Atlanta GA
 API Working Group BOF Session Summary. Clyde Roby
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/APIWG-WS-04-Report.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/APIWG-WS-04-Report.pdf' />
 </file>
 
 <file id='mar2005.Pri-Inv-GustafNaeser.raw'>
@@ -62,7 +62,7 @@ Priority Inversion in Multi Processor Systems due to Protected Actions.
 Gustaf Naeser
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/Pri-Inv-GustafNaeser.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/Pri-Inv-GustafNaeser.pdf' />
 </file>
 
 <file id='mar2005.Task-Locks-Tojo-Cheng.raw'>
@@ -76,7 +76,7 @@ Tasking Deadlocks in Programs with the Full Ada95.
  Y. Tojo, S. Nara, Y. Goto, J. Cheng
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/Task-Locks-Tojo-Cheng.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/Task-Locks-Tojo-Cheng.pdf' />
 </file>
 
 <file id='mar2005.Re-SW-Comp-TLevine.raw'>
@@ -88,7 +88,7 @@ Tasking Deadlocks in Programs with the Full Ada95.
 Reusable Software Components. Trudy Levine
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/Re-SW-Comp-TLevine.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/Re-SW-Comp-TLevine.pdf' />
 </file>
 
 <file id='mar2005.SIGAdaElection2005.raw'>
@@ -100,7 +100,7 @@ Reusable Software Components. Trudy Levine
 SIGAda Elections 2005
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/mar2005/SIGAdaElection2005.pdf' />
+ url='http://www.sigada.org/ada_letters/mar2005/SIGAdaElection2005.pdf' />
 </file>
 
 </link>

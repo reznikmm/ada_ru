@@ -1,17 +1,22 @@
 <?xml version='1.0' encoding='koi8-r'?>
 <table class="last-ver" width="100%">
 <tr><th>Новые версии</th></tr>
+<tr><td><a href="soft.html#tia">10 Сен tia 1.1.1</a></td></tr>
+<tr><td><a href="soft.html#bc">23 Авг bc 20070822</a></td></tr>
+<tr><td><a href="soft.html#marte">04 Июн marte 1.6.</a></td></tr>
+<tr><td><a href="soft.html#gnat">12 Май gnat 2007</a></td></tr>
+<tr><td><a href="soft.html#adasockets">22 Апр adasock 1.8.5</a></td></tr>
 <tr><td><a href="soft.html#acats">06 Мар acats 2_5p</a></td></tr>
 <tr><td><a href="soft.html#adagide">29 Янв adagide 742</a></td></tr>
 <tr><td><a href="soft.html#orbit-ada">31 Дек orbit-ada 1.2</a></td></tr>
 <tr><td><a href="soft.html#acats">20 Дек acats 2_5n</a></td></tr>
 <tr><td><a href="soft.html#bc">16 Июл bc 20060716</a></td></tr>
 <tr><td><a href="soft.html#gnat">22 Июн gnat 2006</a></td></tr>
+<!--
 <tr><td><a href="soft.html#dtraq">11 Июн dtraq 1.100</a></td></tr>
 <tr><td><a href="soft.html#A#">06 Июн a# 20060606</a></td></tr>
 <tr><td><a href="soft.html#mgnat">27 Май a# -</a></td></tr>
 <tr><td><a href="soft.html#mgnat">07 Май a# -</a></td></tr>
-<!--
 <tr><td><a href="soft.html#pragmarc">27 Апр pragmarc</a></td></tr>
 <tr><td><a href="soft.html#adagide">23 Мар adagide 741</a></td></tr>
 <tr><td><a href="soft.html#A#">12 Мар a# -</a></td></tr>

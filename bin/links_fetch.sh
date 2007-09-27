@@ -4,7 +4,6 @@ MY_BIN=`dirname $0`
 
 function download ()
 {
-  WGET="wget --output-document=$2 --execute continue=off --timestamping"
   case "$1" in
     SF:*)
        sf_url=`echo $1 |sed -e s#SF:#$SF#`
@@ -14,7 +13,7 @@ function download ()
     ;;    
   esac;
   echo Download: $sf_url
-  $WGET $sf_url
+  wget --output-document="$2" --execute continue=off --timestamping $sf_url
 }
 
 function part ()
@@ -36,10 +35,10 @@ function part ()
     then
       mv "${STORE}$FILE" "${STORE}$1_old"
       echo Size $FILE changed
-      download $2 "$STORE/$FILE"
+      download "$2" "$STORE/$FILE"
     fi
   else
-     download $2 "$STORE/$FILE"
+     download "$2" "$STORE/$FILE"
   fi
   [ -r "$STORE/$FILE" ] && ln -s "`revpath $DIR`$STORE/$FILE" "$TARGET"
    MD5=`jigdo-file md5 --report quiet "$TARGET" |cut -f1 -d\ `
@@ -48,7 +47,7 @@ function part ()
      echo "Cant download " $*
      exit 1
    fi
-  echo ${MD5}=$2 >> $BUILD/jigdo.parts
+  echo "${MD5}=$2" >> $BUILD/jigdo.parts
 }
 
 function date_one ()

@@ -4,15 +4,15 @@ with AWS.Response;
 with Ada.Text_IO;
 with Ada.Exceptions;
 
-with AI302.Strings.Hash;
-with AI302.Containers.Indefinite_Hashed_Maps;
+with Ada.Strings.Hash;
+with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package body Ada_Links.Downloads is
 
    package Containers is
-     new AI302.Containers.Indefinite_Hashed_Maps
-     (String, Unbounded_String, AI302.Strings.Hash, "=", "=");
+     new Ada.Containers.Indefinite_Hashed_Maps
+     (String, Unbounded_String, Ada.Strings.Hash, "=", "=");
 
    Map : Containers.Map;
 
@@ -34,7 +34,7 @@ package body Ada_Links.Downloads is
    function Download_Page (Url : String) return File_Text is
       use Containers;
    begin
-      if Is_In (Url, Map) then
+      if Contains (Map, Url) then
          return To_String (Element (Map, Url));
       else
          declare

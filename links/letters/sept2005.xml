@@ -2,7 +2,7 @@
 <folder name='sept2005'>
 <descr lang='ru'>Выпуск sept2005</descr>
 <link id='sept2005.'
- home='http://www.acm.org/sigada/ada_letters/sept2005/'>
+ home='http://www.sigada.org/ada_letters/sept2005/'>
 <descr lang='ru'>Выпуск sept2005</descr>
 
 <file id='sept2005.NewsInfo.raw'>
@@ -14,7 +14,7 @@
 Newsletter Information
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/NewsInfo.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/NewsInfo.pdf' />
 </file>
 
 <file id='sept2005.Official-Letters.raw'>
@@ -26,7 +26,7 @@ Newsletter Information
 Letters from SIGAda Officials
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/Official-Letters.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/Official-Letters.pdf' />
 </file>
 
 <file id='sept2005.Endian-Independent%20Paper.raw'>
@@ -41,7 +41,7 @@ Wholesale Byte Reversal of the Outermost Ada Record Object to Achieve
 Endian Independence for Communicated Data Types - Randal P. Andress
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/Endian-Independent%20Paper.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/Endian-Independent%20Paper.pdf' />
 </file>
 
 <file id='sept2005.Dead%20Live%20Longer-Grein.raw'>
@@ -53,7 +53,7 @@ Endian Independence for Communicated Data Types - Randal P. Andress
 Dead Live Longer - A Dramoletto - Christoph Grein
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/Dead%20Live%20Longer-Grein.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/Dead%20Live%20Longer-Grein.pdf' />
 </file>
 
 <file id='sept2005.Intrusion%20in%20Ada-Levine.raw'>
@@ -65,7 +65,7 @@ Dead Live Longer - A Dramoletto - Christoph Grein
 Ada and the Control of Intrusion - Gertrude Levine
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/Intrusion%20in%20Ada-Levine.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/Intrusion%20in%20Ada-Levine.pdf' />
 </file>
 
 <file id='sept2005.Reusable%20SW%20Components-%20Trudy%20Levine.raw'>
@@ -77,7 +77,7 @@ Ada and the Control of Intrusion - Gertrude Levine
 Reusable Software Components - Gertrude (Trudy) Levine
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/Reusable%20SW%20Components-%20Trudy%20Levine.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/Reusable%20SW%20Components-%20Trudy%20Levine.pdf' />
 </file>
 
 <file id='sept2005.AI-00249.raw'>
@@ -89,7 +89,7 @@ AI 00249 - Ravenscar профайл для высоконадежных систем
 AI 00249 - Ravenscar Profile for High-Integrity Systems
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00249.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/AI-00249.pdf' />
 </file>
 
 <file id='sept2005.AI-00297.raw'>
@@ -101,7 +101,7 @@ AI 00297 - События таймера
 AI 00297 - Timing events
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00297.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/AI-00297.pdf' />
 </file>
 
 <file id='sept2005.AI-00298.raw'>
@@ -113,7 +113,7 @@ AI 00298 - Равноправное планирование
 AI 00298 - Non-Preemptive Dispatching
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00298.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/AI-00298.pdf' />
 </file>
 
 <file id='sept2005.AI-00303.raw'>
@@ -126,7 +126,7 @@ AI 00303 - Удаление требования к обработчикам прерываний
 AI 00303 - Removal of library-level requirement for interrupt handler objects
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00303.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/AI-00303.pdf' />
 </file>
 
 <file id='sept2005.AI-00305.raw'>
@@ -141,7 +141,7 @@ AI 00305 - New pragma and additional restriction identifiers for
 real-time systems
 </descr>
 <download type='file'
- url='http://www.acm.org/sigada/ada_letters/sept2005/AI-00305.pdf' />
+ url='http://www.sigada.org/ada_letters/sept2005/AI-00305.pdf' />
 </file>
 
 </link>
