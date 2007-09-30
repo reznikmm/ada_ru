@@ -32,9 +32,9 @@ with Users;
 package body Callbacks is
 
    use AWS;
+   use type Ada.Calendar.Time;
 
-   function Get_WWW_Root (Host : in String) return String;
-   pragma Inline (Get_WWW_Root);
+   function Get_WWW_Root (Request : in AWS.Status.Data) return String;
 
    function Get_File_Name (URI : in String) return String;
    pragma Inline (Get_File_Name);
@@ -52,33 +52,28 @@ package body Callbacks is
 
    Sidebar_File : constant String := "/wiki/layout.wiki";
 
-   -------------
-   -- Default --
-   -------------
-
-   function Default (Request : in AWS.Status.Data) return AWS.Response.Data is
-      File : constant String :=
-        Get_WWW_Root (Status.Host (Request)) & "/index.html";
-   begin
-      return AWS.Response.File (Content_Type => AWS.MIME.Text_HTML,
-                                Filename     => File);
-   end Default;
-
+   Wiki_Root   : Ada.Strings.Unbounded.Unbounded_String;
    Wiki_Prefix : Ada.Strings.Unbounded.Unbounded_String;
    Wiki_Suffix : Ada.Strings.Unbounded.Unbounded_String;
+   Wiki_Prefix_Time : Ada.Calendar.Time;
 
    ----------------------
    -- Read_Wiki_Prefix --
    ----------------------
 
    procedure Read_Wiki_Prefix (Root : String) is
+      use AWS.Resources;
       use Ada.Strings.Unbounded;
+      Name : constant String := Root & "/wiki.prefix";
    begin
-      if Wiki_Prefix = "" then
-         Wiki_Prefix
-           := To_Unbounded_String (Read_File (Root & "/wiki.prefix"));
-         Wiki_Suffix
-           := To_Unbounded_String (Read_File (Root & "/wiki.suffix"));
+      if Wiki_Root /= Root
+        or else Wiki_Prefix_Time < File_Timestamp (Name)
+      then
+         Wiki_Root   := To_Unbounded_String (Root);
+         Wiki_Prefix := To_Unbounded_String (Read_File (Name));
+         Wiki_Suffix := To_Unbounded_String
+           (Read_File (Root & "/wiki.suffix"));
+         Wiki_Prefix_Time := File_Timestamp (Name);
       end if;
    end Read_Wiki_Prefix;
 
@@ -95,7 +90,7 @@ package body Callbacks is
 
       Data    : Wiki.HTML_Output.Context;
    begin
-      Wiki.HTML_Output.Initialize (Data, "/wiki/");
+      Wiki.HTML_Output.Initialize (Data, "/");
       Parse (ASCII.LF & Text, Data);
 
       return Wiki.HTML_Output.Get_Text (Data);
@@ -128,7 +123,7 @@ package body Callbacks is
         Wiki.Parser.Replace (URI, "/edit_wiki/", "wiki:");
 
       Sidebar : constant String :=
-        Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File);
+        Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File, "/");
 
       Content : constant String := To_String (Wiki_Prefix)
         & Sidebar
@@ -156,8 +151,8 @@ package body Callbacks is
    is
       use Ada.Strings.Unbounded;
       URI     : constant String :=
-        Wiki.Parser.Replace (Status.URI (Request), "/edit_wiki/", "/wiki/");
-      Root    : constant String := Get_WWW_Root (Status.Host (Request));
+        Wiki.Parser.Replace (Status.URI (Request), "/edit_wiki/", "/");
+      Root    : constant String := Get_WWW_Root (Request);
       File    : constant String := Root & URI & ".wiki";
    begin
       Read_Wiki_Prefix (Root);
@@ -172,12 +167,13 @@ package body Callbacks is
    -- Get_WWW_Root --
    ------------------
 
-   function Get_WWW_Root (Host : in String) return String is
+   function Get_WWW_Root (Request : in AWS.Status.Data) return String is
+      Host : constant String := Status.Host (Request);
    begin
-      if Host = "" then
-         return AWS.Config.WWW_Root (AWS.Config.Get_Current);
-      else
+      if AWS.Utils.Is_Directory (Host) then
          return Host;
+      else
+         return Config.WWW_Root (Config.Get_Current);
       end if;
    end Get_WWW_Root;
 
@@ -194,6 +190,47 @@ package body Callbacks is
       end if;
    end Get_File_Name;
 
+   ----------------------
+   -- Get_Wiki_Or_HTML --
+   ----------------------
+
+   function Get_Wiki_Or_HTML
+     (Request : in AWS.Status.Data)
+     return AWS.Response.Data
+   is
+      Root    : constant String := Get_WWW_Root (Request);
+      URI     : constant String := Status.URI (Request);
+      File    : constant String := Root & Get_File_Name (URI);
+      Wiki    : constant String := File & ".wiki";
+   begin
+      if Utils.Is_Regular_File (Wiki)
+        and then (not Resources.Is_Regular_File (File)
+                  or else Resources.File_Timestamp (File) <
+                          Utils.File_Time_Stamp (Wiki))
+      then
+         return Get_Wiki (Request);
+      elsif Resources.Is_Regular_File (File) then
+         return Response.File
+           (Content_Type => MIME.Content_Type (File),
+            Filename     => File);
+      elsif Utils.Is_Directory (File) then
+         declare
+            Directory_Browser_Page : constant String
+              := Config.Directory_Browser_Page (Config.Get_Current);
+         begin
+            return Response.Build
+              (Content_Type => MIME.Text_HTML,
+               Message_Body =>
+                 Services.Directory.Browse
+                   (File, Directory_Browser_Page, Request));
+         end;
+      else
+         return Response.Acknowledge
+           (Messages.S404,
+            "<p>Page '" & URI & "' Not found.");
+      end if;
+   end Get_Wiki_Or_HTML;
+
    --------------
    -- Get_Wiki --
    --------------
@@ -201,7 +238,7 @@ package body Callbacks is
    function Get_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data is
       use Ada.Strings.Unbounded;
 
-      Root    : constant String := Get_WWW_Root (Status.Host (Request));
+      Root    : constant String := Get_WWW_Root (Request);
       URI     : constant String := Status.URI (Request);
       File    : constant String := Root & Get_File_Name (URI) & ".wiki";
       Time    : constant Ada.Calendar.Time
@@ -215,7 +252,7 @@ package body Callbacks is
 
          Since : constant String := If_Modified_Since (Request);
       begin
-         if not Is_Valid_HTTP_Date (Since) or else Time /= To_Time (Since) then
+         if not Is_Valid_HTTP_Date (Since) or else Time > To_Time (Since) then
             return True;
          else
             return False;
@@ -231,13 +268,15 @@ package body Callbacks is
       Read_Wiki_Prefix (Root);
 
       declare
-         Wiki_URI : constant String :=
-           Wiki.Parser.Replace (URI, "/wiki/", "wiki:");
+         Wiki_URI : constant String := "wiki:"
+           & URI (Uri'First + 1 .. URI'Last);
          Sidebar  : constant String :=
-           Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File);
-         Text     : constant String := To_String (Wiki_Prefix)
+           Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File, "/");
+         Text     : constant String :=
+           To_String (Wiki_Prefix)
            & Sidebar
-           & Expand_Wiki (Read_File (File)) & To_String (Wiki_Suffix);
+           & Expand_Wiki (Read_File (File))
+           & To_String (Wiki_Suffix);
          Result  : AWS.Response.Data
            := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
                                   Message_Body => Text);
@@ -260,6 +299,21 @@ package body Callbacks is
       return not Utils.Is_Regular_File (File_Name & ".ro");
    end Has_Write_Access;
 
+   -------------------
+   -- Post_Paasword --
+   -------------------
+
+   procedure Post_Password (Request : in AWS.Status.Data) is
+      use AWS.Parameters;
+      use Ada.Strings.Unbounded;
+
+      User : constant String := Status.Authorization_Name (Request);
+      P    : constant AWS.Parameters.List := Status.Parameters (Request);
+      Pwd  : constant String := Get (P, "value");
+   begin
+      Users.Set_Password (User, Pwd);
+   end Post_Password;
+
    ---------------
    -- Post_Wiki --
    ---------------
@@ -274,7 +328,7 @@ package body Callbacks is
       Text : constant String :=
         Wiki.Parser.Replace (Get (P, "text"), (1 => ASCII.CR), "");
       Post : constant String := Get (P, "post");
-      Root : constant String := Get_WWW_Root (Status.Host (Request));
+      Root : constant String := Get_WWW_Root (Request);
       File : constant String := Root & URI & ".wiki";
    begin
       if not Has_Write_Access (File) then
@@ -298,8 +352,9 @@ package body Callbacks is
       use AWS.Status;
       use AWS.Digest;
 
-      File    : constant String := Get_WWW_Root (Status.Host (Request))
-                                 & Get_File_Name (Status.URI (Request));
+      URI     : constant String := Status.URI (Request);
+      File    : constant String := Get_WWW_Root (Request)
+                                 & Get_File_Name (URI);
       Stale   : constant Boolean :=
         not Check_Nonce (Authorization_Nonce (Request));
 
@@ -316,8 +371,10 @@ package body Callbacks is
       then
          return Response.Authenticate
                   ("Ada_Ru private", Response.Digest, Stale);
-      elsif Status.URI (Request) = "/edit_wiki/" then
+      elsif URI = "/edit_wiki/" then
          return Post_Wiki (Request);
+      elsif URI = "/password" then
+         Post_Password (Request);
       elsif Is_Folder (File) then
          GNAT.Directory_Operations.Make_Dir (File);
       elsif not Has_Write_Access (File) then

@@ -8,9 +8,11 @@ package Callbacks is
 
    function Put (Request : in AWS.Status.Data) return AWS.Response.Data;
 
-   function Default (Request : in AWS.Status.Data) return AWS.Response.Data;
-
    function Get_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data;
    function Edit_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data;
+
+   function Get_Wiki_Or_HTML
+     (Request : in AWS.Status.Data)
+     return AWS.Response.Data;
 
 end Callbacks;
