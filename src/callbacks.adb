@@ -268,10 +268,8 @@ package body Callbacks is
       Read_Wiki_Prefix (Root);
 
       declare
-         Wiki_URI : constant String := "wiki:"
-           & URI (Uri'First + 1 .. URI'Last);
          Sidebar  : constant String :=
-           Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File, "/");
+           Wiki.Sidebar.Expand (URI, Root & Sidebar_File, "/");
          Text     : constant String :=
            To_String (Wiki_Prefix)
            & Sidebar
