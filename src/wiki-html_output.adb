@@ -3,9 +3,6 @@ with Wiki.Parser;
 package body Wiki.HTML_Output is
    use Ada.Strings.Unbounded;
 
-   function Clean (Text : String) return String;
-   --  mangle html entities
-
    function Link (Ref : String; Title : String; Data : Context) return String;
    --  make <a> or <img> element
 

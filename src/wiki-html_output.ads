@@ -23,9 +23,12 @@ package Wiki.HTML_Output is
 private
    package U renames Ada.Strings.Unbounded;
 
+   function Clean (Text : String) return String;
+   --  mangle html entities
+
    type Context is record
-      Buffer   : Ada.Strings.Unbounded.Unbounded_String;
-      Wiki_URI : Ada.Strings.Unbounded.Unbounded_String;
+      Buffer   : U.Unbounded_String;
+      Wiki_URI : U.Unbounded_String;
    end record;
 
 end Wiki.HTML_Output;

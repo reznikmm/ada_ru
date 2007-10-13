@@ -25,7 +25,7 @@ with GNAT.Directory_Operations;
 with Wiki.Utils;
 with Wiki.Parser;
 with Wiki.Sidebar;
-with Wiki.HTML_Output;
+with Wiki.HTML_Output.With_Ada;
 
 with Users;
 
@@ -83,17 +83,17 @@ package body Callbacks is
 
    function Expand_Wiki (Text : String) return String is
       procedure Parse is new Wiki.Parser.Parse
-        (Context       => Wiki.HTML_Output.Context,
-         Start_Element => Wiki.HTML_Output.Start_Element,
-         End_Element   => Wiki.HTML_Output.End_Element,
-         Characters    => Wiki.HTML_Output.Characters);
+        (Context       => Wiki.HTML_Output.With_Ada.Context,
+         Start_Element => Wiki.HTML_Output.With_Ada.Start_Element,
+         End_Element   => Wiki.HTML_Output.With_Ada.End_Element,
+         Characters    => Wiki.HTML_Output.With_Ada.Characters);
 
-      Data    : Wiki.HTML_Output.Context;
+      Data    : Wiki.HTML_Output.With_Ada.Context;
    begin
-      Wiki.HTML_Output.Initialize (Data, "/");
+      Wiki.HTML_Output.With_Ada.Initialize (Data, "/");
       Parse (ASCII.LF & Text, Data);
 
-      return Wiki.HTML_Output.Get_Text (Data);
+      return Wiki.HTML_Output.With_Ada.Get_Text (Data);
    end Expand_Wiki;
 
    ---------------
@@ -243,6 +243,8 @@ package body Callbacks is
       File    : constant String := Root & Get_File_Name (URI) & ".wiki";
       Time    : constant Ada.Calendar.Time
         := AWS.Resources.File_Timestamp (File);
+      Side_Tm : constant Ada.Calendar.Time
+        := AWS.Resources.File_Timestamp (Root & Sidebar_File);
 
       function Changed return Boolean is
          use AWS.Status;
@@ -252,7 +254,10 @@ package body Callbacks is
 
          Since : constant String := If_Modified_Since (Request);
       begin
-         if not Is_Valid_HTTP_Date (Since) or else Time > To_Time (Since) then
+         if not Is_Valid_HTTP_Date (Since) or else
+           Time > To_Time (Since) or else
+           Side_Tm > To_Time (Since)
+         then
             return True;
          else
             return False;
