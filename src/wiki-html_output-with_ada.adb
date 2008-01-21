@@ -117,7 +117,9 @@ package body Wiki.HTML_Output.With_Ada is
             Buffer := Buffer & "</pre></div>";
          end;
       else
+         Data.Parent.Buffer := Data.Parent.Buffer & "<pre>";
          Characters (Text, Data.Parent);
+         Data.Parent.Buffer := Data.Parent.Buffer & "</pre>";
       end if;
    end Characters;
 
