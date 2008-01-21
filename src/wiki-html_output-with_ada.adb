@@ -59,8 +59,8 @@ package body Wiki.HTML_Output.With_Ada is
    is
    begin
       if Data.In_Preformated and then
-        Text'Length > 4 and then
-        Text (Text'First) /= '#'
+        Text'Length > 5 and then
+        Text (Text'First .. Text'First + 4) = "#!ada"
       then
          declare
             use Ada_Lexer;
