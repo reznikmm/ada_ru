@@ -74,7 +74,9 @@ package body Wiki.HTML_Output.With_Ada is
             Span   : Boolean;
          begin
             The_Scaners.Set_Encoding (Lexer, KOI8_R);
-            Text_Streams.Strings.Initialize (Stream, Text);
+            Text_Streams.Strings.Initialize
+              (Stream, Text (Text'First + 6 .. Text'Last);
+
             Buffer := Buffer & "<div class='ada'><pre>";
 
             loop
