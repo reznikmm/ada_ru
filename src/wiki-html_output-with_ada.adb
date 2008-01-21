@@ -57,15 +57,15 @@ package body Wiki.HTML_Output.With_Ada is
      (Text : in     String;
       Data : in out Context)
    is
+      use Ada.Strings.Unbounded;
    begin
       if Data.In_Preformated and then
         Text'Length > 5 and then
-        Text (Text'First .. Text'First + 4) = "#!ada"
+        Text (Text'First + 1 .. Text'First + 5) = "#!ada"
       then
          declare
             use Ada_Lexer;
             use Encodings;
-            use Ada.Strings.Unbounded;
 
             Stream : aliased Text_Streams.Strings.String_Text_Stream;
             Lexer  : The_Scaners.Scaner (Stream'Access);
@@ -75,7 +75,7 @@ package body Wiki.HTML_Output.With_Ada is
          begin
             The_Scaners.Set_Encoding (Lexer, KOI8_R);
             Text_Streams.Strings.Initialize
-              (Stream, Text (Text'First + 6 .. Text'Last);
+              (Stream, Text (Text'First + 6 .. Text'Last));
 
             Buffer := Buffer & "<div class='ada'><pre>";
 
@@ -118,10 +118,12 @@ package body Wiki.HTML_Output.With_Ada is
 
             Buffer := Buffer & "</pre></div>";
          end;
-      else
+      elsif Data.In_Preformated then
          Data.Parent.Buffer := Data.Parent.Buffer & "<pre>";
          Characters (Text, Data.Parent);
          Data.Parent.Buffer := Data.Parent.Buffer & "</pre>";
+      else
+         Characters (Text, Data.Parent); 
       end if;
    end Characters;
 
