@@ -46,6 +46,10 @@ package body Callbacks is
    function Read_File (Name : String) return String
      renames Wiki.Utils.Read_File;
 
+   function Has_Write_Access (File_Name : String) return Boolean;
+
+   procedure Post_Password (Request : in AWS.Status.Data);
+
    function Expand_Wiki (Text : String) return String;
    function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data;
    procedure Read_Wiki_Prefix (Root : String);
@@ -172,6 +176,8 @@ package body Callbacks is
       Side_Tm : constant Ada.Calendar.Time
         := AWS.Resources.File_Timestamp (Root & Sidebar_File);
 
+      function Changed return Boolean;
+
       function Changed return Boolean is
          use AWS.Status;
          use AWS.Messages;
@@ -219,20 +225,6 @@ package body Callbacks is
       end;
    end Get_Wiki;
 
-   ------------------
-   -- Get_WWW_Root --
-   ------------------
-
-   function Get_WWW_Root (Request : in AWS.Status.Data) return String is
-      Host : constant String := Status.Host (Request);
-   begin
-      if AWS.Utils.Is_Directory (Host) then
-         return Host;
-      else
-         return Config.WWW_Root (Config.Get_Current);
-      end if;
-   end Get_WWW_Root;
-
    ----------------------
    -- Get_Wiki_Or_HTML --
    ----------------------
@@ -274,11 +266,25 @@ package body Callbacks is
       end if;
    end Get_Wiki_Or_HTML;
 
+   ------------------
+   -- Get_WWW_Root --
+   ------------------
+
+   function Get_WWW_Root (Request : in AWS.Status.Data) return String is
+      Host : constant String := Status.Host (Request);
+   begin
+      if AWS.Utils.Is_Directory (Host) then
+         return Host;
+      else
+         return Config.WWW_Root (Config.Get_Current);
+      end if;
+   end Get_WWW_Root;
+
    ----------------------
    -- Has_Write_Access --
    ----------------------
 
-   function Has_Write_Access (File_Name : String)return Boolean is
+   function Has_Write_Access (File_Name : String) return Boolean is
    begin
       return not Utils.Is_Regular_File (File_Name & ".ro");
    end Has_Write_Access;
