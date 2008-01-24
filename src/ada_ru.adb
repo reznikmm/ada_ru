@@ -1,9 +1,9 @@
 
 with Ada.Text_IO;
 
-with AWS.Log;
 with AWS.Config;
-with AWS.Server;
+with AWS.Default;
+with AWS.Server.Log;
 with AWS.Status;
 
 with Callbacks;
@@ -18,11 +18,13 @@ procedure Ada_Ru is
    use AWS.Dispatchers;
    use AWS.Services.Dispatchers;
 
-   WS   : AWS.Server.HTTP;
-   U    : URI.Handler;
-   M    : Method.Handler;
-   C    : Callback.Handler := Callback.Create
+   WS : AWS.Server.HTTP;
+   U  : URI.Handler;
+   M  : Method.Handler;
+   C  : Callback.Handler := Callback.Create
      (Callbacks.Get_Wiki_Or_HTML'Access);
+
+   Config : constant AWS.Config.Object := AWS.Config.Get_Current;
 
 begin
    Text_IO.Put_Line ("AWS " & AWS.Version);
@@ -33,7 +35,14 @@ begin
    Method.Register (M, AWS.Status.POST, Callbacks.Put'Access);
    Method.Register_Default_Callback (M, U);
 
-   AWS.Server.Start (WS, Dispatcher => M, Config => AWS.Config.Get_Current);
+   AWS.Server.Start (WS, Dispatcher => M, Config => Config);
+
+   if AWS.Config.Log_File_Directory (Config)
+      /= AWS.Default.Log_File_Directory
+   then
+      AWS.Server.Log.Start (WS);
+      AWS.Server.Log.Start_Error (WS);
+   end if;
 
    loop
       delay 4 * 3600.0;
