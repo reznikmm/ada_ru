@@ -8,7 +8,7 @@ package Wiki is
       Heading_3, Heading_2, Heading_1,
       Paragraph, Break, Ordered_List, Numbered_List, List_Item,
       Table_Row, Table_Cell, HTTP_Link, Boxed_Wiki_Link, Boxed_Link,
-      Horizontal_Line);
+      Horizontal_Line, Anchor);
 
    subtype Heading is Element_Kinds range Heading_3 .. Heading_1;
 
@@ -23,6 +23,8 @@ package Wiki is
            | Boxed_Wiki_Link =>
             Link  : Ada.Strings.Unbounded.Unbounded_String;
             Title : Ada.Strings.Unbounded.Unbounded_String;
+         when Anchor =>
+            Anchor_Name : Ada.Strings.Unbounded.Unbounded_String;
          when others =>
             null;
       end case;

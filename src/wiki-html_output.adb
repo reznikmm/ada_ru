@@ -62,6 +62,8 @@ package body Wiki.HTML_Output is
               Link (To_String (Info.Link), To_String (Info.Title), Data);
          when Horizontal_Line =>
             Data.Buffer := Data.Buffer & "<hr/>";
+         when Anchor =>
+            Data.Buffer := Data.Buffer & "<a name='" & Info.Anchor_Name & "'>";
       end case;
    end Start_Element;
 
@@ -120,6 +122,8 @@ package body Wiki.HTML_Output is
             null;
          when Horizontal_Line =>
             null;
+         when Anchor =>
+            Data.Buffer := Data.Buffer & "</a>";
       end case;
    end End_Element;
 

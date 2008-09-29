@@ -348,6 +348,11 @@ package body Wiki.Parser is
                Next := Text'First + 4;
                Start_Element (Info, Data);
                End_Element (Info, Data);
+            when Anchor =>
+               Next := Find (Text, "]") + 1;
+               Info.Anchor_Name := +Text (Text'First + 2 .. Next - 2);
+               Start_Element (Info, Data);
+               End_Element (Info, Data);
          end case;
       end Element;
 
@@ -568,6 +573,8 @@ package body Wiki.Parser is
             return Index (Text, "[wiki:");
          when Horizontal_Line =>
             return Index (Text, "----");
+         when Anchor =>
+            return Index (Text, "[#");
       end case;
    end Start;
 
