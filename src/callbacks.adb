@@ -116,6 +116,7 @@ package body Callbacks is
    function Edit_Wiki
      (Request : in AWS.Status.Data) return AWS.Response.Data
    is
+      use AWS.Resources;
       use Ada.Strings.Unbounded;
       URI     : constant String :=
         Wiki.Parser.Replace (Status.URI (Request), "/edit_wiki/", "/");
@@ -123,10 +124,23 @@ package body Callbacks is
       File    : constant String := Root & URI & ".wiki";
    begin
       Read_Wiki_Prefix (Root);
-      return Edit_Wiki (URI, Read_File (File), Root);
-   exception
-      when Ada.Text_IO.Name_Error =>
-         return Edit_Wiki (URI, "", Root);
+
+      if Exist (File) = Plain then
+         return Edit_Wiki (URI, Read_File (File), Root);
+      else
+         declare
+            use AWS.Parameters;
+            List : constant AWS.Parameters.List := Status.Parameters (Request);
+            Init : constant String := Get (List, "init");
+            File : constant String := Root & Init & ".wiki";
+         begin
+            if Exist (File) = Plain then
+               return Edit_Wiki (URI, Read_File (File), Root);
+            else
+               return Edit_Wiki (URI, "", Root);
+            end if;
+         end;
+      end if;
    end Edit_Wiki;
 
    -----------------
