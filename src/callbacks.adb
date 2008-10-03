@@ -169,6 +169,7 @@ package body Callbacks is
       Result :    out Ada.Strings.Unbounded.Unbounded_String)
    is
       use Ada.Strings;
+      use AWS.Resources;
       use type Ada.Calendar.Time;
       use type Ada.Strings.Unbounded.Unbounded_String;
 
@@ -217,19 +218,16 @@ package body Callbacks is
 
             Wiki_File : constant String
               := Prefix & Text (Load + Load_Token'Length .. To - 1) & ".wiki";
-
-            Wiki_Text : constant String := Read_File (Wiki_File);
-
-            Wiki_Time  : Ada.Calendar.Time
-              := AWS.Resources.File_Timestamp (Wiki_File);
          begin
-            Wiki.HTML_Output.Initialize (Context, "");
-            Parse (ASCII.LF & Wiki_Text, Context);
+            if Exist (Wiki_File) = Plain then
+               Wiki.HTML_Output.Initialize (Context, "");
+               Parse (ASCII.LF & Read_File (Wiki_File), Context);
 
-            Result := Result & Wiki.HTML_Output.Get_Text (Context);
+               Result := Result & Wiki.HTML_Output.Get_Text (Context);
 
-            if Wiki_Time > Time then
-               Time := Wiki_Time;
+               if File_Timestamp (Wiki_File) > Time then
+                  Time := File_Timestamp (Wiki_File);
+               end if;
             end if;
          end;
 
@@ -535,8 +533,10 @@ package body Callbacks is
         or else User = ""
         or else Pwd = ""
         or else not Check_Digest (Request, Pwd)
-        or else Stale
       then
+         return Response.Authenticate
+                  ("Ada_Ru private", Response.Digest);
+      elsif Stale then
          return Response.Authenticate
                   ("Ada_Ru private", Response.Digest, Stale);
       elsif URI = "/edit_wiki/" then
