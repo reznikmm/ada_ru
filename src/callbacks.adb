@@ -1,6 +1,7 @@
 with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Calendar;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 with Ada.Streams.Stream_IO;
 
@@ -122,7 +123,6 @@ package body Callbacks is
       File    : constant String := Root & URI & ".wiki";
    begin
       Read_Wiki_Prefix (Root);
-
       return Edit_Wiki (URI, Read_File (File), Root);
    exception
       when Ada.Text_IO.Name_Error =>
@@ -147,6 +147,126 @@ package body Callbacks is
 
       return Wiki.HTML_Output.With_Ada.Get_Text (Data);
    end Expand_Wiki;
+
+   procedure Expand_ARM
+     (Prefix : in String;
+      Text   : in String;
+      Time   : in out Ada.Calendar.Time;
+      Result :    out Ada.Strings.Unbounded.Unbounded_String)
+   is
+      use Ada.Strings;
+      use type Ada.Calendar.Time;
+      use type Ada.Strings.Unbounded.Unbounded_String;
+
+      procedure Start_Element
+        (Info : in     Wiki.Element_Info;
+         Data : in out Wiki.HTML_Output.Context)
+      is
+         use type Wiki.Element_Kinds;
+      begin
+         if Info.Kind /= Wiki.Paragraph then
+            Wiki.HTML_Output.Start_Element (Info, Data);
+         end if;
+      end;
+
+      procedure End_Element
+        (Info : in     Wiki.Element_Info;
+         Data : in out Wiki.HTML_Output.Context)
+      is
+         use type Wiki.Element_Kinds;
+      begin
+         if Info.Kind /= Wiki.Paragraph then
+            Wiki.HTML_Output.End_Element (Info, Data);
+         end if;
+      end;
+
+      procedure Parse is new Wiki.Parser.Parse
+        (Context       => Wiki.HTML_Output.Context,
+         Start_Element => Start_Element,
+         End_Element   => End_Element,
+         Characters    => Wiki.HTML_Output.Characters);
+
+      Load_Token : constant String := "@LOAD(";
+      From       : Positive := Text'First;
+      To         : Positive;
+      Load       : Natural := Fixed.Index (Text, Load_Token);
+   begin
+      Result := Unbounded.Null_Unbounded_String;
+
+      while Load /= 0 loop
+         Result := Result & Text (From .. Load - 1);
+
+         To   := Fixed.Index (Text (Load .. Text'Last), ")");
+
+         declare
+            Context   : Wiki.HTML_Output.Context;
+
+            Wiki_File : constant String
+              := Prefix & Text (Load + Load_Token'Length .. To - 1) & ".wiki";
+
+            Wiki_Text : constant String := Read_File (Wiki_File);
+
+            Wiki_Time  : Ada.Calendar.Time
+              := AWS.Resources.File_Timestamp (Wiki_File);
+         begin
+            Wiki.HTML_Output.Initialize (Context, "");
+            Parse (ASCII.LF & Wiki_Text, Context);
+
+            Result := Result & Wiki.HTML_Output.Get_Text (Context);
+
+            if Wiki_Time > Time then
+               Time := Wiki_Time;
+            end if;
+         end;
+
+         From := To + 1;
+
+         Load := Fixed.Index (Text (From .. Text'Last), Load_Token);
+      end loop;
+
+      Result := Result & Text (From .. Text'Last);
+   end Expand_ARM;
+
+   -------------
+   -- Get_ARM --
+   -------------
+
+   function Get_ARM (Request : in AWS.Status.Data) return AWS.Response.Data is
+      use AWS.Status;
+      use AWS.Messages;
+      use AWS.Server.HTTP_Utils;
+      use type Ada.Calendar.Time;
+
+      Root    : constant String := Get_WWW_Root (Request);
+      URI     : constant String := Status.URI (Request);
+      File    : constant String := Root & Get_File_Name (URI);
+      Text    : constant String := Read_File (File);
+      Since   : constant String := If_Modified_Since (Request);
+      Time    : Ada.Calendar.Time
+        := AWS.Resources.File_Timestamp (File);
+
+      Full_Text : Ada.Strings.Unbounded.Unbounded_String;
+   begin
+      Expand_ARM (Root & "/arm/", Text, Time, Full_Text);
+
+      if Is_Valid_HTTP_Date (Since) and then Time <= To_Time (Since) then
+         return AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
+                                    Message_Body => "",
+                                    Status_Code  => Messages.S304);
+      end if;
+
+      declare
+         Result  : AWS.Response.Data
+           := AWS.Response.Build (AWS.MIME.Text_HTML, Full_Text);
+      begin
+         AWS.Response.Set.Add_Header
+           (Result,
+            AWS.Messages.Last_Modified_Token,
+            AWS.Messages.To_HTTP_Date (Time));
+
+         return Result;
+      end;
+   end Get_ARM;
 
    -------------------
    -- Get_File_Name --

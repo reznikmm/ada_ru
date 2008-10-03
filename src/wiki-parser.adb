@@ -451,9 +451,9 @@ package body Wiki.Parser is
 
       procedure Put_Text (Text : in String) is
       begin
-         if Index_Non_Blank (Text) = 0 then
-            return;
-         end if;
+--         if Index_Non_Blank (Text) = 0 then
+--            return;
+--         end if;
 
          Open_Para;
 
@@ -572,7 +572,7 @@ package body Wiki.Parser is
          when Boxed_Wiki_Link =>
             return Index (Text, "[wiki:");
          when Horizontal_Line =>
-            return Index (Text, "----");
+            return Index (Text, "----" & ASCII.LF);
          when Anchor =>
             return Index (Text, "[#");
       end case;

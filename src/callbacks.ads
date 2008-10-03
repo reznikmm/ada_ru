@@ -15,4 +15,6 @@ package Callbacks is
      (Request : in AWS.Status.Data)
      return AWS.Response.Data;
 
+   function Get_ARM (Request : in AWS.Status.Data) return AWS.Response.Data;
+
 end Callbacks;

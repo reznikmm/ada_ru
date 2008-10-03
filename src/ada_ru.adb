@@ -29,6 +29,7 @@ procedure Ada_Ru is
 begin
    Text_IO.Put_Line ("AWS " & AWS.Version);
 
+   URI.Register (U, "/arm/",       Callbacks.Get_ARM'Access, True);
    URI.Register (U, "/edit_wiki/", Callbacks.Edit_Wiki'Access, True);
    URI.Register_Default_Callback (U, C);
 
