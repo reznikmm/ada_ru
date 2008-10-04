@@ -27,6 +27,7 @@ package body Wiki.HTML_Output is
             Data.Buffer := Data.Buffer & "<span class='underline'>";
          when Monospace | Monospace_2 =>
             Data.Buffer := Data.Buffer & "<tt>";
+            Data.In_Mono := True;
          when Strike =>
             Data.Buffer := Data.Buffer & "<del>";
          when Superscript =>
@@ -88,6 +89,7 @@ package body Wiki.HTML_Output is
             Data.Buffer := Data.Buffer & "</span>";
          when Monospace | Monospace_2 =>
             Data.Buffer := Data.Buffer & "</tt>";
+            Data.In_Mono := False;
          when Strike =>
             Data.Buffer := Data.Buffer & "</del>";
          when Superscript =>
@@ -136,20 +138,26 @@ package body Wiki.HTML_Output is
       Data : in out Context)
    is
    begin
-      Data.Buffer := Data.Buffer & Clean (Text);
+      Data.Buffer := Data.Buffer & Clean (Text, Data.In_Mono);
    end Characters;
 
    -----------
    -- Clean --
    -----------
 
-   function Clean (Text : String) return String is
+   function Clean (Text : String; Space : Boolean := False) return String is
       use Wiki.Parser;
+      Clean_Text : constant String := 
+        Replace (Replace (Replace (Text,
+                                   "&", "&amp;"),
+                          "<", "&lt;"),
+                 ">", "&gt;");
    begin
-      return Replace (Replace (Replace (Text,
-                                        "&", "&amp;"),
-                               "<", "&lt;"),
-                      ">", "&gt;");
+      if Space then
+         return Replace (Clean_Text, " ", "&nbsp;");
+      else
+         return Clean_Text;
+      end if;
    end Clean;
 
    --------------
@@ -173,6 +181,7 @@ package body Wiki.HTML_Output is
    begin
       Data.Wiki_URI := To_Unbounded_String (Wiki_URI_Prefix);
       Data.Buffer   := Null_Unbounded_String;
+      Data.In_Mono  := False;
    end Initialize;
 
    ----------
