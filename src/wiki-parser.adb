@@ -1,5 +1,5 @@
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-
+with Ada.Text_IO;
 package body Wiki.Parser is
    package U renames Ada.Strings.Unbounded;
 
@@ -284,6 +284,33 @@ package body Wiki.Parser is
                Current.Need_Para := None;
                Process (ASCII.LF & "}}}", False, False);
                Current.Need_Para := Para;
+            when Special_Format =>
+               Close_Para;
+               Next := Index (Text, ASCII.LF & "}}}");
+
+               declare
+                  use Ada.Strings;
+                  From  : constant Positive := Text'First + 6;
+                  Space : constant Natural := Find (Text (From .. Next), " ");
+                  Line  : constant Natural :=
+                    Index (Text (From .. Next), (1 => ASCII.LF));
+               begin
+                  if Space = 0 or else Space >= Line then
+                     Info.Format := +Trim (Text (From .. Line - 1), Both);
+                     Info.Argument := +"";
+                  else
+                     Info.Format := +Trim (Text (From .. Space - 1), Both);
+                     Info.Argument :=
+                       +Trim (Text (Space + 1 .. Line - 1), Both);
+                  end if;
+
+                  Start_Element (Info, Data);
+                  Characters (Text (Line + 1 .. Next - 1), Data);
+                  End_Element (Info, Data);
+                  Next := Next + 4;
+               end;
+
+               Current.Need_Para := Para;
             when Ordered_List =>
                Deep := Count_Spaces (Text) / 2;
                Close_Para (Deep);
@@ -493,6 +520,8 @@ package body Wiki.Parser is
       case Kind is
          when Preformat =>
             return Index (Text, ASCII.LF & "{{{" & ASCII.LF);
+         when Special_Format =>
+            return Index (Text, ASCII.LF & "{{{" & ASCII.LF & '#');
          when Bold_Italic =>
             return Index (Text, "'''''");
          when Bold =>

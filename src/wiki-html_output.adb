@@ -1,10 +1,19 @@
 with Wiki.Parser;
+with Ada.Text_IO;
 
 package body Wiki.HTML_Output is
    use Ada.Strings.Unbounded;
+   use type Special_Formats.Special_Formatter;
+
 
    function Link (Ref : String; Title : String; Data : Context) return String;
    --  make <a> or <img> element
+
+   function "+" (Text : U.Unbounded_String) return String
+     renames U.To_String;
+
+   function "+" (Text : String) return Unbounded_String
+     renames U.To_Unbounded_String;
 
    -------------------
    -- Start_Element --
@@ -15,6 +24,18 @@ package body Wiki.HTML_Output is
       Data : in out Context) is
    begin
       case Info.Kind is
+         when Special_Format =>
+            declare
+               use Special_Formats;
+               Formatter : constant Special_Formatter := Get (+Info.Format);
+            begin
+               if Formatter = null then
+                  Start_Element ((Kind => Preformat), Data);
+               else
+                  Data.Special_Format := Formatter;
+                  Data.Special_Argument := Info.Argument;
+               end if;
+            end;
          when Preformat =>
             Data.Buffer := Data.Buffer & "<pre>";
          when Bold_Italic =>
@@ -77,6 +98,12 @@ package body Wiki.HTML_Output is
       Data : in out Context) is
    begin
       case Info.Kind is
+         when Special_Format =>
+            if Data.Special_Format = null then
+               End_Element ((Kind => Preformat), Data);
+            else
+               Data.Special_Format := null;
+            end if;
          when Preformat =>
             Data.Buffer := Data.Buffer & "</pre>";
          when Bold_Italic =>
@@ -137,8 +164,16 @@ package body Wiki.HTML_Output is
      (Text : in     String;
       Data : in out Context)
    is
+      use type Special_Formats.Strings;
    begin
-      Data.Buffer := Data.Buffer & Clean (Text, Data.In_Mono);
+      if Data.Special_Format = null then
+         Data.Buffer := Data.Buffer & Clean (Text, Data.In_Mono);
+      else
+         Data.Buffer := Data.Buffer & Data.Special_Format
+           (Text, (Data.Arguments.Length + 1,
+                   ((+"arg") & Data.Arguments.Names),
+                   (Data.Special_Argument & Data.Arguments.Values)));
+      end if;
    end Characters;
 
    -----------
@@ -147,7 +182,7 @@ package body Wiki.HTML_Output is
 
    function Clean (Text : String; Space : Boolean := False) return String is
       use Wiki.Parser;
-      Clean_Text : constant String := 
+      Clean_Text : constant String :=
         Replace (Replace (Replace (Text,
                                    "&", "&amp;"),
                           "<", "&lt;"),
@@ -175,13 +210,16 @@ package body Wiki.HTML_Output is
 
    procedure Initialize
      (Data            :    out Context;
-      Wiki_URI_Prefix : in     String)
+      Wiki_URI_Prefix : in     String;
+      Arguments       : in     Argument_List := Null_Arguments)
    is
       use Ada.Strings.Unbounded;
    begin
-      Data.Wiki_URI := To_Unbounded_String (Wiki_URI_Prefix);
-      Data.Buffer   := Null_Unbounded_String;
-      Data.In_Mono  := False;
+      Data.Wiki_URI  := To_Unbounded_String (Wiki_URI_Prefix);
+      Data.Buffer    := Null_Unbounded_String;
+      Data.In_Mono   := False;
+      Data.Special_Format := null;
+      Data.Arguments := Arguments;
    end Initialize;
 
    ----------

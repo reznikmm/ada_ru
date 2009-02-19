@@ -3,7 +3,7 @@ with Ada.Strings.Unbounded;
 package Wiki is
 
    type Element_Kinds is
-     (Preformat, Bold_Italic, Bold, Italic, Underline,
+     (Special_Format, Preformat, Bold_Italic, Bold, Italic, Underline,
       Strike, Superscript, Subscript, Monospace, Monospace_2,
       Heading_3, Heading_2, Heading_1,
       Paragraph, Break, Ordered_List, Numbered_List, List_Item,
@@ -25,6 +25,9 @@ package Wiki is
             Title : Ada.Strings.Unbounded.Unbounded_String;
          when Anchor =>
             Anchor_Name : Ada.Strings.Unbounded.Unbounded_String;
+         when Special_Format =>
+            Format   : Ada.Strings.Unbounded.Unbounded_String;
+            Argument : Ada.Strings.Unbounded.Unbounded_String;
          when others =>
             null;
       end case;

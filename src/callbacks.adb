@@ -24,7 +24,10 @@ with GNAT.Directory_Operations;
 with Wiki.Utils;
 with Wiki.Parser;
 with Wiki.Sidebar;
-with Wiki.HTML_Output.With_Ada;
+with Wiki.Ada_Format;
+with Wiki.HTML_Output;
+with Wiki.Special_Formats;
+--with Wiki.Database_Format;
 
 with Users;
 
@@ -32,6 +35,7 @@ package body Callbacks is
 
    use AWS;
    use type Ada.Calendar.Time;
+   package S renames Wiki.Special_Formats;
 
    function Get_WWW_Root (Request : in AWS.Status.Data) return String;
 
@@ -51,10 +55,14 @@ package body Callbacks is
 
    procedure Post_Password (Request : in AWS.Status.Data);
 
-   function Expand_Wiki (Text : String) return String;
+   function Expand_Wiki
+     (Text : String;
+      Args : S.Argument_List := S.Null_Arguments) return String;
+
    function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data;
    procedure Read_Wiki_Prefix (Root : String);
    function Post_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data;
+   function To_Arguments (Request : in AWS.Status.Data) return S.Argument_List;
 
    Sidebar_File : constant String := "/wiki/layout.wiki";
 
@@ -147,19 +155,22 @@ package body Callbacks is
    -- Expand_Wiki --
    -----------------
 
-   function Expand_Wiki (Text : String) return String is
+   function Expand_Wiki
+     (Text : String;
+      Args : S.Argument_List := S.Null_Arguments) return String
+   is
       procedure Parse is new Wiki.Parser.Parse
-        (Context       => Wiki.HTML_Output.With_Ada.Context,
-         Start_Element => Wiki.HTML_Output.With_Ada.Start_Element,
-         End_Element   => Wiki.HTML_Output.With_Ada.End_Element,
-         Characters    => Wiki.HTML_Output.With_Ada.Characters);
+        (Context       => Wiki.HTML_Output.Context,
+         Start_Element => Wiki.HTML_Output.Start_Element,
+         End_Element   => Wiki.HTML_Output.End_Element,
+         Characters    => Wiki.HTML_Output.Characters);
 
-      Data    : Wiki.HTML_Output.With_Ada.Context;
+      Data      : Wiki.HTML_Output.Context;
    begin
-      Wiki.HTML_Output.With_Ada.Initialize (Data, "/");
+      Wiki.HTML_Output.Initialize (Data, "/", Args);
       Parse (ASCII.LF & Text, Data);
 
-      return Wiki.HTML_Output.With_Ada.Get_Text (Data);
+      return Wiki.HTML_Output.Get_Text (Data);
    end Expand_Wiki;
 
    procedure Expand_ARM
@@ -342,7 +353,7 @@ package body Callbacks is
          Text     : constant String :=
            To_String (Wiki_Prefix)
            & Sidebar
-           & Expand_Wiki (Read_File (File))
+           & Expand_Wiki (Read_File (File), To_Arguments (Request))
            & To_String (Wiki_Suffix);
          Result  : AWS.Response.Data
            := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
@@ -583,6 +594,28 @@ package body Callbacks is
       end if;
    end Read_Wiki_Prefix;
 
+   ------------------
+   -- To_Arguments --
+   ------------------
+
+   function To_Arguments
+     (Request : in AWS.Status.Data)
+     return S.Argument_List
+   is
+      use AWS.Parameters;
+      use Ada.Strings.Unbounded;
+      List   : constant AWS.Parameters.List := Status.Parameters (Request);
+      Length : constant Natural := Count (List);
+      Result : S.Argument_List (Length);
+   begin
+      for J in 1 .. Length loop
+         Result.Names (J) := To_Unbounded_String (Get_Name (List, J));
+         Result.Values (J) := To_Unbounded_String (Get_Value (List, J));
+      end loop;
+
+      return Result;
+   end To_Arguments;
+
    ----------------
    -- Write_File --
    ----------------
@@ -664,5 +697,9 @@ package body Callbacks is
       --      Ada.Exceptions.Reraise_Occurrence (E);
    end Write_File;
 
+begin
+   S.Register ("ada", Wiki.Ada_Format'Access);
+--   S.Register ("db*text", Wiki.Database_Format.DB_To_Text'Access);
+--   S.Register ("db*xslt", Wiki.Database_Format.DB_To_XSL'Access);
 end Callbacks;
 
