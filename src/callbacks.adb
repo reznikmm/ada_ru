@@ -27,7 +27,6 @@ with Wiki.Sidebar;
 with Wiki.Ada_Format;
 with Wiki.HTML_Output;
 with Wiki.Special_Formats;
---with Wiki.Database_Format;
 
 with Users;
 
@@ -58,6 +57,12 @@ package body Callbacks is
    function Expand_Wiki
      (Text : String;
       Args : S.Argument_List := S.Null_Arguments) return String;
+
+   procedure Expand_ARM
+     (Prefix : in String;
+      Text   : in String;
+      Time   : in out Ada.Calendar.Time;
+      Result :    out Ada.Strings.Unbounded.Unbounded_String);
 
    function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data;
    procedure Read_Wiki_Prefix (Root : String);
@@ -110,7 +115,7 @@ package body Callbacks is
         & Edit_End
         & To_String (Wiki_Suffix);
 
-      Result : AWS.Response.Data
+      Result : constant AWS.Response.Data
         := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
                                Message_Body => Content);
    begin
@@ -151,27 +156,9 @@ package body Callbacks is
       end if;
    end Edit_Wiki;
 
-   -----------------
-   -- Expand_Wiki --
-   -----------------
-
-   function Expand_Wiki
-     (Text : String;
-      Args : S.Argument_List := S.Null_Arguments) return String
-   is
-      procedure Parse is new Wiki.Parser.Parse
-        (Context       => Wiki.HTML_Output.Context,
-         Start_Element => Wiki.HTML_Output.Start_Element,
-         End_Element   => Wiki.HTML_Output.End_Element,
-         Characters    => Wiki.HTML_Output.Characters);
-
-      Data      : Wiki.HTML_Output.Context;
-   begin
-      Wiki.HTML_Output.Initialize (Data, "/", Args);
-      Parse (ASCII.LF & Text, Data);
-
-      return Wiki.HTML_Output.Get_Text (Data);
-   end Expand_Wiki;
+   ----------------
+   -- Expand_ARM --
+   ----------------
 
    procedure Expand_ARM
      (Prefix : in String;
@@ -181,30 +168,32 @@ package body Callbacks is
    is
       use Ada.Strings;
       use AWS.Resources;
-      use type Ada.Calendar.Time;
       use type Ada.Strings.Unbounded.Unbounded_String;
 
       procedure Start_Element
-        (Info : in     Wiki.Element_Info;
-         Data : in out Wiki.HTML_Output.Context)
-      is
-         use type Wiki.Element_Kinds;
-      begin
-         if Info.Kind /= Wiki.Paragraph then
-            Wiki.HTML_Output.Start_Element (Info, Data);
-         end if;
-      end;
+        (Info : in Wiki.Element_Info; Data : in out Wiki.HTML_Output.Context);
+      procedure End_Element
+        (Info : in Wiki.Element_Info; Data : in out Wiki.HTML_Output.Context);
 
       procedure End_Element
-        (Info : in     Wiki.Element_Info;
-         Data : in out Wiki.HTML_Output.Context)
+        (Info : in Wiki.Element_Info; Data : in out Wiki.HTML_Output.Context)
       is
          use type Wiki.Element_Kinds;
       begin
          if Info.Kind /= Wiki.Paragraph then
             Wiki.HTML_Output.End_Element (Info, Data);
          end if;
-      end;
+      end End_Element;
+
+      procedure Start_Element
+        (Info : in Wiki.Element_Info; Data : in out Wiki.HTML_Output.Context)
+      is
+         use type Wiki.Element_Kinds;
+      begin
+         if Info.Kind /= Wiki.Paragraph then
+            Wiki.HTML_Output.Start_Element (Info, Data);
+         end if;
+      end Start_Element;
 
       procedure Parse is new Wiki.Parser.Parse
         (Context       => Wiki.HTML_Output.Context,
@@ -250,6 +239,28 @@ package body Callbacks is
       Result := Result & Text (From .. Text'Last);
    end Expand_ARM;
 
+   -----------------
+   -- Expand_Wiki --
+   -----------------
+
+   function Expand_Wiki
+     (Text : String;
+      Args : S.Argument_List := S.Null_Arguments) return String
+   is
+      procedure Parse is new Wiki.Parser.Parse
+        (Context       => Wiki.HTML_Output.Context,
+         Start_Element => Wiki.HTML_Output.Start_Element,
+         End_Element   => Wiki.HTML_Output.End_Element,
+         Characters    => Wiki.HTML_Output.Characters);
+
+      Data      : Wiki.HTML_Output.Context;
+   begin
+      Wiki.HTML_Output.Initialize (Data, "/", Args);
+      Parse (ASCII.LF & Text, Data);
+
+      return Wiki.HTML_Output.Get_Text (Data);
+   end Expand_Wiki;
+
    -------------
    -- Get_ARM --
    -------------
@@ -258,7 +269,6 @@ package body Callbacks is
       use AWS.Status;
       use AWS.Messages;
       use AWS.Server.HTTP_Utils;
-      use type Ada.Calendar.Time;
 
       Root    : constant String := Get_WWW_Root (Request);
       URI     : constant String := Status.URI (Request);
@@ -325,7 +335,6 @@ package body Callbacks is
          use AWS.Status;
          use AWS.Messages;
          use AWS.Server.HTTP_Utils;
-         use type Ada.Calendar.Time;
 
          Since : constant String := If_Modified_Since (Request);
       begin
@@ -373,13 +382,50 @@ package body Callbacks is
    ----------------------
 
    function Get_Wiki_Or_HTML
-     (Request : in AWS.Status.Data)
-     return AWS.Response.Data
+     (Request : in AWS.Status.Data) return AWS.Response.Data
    is
-      Root    : constant String := Get_WWW_Root (Request);
-      URI     : constant String := Status.URI (Request);
-      File    : constant String := Root & Get_File_Name (URI);
-      Wiki    : constant String := File & ".wiki";
+      Root : constant String := Get_WWW_Root (Request);
+      URI  : constant String := Status.URI (Request);
+      File : constant String := Root & Get_File_Name (URI);
+      Wiki : constant String := File & ".wiki";
+
+      function Get_File return AWS.Response.Data;
+
+      --------------
+      -- Get_File --
+      --------------
+
+      function Get_File return AWS.Response.Data is
+         use type AWS.Utils.File_Size_Type;
+         use Ada.Text_IO;
+
+         Content_Type : constant String := MIME.Content_Type (File);
+         Redirect_URL : String (1 .. 256);
+         Last         : Positive;
+         IP_File      : File_Type;
+
+      begin
+         if Content_Type /= "text/html"
+           and then AWS.Status.Parameter (Request, "R") /= "Y"
+           and then Utils.File_Size (File) > 32000
+         then
+            begin
+               Open (IP_File, In_File, "redirect.url", Form => "shared=no");
+            exception
+               when Name_Error =>
+                  return Response.File
+                           (Content_Type => Content_Type, Filename => File);
+            end;
+
+            Get_Line (IP_File, Redirect_URL, Last);
+            Close (IP_File);
+
+            return AWS.Response.URL (Redirect_URL (1 .. Last) & URI & "?R=Y");
+         end if;
+
+         return Response.File (Content_Type => Content_Type, Filename => File);
+      end Get_File;
+
    begin
       if Utils.Is_Regular_File (Wiki)
         and then (not Resources.Is_Regular_File (File)
@@ -387,10 +433,10 @@ package body Callbacks is
                           Utils.File_Time_Stamp (Wiki))
       then
          return Get_Wiki (Request);
+
       elsif Resources.Is_Regular_File (File) then
-         return Response.File
-           (Content_Type => MIME.Content_Type (File),
-            Filename     => File);
+         return Get_File;
+
       elsif Utils.Is_Directory (File) then
          declare
             Directory_Browser_Page : constant String
