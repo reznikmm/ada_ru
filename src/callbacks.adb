@@ -10,6 +10,7 @@ with AWS.Utils;
 with AWS.Digest;
 with AWS.Config;
 with AWS.Messages;
+with AWS.Net;
 with AWS.Resources;
 with AWS.Parameters;
 with AWS.Translator;
@@ -36,16 +37,25 @@ package body Callbacks is
    use type Ada.Calendar.Time;
    package S renames Wiki.Special_Formats;
 
+   package ASU renames Ada.Strings.Unbounded;
+
+   function "+" (Item : in ASU.Unbounded_String) return String
+     renames ASU.To_String;
+
+   function "+" (Item : in String) return ASU.Unbounded_String
+     renames ASU.To_Unbounded_String;
+
    function Get_WWW_Root (Request : in AWS.Status.Data) return String;
 
    function Get_File_Name (URI : in String) return String;
    pragma Inline (Get_File_Name);
 
-   function Is_Folder (URI : String) return Boolean;
+   function Is_Folder (URI : in String) return Boolean;
+
+   procedure Load_Redirector;
 
    procedure Write_File
-     (File_Name : String;
-      Data      : Ada.Streams.Stream_Element_Array);
+     (File_Name : in String; Data : in Ada.Streams.Stream_Element_Array);
 
    function Read_File (Name : String) return String
      renames Wiki.Utils.Read_File;
@@ -55,14 +65,14 @@ package body Callbacks is
    procedure Post_Password (Request : in AWS.Status.Data);
 
    function Expand_Wiki
-     (Text : String;
-      Args : S.Argument_List := S.Null_Arguments) return String;
+     (Text : in String;
+      Args : in S.Argument_List := S.Null_Arguments) return String;
 
    procedure Expand_ARM
      (Prefix : in String;
       Text   : in String;
       Time   : in out Ada.Calendar.Time;
-      Result :    out Ada.Strings.Unbounded.Unbounded_String);
+      Result :    out ASU.Unbounded_String);
 
    function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data;
    procedure Read_Wiki_Prefix (Root : String);
@@ -71,10 +81,14 @@ package body Callbacks is
 
    Sidebar_File : constant String := "/wiki/layout.wiki";
 
-   Wiki_Root   : Ada.Strings.Unbounded.Unbounded_String;
-   Wiki_Prefix : Ada.Strings.Unbounded.Unbounded_String;
-   Wiki_Suffix : Ada.Strings.Unbounded.Unbounded_String;
+   Wiki_Root   : ASU.Unbounded_String;
+   Wiki_Prefix : ASU.Unbounded_String;
+   Wiki_Suffix : ASU.Unbounded_String;
    Wiki_Prefix_Time : Ada.Calendar.Time;
+
+   Redirect_SIP  : ASU.Unbounded_String;
+   Redirect_URL  : ASU.Unbounded_String;
+   Redirect_Size : Utils.File_Size_Type := Utils.File_Size_Type'Last;
 
    ---------------
    -- Edit_Wiki --
@@ -83,11 +97,8 @@ package body Callbacks is
    function Edit_Wiki (URI, Text, Root : in String) return AWS.Response.Data is
       use Ada.Strings.Unbounded;
 
-      Preview_Start : constant String :=
-        "<div class='wiki.preview'>";
-
-      Preview_End : constant String :=
-        "</div'>";
+      Preview_Start : constant String := "<div class='wiki.preview'>";
+      Preview_End   : constant String := "</div'>";
 
       Edit_Start : constant String :=
         "<form method='post' action='/edit_wiki/'>"
@@ -105,7 +116,7 @@ package body Callbacks is
       Sidebar : constant String :=
         Wiki.Sidebar.Expand (Wiki_URI, Root & Sidebar_File, "/");
 
-      Content : constant String := To_String (Wiki_Prefix)
+      Content : constant String := +Wiki_Prefix
         & Sidebar
         & Preview_Start
         & Expand_Wiki (Text)
@@ -113,7 +124,7 @@ package body Callbacks is
         & Edit_Start
         & Text
         & Edit_End
-        & To_String (Wiki_Suffix);
+        & (+Wiki_Suffix);
 
       Result : constant AWS.Response.Data
         := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
@@ -164,11 +175,11 @@ package body Callbacks is
      (Prefix : in String;
       Text   : in String;
       Time   : in out Ada.Calendar.Time;
-      Result :    out Ada.Strings.Unbounded.Unbounded_String)
+      Result :    out ASU.Unbounded_String)
    is
       use Ada.Strings;
       use AWS.Resources;
-      use type Ada.Strings.Unbounded.Unbounded_String;
+      use type ASU.Unbounded_String;
 
       procedure Start_Element
         (Info : in Wiki.Element_Info; Data : in out Wiki.HTML_Output.Context);
@@ -206,7 +217,7 @@ package body Callbacks is
       To         : Positive;
       Load       : Natural := Fixed.Index (Text, Load_Token);
    begin
-      Result := Unbounded.Null_Unbounded_String;
+      Result := ASU.Null_Unbounded_String;
 
       while Load /= 0 loop
          Result := Result & Text (From .. Load - 1);
@@ -278,7 +289,7 @@ package body Callbacks is
       Time    : Ada.Calendar.Time
         := AWS.Resources.File_Timestamp (File);
 
-      Full_Text : Ada.Strings.Unbounded.Unbounded_String;
+      Full_Text : ASU.Unbounded_String;
    begin
       Expand_ARM (Root & "/arm/", Text, Time, Full_Text);
 
@@ -360,10 +371,10 @@ package body Callbacks is
          Sidebar  : constant String :=
            Wiki.Sidebar.Expand (URI, Root & Sidebar_File, "/");
          Text     : constant String :=
-           To_String (Wiki_Prefix)
+           +Wiki_Prefix
            & Sidebar
            & Expand_Wiki (Read_File (File), To_Arguments (Request))
-           & To_String (Wiki_Suffix);
+           & (+Wiki_Suffix);
          Result  : AWS.Response.Data
            := AWS.Response.Build (Content_Type => AWS.MIME.Text_HTML,
                                   Message_Body => Text);
@@ -397,30 +408,13 @@ package body Callbacks is
 
       function Get_File return AWS.Response.Data is
          use type AWS.Utils.File_Size_Type;
-         use Ada.Text_IO;
-
          Content_Type : constant String := MIME.Content_Type (File);
-         Redirect_URL : String (1 .. 256);
-         Last         : Positive;
-         IP_File      : File_Type;
-
       begin
-         if Content_Type /= "text/html"
-           and then AWS.Status.Parameter (Request, "R") /= "Y"
-           and then Utils.File_Size (File) > 32000
+         if Net.Get_Addr (Status.Socket (Request).all) = +Redirect_SIP
+           and then Content_Type /= "text/html"
+           and then Utils.File_Size (File) > Redirect_Size
          then
-            begin
-               Open (IP_File, In_File, "redirect.url", Form => "shared=no");
-            exception
-               when Name_Error =>
-                  return Response.File
-                           (Content_Type => Content_Type, Filename => File);
-            end;
-
-            Get_Line (IP_File, Redirect_URL, Last);
-            Close (IP_File);
-
-            return AWS.Response.URL (Redirect_URL (1 .. Last) & URI & "?R=Y");
+            return AWS.Response.URL (+Redirect_URL & URI);
          end if;
 
          return Response.File (Content_Type => Content_Type, Filename => File);
@@ -490,6 +484,26 @@ package body Callbacks is
          return False;
       end if;
    end Is_Folder;
+
+   ---------------------
+   -- Load_Redirector --
+   ---------------------
+
+   procedure Load_Redirector is
+      use Ada.Text_IO;
+      File : File_Type;
+   begin
+      Open (File, In_File, "redirector.ini", Form => "shared=no");
+      Redirect_SIP  := +Get_Line (File);
+      Redirect_Size := Utils.File_Size_Type'Value (Get_Line (File));
+      Redirect_URL  := +Get_Line (File);
+      Close (File);
+   exception
+      when Name_Error => null;
+      when others =>
+         Close (File);
+         raise;
+   end Load_Redirector;
 
    -------------------
    -- Post_Paasword --
@@ -632,10 +646,9 @@ package body Callbacks is
       if Wiki_Root /= Root
         or else Wiki_Prefix_Time < File_Timestamp (Name)
       then
-         Wiki_Root   := To_Unbounded_String (Root);
-         Wiki_Prefix := To_Unbounded_String (Read_File (Name));
-         Wiki_Suffix := To_Unbounded_String
-           (Read_File (Root & "/wiki.suffix"));
+         Wiki_Root   := +Root;
+         Wiki_Prefix := +Read_File (Name);
+         Wiki_Suffix := +Read_File (Root & "/wiki.suffix");
          Wiki_Prefix_Time := File_Timestamp (Name);
       end if;
    end Read_Wiki_Prefix;
@@ -655,8 +668,8 @@ package body Callbacks is
       Result : S.Argument_List (Length);
    begin
       for J in 1 .. Length loop
-         Result.Names (J) := To_Unbounded_String (Get_Name (List, J));
-         Result.Values (J) := To_Unbounded_String (Get_Value (List, J));
+         Result.Names (J)  := +Get_Name  (List, J);
+         Result.Values (J) := +Get_Value (List, J);
       end loop;
 
       return Result;
@@ -745,6 +758,7 @@ package body Callbacks is
 
 begin
    S.Register ("ada", Wiki.Ada_Format'Access);
+   Load_Redirector;
 --   S.Register ("db*text", Wiki.Database_Format.DB_To_Text'Access);
 --   S.Register ("db*xslt", Wiki.Database_Format.DB_To_XSL'Access);
 end Callbacks;
