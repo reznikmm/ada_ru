@@ -256,28 +256,21 @@ package body Wiki.Sidebar is
         (Next   : in     Item_Access;
          Result : in out Unbounded_String);
 
+      UL    : constant String := "<ul class='sidebar'>";
+
       procedure Output
         (Next   : in     Item_Access;
          Result : in out Unbounded_String)
       is
          Here  : constant Boolean := Find (Next, Name);
 
-         Br    : constant String := "<br/>";
-         Blank : constant String := "<input disabled class='blank'>";
-         Empty : constant String := "<input disabled class='empty'>";
-         Opened  : constant String := "<input disabled class='open'>";
-         Closed  : constant String := "<input disabled class='closed'>";
-         Add     : constant String := "<input disabled class='added'>";
-         Change  : constant String := "<input disabled class='changed'>";
-         Pointer : constant String := "<input disabled class='pointer'>";
+         Empty   : constant String := "<li class='empty'>";
+         Opened  : constant String := "<li class='open'>";
+         Closed  : constant String := "<li class='closed'>";
+         Add     : constant String := "<span class='added'/>";
+         Change  : constant String := "<span class='changed'/>";
+         Pointer : constant String := "<span class='pointer'/>";
       begin
-         Result := Result & Br & ASCII.LF;
-         Result := Result & "<a href='" & Next.Name & "'>";
-
-         for J in 1 .. Next.Level loop
-            Result := Result & Blank;
-         end loop;
-
          if Next.Down = null then
             -- Output no children
             Result := Result & Empty;
@@ -289,7 +282,7 @@ package body Wiki.Sidebar is
             Result := Result & Closed;
          end if;
 
-         Result := Result & Next.Title;
+         Result := Result & "<a href='" & Next.Name & "'>" & Next.Title;
 
          case Next.Kind is
             when Added =>
@@ -303,6 +296,8 @@ package body Wiki.Sidebar is
          if Next.Name = Name then
             Result := Result & Pointer;
          end if;
+
+         Result := Result & "</a></li>" & ASCII.LF;
       end Output;
 
       Result : Unbounded_String;
@@ -310,6 +305,8 @@ package body Wiki.Sidebar is
 
    begin
       if Tree.Up = null or else Find (Tree, Name) then
+         Result := To_Unbounded_String (UL & ASCII.LF);
+
          Next := Tree.Down;
 
          while Next /= null loop
@@ -317,6 +314,8 @@ package body Wiki.Sidebar is
             Result := Result & Expand (Next, Name);
             Next := Next.Next;
          end loop;
+
+         Result := Result & "</ul>" & ASCII.LF;
       end if;
 
       return Result;
