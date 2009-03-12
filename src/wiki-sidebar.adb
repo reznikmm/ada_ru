@@ -267,9 +267,9 @@ package body Wiki.Sidebar is
          Empty   : constant String := "<li class='empty'>";
          Opened  : constant String := "<li class='open'>";
          Closed  : constant String := "<li class='closed'>";
-         Add     : constant String := "<span class='added'/>";
-         Change  : constant String := "<span class='changed'/>";
-         Pointer : constant String := "<span class='pointer'/>";
+         Add     : constant String := "<span class='added'>&nbsp;</span>";
+         Change  : constant String := "<span class='changed'>&nbsp;</span>";
+         Pointer : constant String := "<span class='pointer'>&nbsp;</span>";
       begin
          if Next.Down = null then
             -- Output no children
@@ -282,7 +282,8 @@ package body Wiki.Sidebar is
             Result := Result & Closed;
          end if;
 
-         Result := Result & "<a href='" & Next.Name & "'>" & Next.Title;
+         Result := Result
+           & "<a href='" & Next.Name & "'>" & Next.Title & "</a>"; 
 
          case Next.Kind is
             when Added =>
@@ -297,7 +298,7 @@ package body Wiki.Sidebar is
             Result := Result & Pointer;
          end if;
 
-         Result := Result & "</a></li>" & ASCII.LF;
+         Result := Result & "</li>" & ASCII.LF;
       end Output;
 
       Result : Unbounded_String;
