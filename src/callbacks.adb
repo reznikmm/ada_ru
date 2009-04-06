@@ -2,6 +2,7 @@ with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Calendar;
 with Ada.Strings.Fixed;
+with Ada.Strings.Maps;
 with Ada.Strings.Unbounded;
 with Ada.Streams.Stream_IO;
 
@@ -454,9 +455,12 @@ package body Callbacks is
    ------------------
 
    function Get_WWW_Root (Request : in AWS.Status.Data) return String is
+      use Ada.Strings;
       Host : constant String := Status.Host (Request);
    begin
-      if AWS.Utils.Is_Directory (Host) then
+      if AWS.Utils.Is_Directory (Host)
+        and then Fixed.Index (Host, Maps.To_Set ("/\")) = 0
+      then
          return Host;
       else
          return Config.WWW_Root (Config.Get_Current);

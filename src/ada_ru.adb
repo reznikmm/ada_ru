@@ -21,8 +21,8 @@ procedure Ada_Ru is
    WS : AWS.Server.HTTP;
    U  : URI.Handler;
    M  : Method.Handler;
-   C  : Callback.Handler := Callback.Create
-     (Callbacks.Get_Wiki_Or_HTML'Access);
+   C  : constant Callback.Handler :=
+     Callback.Create (Callbacks.Get_Wiki_Or_HTML'Access);
 
    Config : constant AWS.Config.Object := AWS.Config.Get_Current;
 

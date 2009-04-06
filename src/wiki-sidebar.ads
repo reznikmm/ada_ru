@@ -5,4 +5,4 @@ package Wiki.Sidebar is
       File_Name       : String;
       Wiki_URI_Prefix : String) return String;
 
-end;
+end Wiki.Sidebar;

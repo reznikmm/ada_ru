@@ -98,24 +98,62 @@ package body Wiki.Sidebar is
       Do_Suffix : Boolean := False;
 
       procedure Start_Element
-        (Info : in     Element_Info;
-         Data : in out Item_Access);
+        (Info : in Element_Info; Data : in out Item_Access);
 
       procedure End_Element
-        (Info : in     Element_Info;
-         Data : in out Item_Access);
+        (Info : in Element_Info; Data : in out Item_Access);
+
+      procedure Characters (Text : in String; Data : in out Item_Access);
+
+      ----------------
+      -- Characters --
+      ----------------
 
       procedure Characters
         (Text : in     String;
-         Data : in out Item_Access);
+         Data : in out Item_Access) is
+      begin
+         if In_Prefix then
+            Prefix := Prefix & Text;
+         elsif In_Suffix then
+            Suffix := Suffix & Text;
+         elsif Ada.Strings.Fixed.Index (Text, "new") /= 0 then
+            Data.Kind := Added;
+         elsif Ada.Strings.Fixed.Index (Text, "changed") /= 0 then
+            Data.Kind := Changed;
+         end if;
+      end Characters;
+
+      -----------------
+      -- End_Element --
+      -----------------
+
+      procedure End_Element
+        (Info : in Element_Info; Data : in out Item_Access) is
+      begin
+         case Info.Kind is
+            when Ordered_List =>
+               Data := Data.Up;
+
+               while Data.Next /= null loop
+                  Data := Data.Next;
+               end loop;
+
+               Do_Suffix := True;
+            when Preformat =>
+               In_Prefix := False;
+               In_Suffix := False;
+            when others =>
+               null;
+         end case;
+      end End_Element;
 
       -------------------
       -- Start_Element --
       -------------------
 
       procedure Start_Element
-        (Info : in     Element_Info;
-         Data : in out Item_Access)
+        (Info : in Element_Info; Data : in out Item_Access)
       is
          Next : Item_Access;
       begin
@@ -136,7 +174,7 @@ package body Wiki.Sidebar is
                   begin
                      while Step /= null loop
                         Prev := Step;
-                        Step:= Step.Next;
+                        Step := Step.Next;
                      end loop;
 
                      Prev.Next := Next;
@@ -171,50 +209,6 @@ package body Wiki.Sidebar is
                null;
          end case;
       end Start_Element;
-
-      -----------------
-      -- End_Element --
-      -----------------
-
-      procedure End_Element
-        (Info : in     Element_Info;
-         Data : in out Item_Access) is
-      begin
-         case Info.Kind is
-            when Ordered_List =>
-               Data := Data.Up;
-
-               while Data.Next /= null loop
-                  Data := Data.Next;
-               end loop;
-
-               Do_Suffix := True;
-            when Preformat =>
-               In_Prefix := False;
-               In_Suffix := False;
-            when others =>
-               null;
-         end case;
-      end End_Element;
-
-      ----------------
-      -- Characters --
-      ----------------
-
-      procedure Characters
-        (Text : in     String;
-         Data : in out Item_Access) is
-      begin
-         if In_Prefix then
-            Prefix := Prefix & Text;
-         elsif In_Suffix then
-            Suffix := Suffix & Text;
-         elsif Ada.Strings.Fixed.Index (Text, "new") /= 0 then
-            Data.Kind := Added;
-         elsif Ada.Strings.Fixed.Index (Text, "changed") /= 0 then
-            Data.Kind := Changed;
-         end if;
-      end Characters;
 
       procedure Build is new Wiki.Parser.Parse
         (Item_Access, Start_Element, End_Element, Characters);
@@ -272,18 +266,18 @@ package body Wiki.Sidebar is
          Pointer : constant String := "<span class='pointer'>&nbsp;</span>";
       begin
          if Next.Down = null then
-            -- Output no children
+            --  Output no children
             Result := Result & Empty;
          elsif Here then
-            -- Output open children
+            --  Output open children
             Result := Result & Opened;
          else
-            -- Output close children
+            --  Output close children
             Result := Result & Closed;
          end if;
 
          Result := Result
-           & "<a href='" & Next.Name & "'>" & Next.Title & "</a>"; 
+           & "<a href='" & Next.Name & "'>" & Next.Title & "</a>";
 
          case Next.Kind is
             when Added =>

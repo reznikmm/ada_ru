@@ -3,8 +3,8 @@ with AWS.Response;
 
 package Callbacks is
 
-   function Private_Service (Request : in AWS.Status.Data)
-     return AWS.Response.Data;
+   function Private_Service
+     (Request : in AWS.Status.Data) return AWS.Response.Data;
 
    function Put (Request : in AWS.Status.Data) return AWS.Response.Data;
 
@@ -12,8 +12,7 @@ package Callbacks is
    function Edit_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data;
 
    function Get_Wiki_Or_HTML
-     (Request : in AWS.Status.Data)
-     return AWS.Response.Data;
+     (Request : in AWS.Status.Data) return AWS.Response.Data;
 
    function Get_ARM (Request : in AWS.Status.Data) return AWS.Response.Data;
 
