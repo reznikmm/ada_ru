@@ -12,13 +12,14 @@ with AWS.Digest;
 with AWS.Config;
 with AWS.Messages;
 with AWS.Net;
-with AWS.Resources;
 with AWS.Parameters;
-with AWS.Translator;
+with AWS.Resources;
 with AWS.Response.Set;
 with AWS.Server.HTTP_Utils;
 with AWS.Services.Directory;
 with AWS.Services.Page_Server;
+with AWS.Translator;
+with AWS.URL;
 
 with GNAT.OS_Lib;
 with GNAT.Directory_Operations;
@@ -437,11 +438,17 @@ package body Callbacks is
             Directory_Browser_Page : constant String
               := Config.Directory_Browser_Page (Config.Get_Current);
          begin
-            return Response.Build
-              (Content_Type => MIME.Text_HTML,
-               Message_Body =>
-                 Services.Directory.Browse
-                   (File, Directory_Browser_Page, Request));
+            if Net.Get_Addr (Status.Socket (Request).all) = +Redirect_SIP then
+               return AWS.Response.URL
+                 (+Redirect_URL
+                  & URL.Pathname_And_Parameters (Status.URI (Request)));
+            else
+               return Response.Build
+                 (Content_Type => MIME.Text_HTML,
+                  Message_Body =>
+                  Services.Directory.Browse
+                    (File, Directory_Browser_Page, Request));
+            end if;
          end;
       else
          return Response.Acknowledge
