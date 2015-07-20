@@ -36,6 +36,8 @@ with Users;
 package body Callbacks is
 
    use AWS;
+   use AWS.Utils;
+
    use type Ada.Calendar.Time;
    package S renames Wiki.Special_Formats;
 
