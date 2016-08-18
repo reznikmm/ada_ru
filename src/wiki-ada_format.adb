@@ -18,7 +18,7 @@ is
    Next   : Token;
    Span   : Boolean;
 begin
-   The_Scaners.Set_Encoding (Lexer, KOI8_R);
+   The_Scaners.Set_Encoding (Lexer, UTF_8);
    Text_Streams.Strings.Initialize (Stream, Text);
 
    Buffer := Buffer & "<div class='ada'><pre>";
@@ -50,7 +50,7 @@ begin
       end case;
 
       Buffer := Buffer & Wiki.HTML_Output.Clean
-        (Encode (The_Scaners.Token_Image (Lexer), KOI8_R));
+        (Encode (The_Scaners.Token_Image (Lexer), UTF_8));
 
       if Span then
          Span := False;
