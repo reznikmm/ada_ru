@@ -738,7 +738,5 @@ package body Callbacks is
 begin
    S.Register ("ada", Wiki.Ada_Format'Access);
    Load_Redirector;
---   S.Register ("db*text", Wiki.Database_Format.DB_To_Text'Access);
---   S.Register ("db*xslt", Wiki.Database_Format.DB_To_XSL'Access);
 end Callbacks;
 
