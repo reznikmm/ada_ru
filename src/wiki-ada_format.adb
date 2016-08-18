@@ -7,6 +7,7 @@ with Wiki.HTML_Output;
 function Wiki.Ada_Format (Text : String; Arg : Special_Formats.Argument_List)
    return String
 is
+   pragma Unreferenced (Arg);
    use Ada_Lexer;
    use Encodings;
    use Ada.Strings.Unbounded;

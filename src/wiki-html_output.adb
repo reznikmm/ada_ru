@@ -1,10 +1,7 @@
 with Wiki.Parser;
-with Ada.Text_IO;
 
 package body Wiki.HTML_Output is
    use Ada.Strings.Unbounded;
-   use type Special_Formats.Special_Formatter;
-
 
    function Link (Ref : String; Title : String; Data : Context) return String;
    --  make <a> or <img> element
@@ -26,7 +23,6 @@ package body Wiki.HTML_Output is
       case Info.Kind is
          when Special_Format =>
             declare
-               use Special_Formats;
                Formatter : constant Special_Formatter := Get (+Info.Format);
             begin
                if Formatter = null then
@@ -162,9 +158,7 @@ package body Wiki.HTML_Output is
 
    procedure Characters
      (Text : in     String;
-      Data : in out Context)
-   is
-      use type Special_Formats.Strings;
+      Data : in out Context) is
    begin
       if Data.Special_Format = null then
          Data.Buffer := Data.Buffer & Clean (Text, Data.In_Mono);
@@ -213,7 +207,6 @@ package body Wiki.HTML_Output is
       Wiki_URI_Prefix : in     String;
       Arguments       : in     Argument_List := Null_Arguments)
    is
-      use Ada.Strings.Unbounded;
    begin
       Data.Wiki_URI  := To_Unbounded_String (Wiki_URI_Prefix);
       Data.Buffer    := Null_Unbounded_String;

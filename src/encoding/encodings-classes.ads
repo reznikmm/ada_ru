@@ -43,7 +43,7 @@ private
             null;
          when UTF_8 =>
             Cache   : Class_Cache := (others => Unknown);
-            Wide    : Wide_String (Cache_Index);
+            Wide    : Wide_String (Cache_Index) := (others => ' ');
          when others =>  --  8 bit encoding
             Classes : Class_Map   := (others => Unknown);
       end case;

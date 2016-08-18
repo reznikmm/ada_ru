@@ -11,6 +11,7 @@ package body Encodings.Maps.UTF_8 is
       Result_Last :    out Natural;
       Map         : in     Encoding := Encodings.UTF_8)
    is
+      pragma Unreferenced (Map);
       Index  : Positive := Text'First;
       Value  : Natural;
       T_Last : Natural := Text'First - 1;
@@ -62,6 +63,7 @@ package body Encodings.Maps.UTF_8 is
       Result_Last :    out Natural;
       Map         : in     Encoding := Encodings.UTF_8)
    is
+      pragma Unreferenced (Map);
       Index  : Positive := Result'First;
       Value  : Natural;
       T_Last : Natural := Text'First - 1;

@@ -4,6 +4,8 @@
 --  file in run time (if Encodings.Maps.Runtime linked).
 --  Otherwite encoding isn't available.
 
+pragma Warnings (Off);
+
 with Encodings.Maps.Utf_8;
 with Encodings.Maps.Runtime;
 

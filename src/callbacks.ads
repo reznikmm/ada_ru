@@ -3,9 +3,6 @@ with AWS.Response;
 
 package Callbacks is
 
-   function Private_Service
-     (Request : in AWS.Status.Data) return AWS.Response.Data;
-
    function Put (Request : in AWS.Status.Data) return AWS.Response.Data;
 
    function Get_Wiki (Request : in AWS.Status.Data) return AWS.Response.Data;

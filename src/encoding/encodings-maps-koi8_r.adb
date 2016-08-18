@@ -2,6 +2,7 @@
 
 package body Encodings.Maps.KOI8_R is
 
+   pragma Warnings (Off);
    Forward  : Forward_Map  (Character'Val(16#80#) .. Character'Last) :=
      (Wide_Character'Val(16#2500#),
       Wide_Character'Val(16#2502#),
