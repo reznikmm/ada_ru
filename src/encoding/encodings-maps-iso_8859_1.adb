@@ -2,6 +2,7 @@
 
 package body Encodings.Maps.ISO_8859_1 is
 
+   pragma Warnings (Off);
    Forward  : Forward_Map  (Character'Val(16#FF#) .. Character'Last) :=
      (Character'Val(16#FF#) => Wide_Character'Val(  16#FF#));
 

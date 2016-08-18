@@ -2,6 +2,7 @@
 
 package body Encodings.Maps.CP_1251 is
 
+   pragma Warnings (Off);
    Forward  : Forward_Map  (Character'Val(16#80#) .. Character'Last) :=
      (Wide_Character'Val( 16#402#),
       Wide_Character'Val( 16#403#),

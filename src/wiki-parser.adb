@@ -1,5 +1,4 @@
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Ada.Text_IO;
 package body Wiki.Parser is
    package U renames Ada.Strings.Unbounded;
 
@@ -59,7 +58,6 @@ package body Wiki.Parser is
       use Ada.Strings;
       From : constant Natural := Index (Text, Pattern);
       Line : Natural;
-      Ok   : Boolean := True;
    begin
       if From = 0 then
          return 0;
@@ -128,7 +126,6 @@ package body Wiki.Parser is
      (Text : in     String;
       Data : in out Context)
    is
-      Pos     : Positive := Text'First;
       Current : State := Initial;
       From    : array (Element_Kinds) of Natural := (others => 0);
 
@@ -497,7 +494,7 @@ package body Wiki.Parser is
    -------------
 
    function Replace (Text, From, To : String) return String is
-      Pos : Natural := Index (Text, From);
+      Pos : constant Natural := Index (Text, From);
    begin
       if Pos = 0 then
          return Text;

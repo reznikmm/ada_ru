@@ -7,7 +7,7 @@ package body Ada_Lexer is
    ---------------
 
    function Get_Class (C : Wide_String) return Character_Class is
-      Pos : Natural := Wide_Character'Pos (C (1));
+      Pos : constant Natural := Wide_Character'Pos (C (C'First));
    begin
       case Pos is
          when  9

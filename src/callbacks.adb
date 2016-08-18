@@ -15,9 +15,7 @@ with AWS.Net;
 with AWS.Parameters;
 with AWS.Resources;
 with AWS.Response.Set;
-with AWS.Server.HTTP_Utils;
 with AWS.Services.Directory;
-with AWS.Services.Page_Server;
 with AWS.Translator;
 with AWS.URL;
 
@@ -283,7 +281,6 @@ package body Callbacks is
    function Get_ARM (Request : in AWS.Status.Data) return AWS.Response.Data is
       use AWS.Status;
       use AWS.Messages;
-      use AWS.Server.HTTP_Utils;
 
       Root    : constant String := Get_WWW_Root (Request);
       URI     : constant String := Status.URI (Request);
@@ -349,7 +346,6 @@ package body Callbacks is
       function Changed return Boolean is
          use AWS.Status;
          use AWS.Messages;
-         use AWS.Server.HTTP_Utils;
 
          Since : constant String := If_Modified_Since (Request);
       begin
@@ -563,36 +559,6 @@ package body Callbacks is
          return Edit_Wiki (URI, Text, Root);
       end if;
    end Post_Wiki;
-
-   ---------------------
-   -- Private_Service --
-   ---------------------
-
-   function Private_Service (Request : in AWS.Status.Data)
-      return AWS.Response.Data
-   is
-      use AWS.Status;
-      use AWS.Digest;
-
-      Stale : constant Boolean
-        := not Check_Nonce (Authorization_Nonce (Request));
-      User : constant String := Authorization_Name (Request);
-      Pwd  : constant String := Users.Password (User);
-      Mode : constant AWS.Status.Authorization_Type
-        := Authorization_Mode (Request);
-   begin
-      if Mode /= AWS.Status.Digest
-        or else User = ""
-        or else Pwd = ""
-        or else not Check_Digest (Request, Pwd)
-        or else Stale
-      then
-         return Response.Authenticate
-           ("Ada_Ru private", Response.Digest, Stale);
-      else
-         return AWS.Services.Page_Server.Callback (Request);
-      end if;
-   end Private_Service;
 
    ---------
    -- Put --
