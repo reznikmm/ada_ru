@@ -36,6 +36,8 @@ with Servlet.Servlets;
 
 with AWFC.Static_Resource_Servlets;
 
+with Axe.Wiki_View_Servlets;
+
 package body Startup is
 
    type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
@@ -91,6 +93,11 @@ package body Startup is
       if not List.Is_Empty then
          raise Program_Error;
       end if;
+
+      Registry := Context.Add_Servlet
+        (+"WikiRendering",
+         Servlet_Access'(new Axe.Wiki_View_Servlets.Wiki_View_Servlet));
+      Registry.Add_Mapping (+"/");
 
       --  TODO: /arm/*
       --  TODO: set_password.html

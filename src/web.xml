@@ -1,0 +1,4 @@
+<?xml version='1.0'?>
+<web-app xmlns='http://forge.ada-ru.org/matreshka/xml/ns/spikedogdd'>
+  <library-name>ada_ru</library-name>
+</web-app>

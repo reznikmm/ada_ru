@@ -35,10 +35,10 @@ with "matreshka_xml.gpr";
 
 library project Server is
 
-   for Source_Dirs use ("../startup", "../opm", "../awfc");
+   for Source_Dirs use ("../startup", "../opm", "../awfc", "../wiki");
    for Object_Dir use ".objs";
 
-   for Library_Name use "hdaServer";
+   for Library_Name use "ada_ru";
    for Library_Kind use "dynamic";
    for Library_Dir use ".libs";
    for Library_ALI_Dir use ".libs/server";
@@ -53,7 +53,7 @@ library project Server is
       "-gnat12",        --  Enable Ada 2012 mode
       "-gnatW8",        --  Interpret source files as UTF-8 encoded.
       "-gnatwe",        --  Warnings as errors
-      "-gnatwjkrv",
+      "-gnatwjkmrv",
       --  Enable warnings:
       --   j+   turn on warnings for obsolescent (annex J) feature
       --   k+   turn on warnings on constant variable
