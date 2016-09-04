@@ -36,7 +36,7 @@ with League.Text_Codecs;
 
 with XML.SAX.Event_Writers;
 with XML.SAX.HTML5_Writers;
-with XML.SAX.Input_Sources.Strings;
+with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Locators;
 with XML.SAX.Locators.Internals;
 with XML.SAX.Output_Destinations.Strings;
@@ -164,9 +164,6 @@ package body Axe.Wiki_View_Servlets is
    is
       pragma Unreferenced (Self);
 
-      function Read_Template return League.Strings.Universal_String;
-      --  Read page template using wiki.prefix and wiki suffix text fixles
-
       function Wiki_Content return League.Holders.Holder;
       --  Return rendered wiki content wrapped into
       --  Holder of XML.Templates.Streams.Holders
@@ -184,26 +181,13 @@ package body Axe.Wiki_View_Servlets is
       Real_Name : constant League.Strings.Universal_String
         := Context.Get_Real_Path (Wiki_File);
       Name      : constant String := Real_Name.To_UTF_8_String;
-      Input     : aliased XML.SAX.Input_Sources.Strings.String_Input_Source;
+      Input     : aliased XML.SAX.Input_Sources.Streams.Files
+        .File_Input_Source;
       Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
       Filter    : aliased XML.Templates.Processors.Template_Processor;
       Writer    : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
       Output    : aliased XML.SAX.Output_Destinations.Strings
         .String_Output_Destination;
-
-      -------------------
-      -- Read_Template --
-      -------------------
-
-      function Read_Template return League.Strings.Universal_String is
-         Template : constant League.Strings.Universal_String :=
-           Context.Get_Real_Path (Page_XHTML);
-         Result : League.Strings.Universal_String;
-      begin
-         Result.Append (Axe.Read_File (Template, Decoder));
-
-         return Result;
-      end Read_Template;
 
       ---------------------
       -- Sidebar_Content --
@@ -256,7 +240,7 @@ package body Axe.Wiki_View_Servlets is
       end if;
 
       --  Set template input
-      Input.Set_String (Read_Template);
+      Input.Open_By_File_Name (Context.Get_Real_Path (Page_XHTML));
 
       --  Configure reader
       Reader.Set_Input_Source (Input'Unchecked_Access);
