@@ -109,15 +109,24 @@ package body Axe.Wiki_View_Servlets is
      League.Text_Codecs.Codec (UTF_8);
    Page_XHTML   : constant League.Strings.Universal_String :=
      +"/page.xhtml.tmpl";
+   Edit_XHTML   : constant League.Strings.Universal_String :=
+     +"/edit_wiki.xhtml.tmpl";
    Sidebar_File : constant League.Strings.Universal_String :=
      +"/wiki/layout.wiki";
    Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
    Sidebar      : constant League.Strings.Universal_String := +"sidebar";
+   Edit_Wiki    : constant League.Strings.Universal_String := +"edit_wiki";
+   URI          : constant League.Strings.Universal_String := +"URI";
 
    function Get_File_Name
      (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
       return League.Strings.Universal_String;
    --  Return virtual file name in context space
+
+   function Get_Wiki_File
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+      return League.Strings.Universal_String;
+   --  Return corresponding .wiki virtual file name in context space
 
    --------------------
    -- Dummy_Locators --
@@ -168,16 +177,18 @@ package body Axe.Wiki_View_Servlets is
       --  Return rendered wiki content wrapped into
       --  Holder of XML.Templates.Streams.Holders
 
+      function Edit_Wiki_Content return League.Holders.Holder;
+      --  Return edit wiki form with wiki content inside it, wrapped into
+      --  Holder of XML.Templates.Streams.Holders
+
       function Sidebar_Content return League.Holders.Holder;
       --  Return rendered sidebar menu wrapped into
       --  Holder of XML.Templates.Streams.Holders
 
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name : constant League.Strings.Universal_String
-        := Get_File_Name (Request);
       Wiki_File : constant League.Strings.Universal_String
-        := File_Name & ".wiki";
+        := Get_Wiki_File (Request);
       Real_Name : constant League.Strings.Universal_String
         := Context.Get_Real_Path (Wiki_File);
       Name      : constant String := Real_Name.To_UTF_8_String;
@@ -188,6 +199,57 @@ package body Axe.Wiki_View_Servlets is
       Writer    : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
       Output    : aliased XML.SAX.Output_Destinations.Strings
         .String_Output_Destination;
+
+      -----------------------
+      -- Edit_Wiki_Content --
+      -----------------------
+
+      function Edit_Wiki_Content return League.Holders.Holder is
+         Servlet_Path : constant League.String_Vectors.Universal_String_Vector
+           := Request.Get_Servlet_Path;
+      begin
+         if Servlet_Path.Length /= 1
+           or else Servlet_Path.Element (1) /= Edit_Wiki
+         then
+            return XML.Templates.Streams.Holders.To_Holder
+              (XML.Templates.Streams.XML_Stream_Element_Vectors.Empty_Vector);
+         end if;
+
+         declare
+            Input     : aliased XML.SAX.Input_Sources.Streams.Files
+              .File_Input_Source;
+            Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
+            Filter    : aliased XML.Templates.Processors.Template_Processor;
+            Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+         begin
+            --  Set template input
+            Input.Open_By_File_Name (Context.Get_Real_Path (Edit_XHTML));
+
+            --  Configure reader
+            Reader.Set_Input_Source (Input'Unchecked_Access);
+            Reader.Set_Content_Handler (Filter'Unchecked_Access);
+            Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
+
+            --  Configure template processor
+            Filter.Set_Content_Handler (Event'Unchecked_Access);
+            Filter.Set_Lexical_Handler (Event'Unchecked_Access);
+
+            --  Bind wiki page content
+            Filter.Set_Parameter (URI, League.Holders.To_Holder (Wiki_File));
+            Filter.Set_Parameter
+              (Wiki_Page,
+               League.Holders.To_Holder (Axe.Read_File (Real_Name, Decoder)));
+
+            --  Process template
+            Reader.Parse;
+
+            if not Filter.Error_String.Is_Empty then
+               raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
+            end if;
+
+            return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+         end;
+      end Edit_Wiki_Content;
 
       ---------------------
       -- Sidebar_Content --
@@ -254,6 +316,7 @@ package body Axe.Wiki_View_Servlets is
       --  Bind wiki page content
       Filter.Set_Parameter (Wiki_Page, Wiki_Content);
       Filter.Set_Parameter (Sidebar, Sidebar_Content);
+      Filter.Set_Parameter (Edit_Wiki, Edit_Wiki_Content);
 
       --  Configure template persing output
       Writer.Set_Output_Destination (Output'Unchecked_Access);
@@ -280,15 +343,12 @@ package body Axe.Wiki_View_Servlets is
      (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
        return League.Strings.Universal_String
    is
-      Servlet_Path : constant League.String_Vectors.Universal_String_Vector
-        := Request.Get_Servlet_Path;
       Path_Info    : constant League.String_Vectors.Universal_String_Vector
         := Request.Get_Path_Info;
       Path         : League.String_Vectors.Universal_String_Vector;
    begin
       --  Add empty string to have leading '/'
       Path.Append (League.Strings.Empty_Universal_String);
-      Path.Append (Servlet_Path);
       Path.Append (Path_Info);
       return Path.Join ('/');
    end Get_File_Name;
@@ -338,9 +398,10 @@ package body Axe.Wiki_View_Servlets is
       end Check_File;
 
    begin
-      Check_File (Get_File_Name (Request));
+      Check_File (Get_Wiki_File (Request));
       Check_File (Page_XHTML);
       Check_File (Sidebar_File);
+      Check_File (Edit_XHTML);
 
       if Exist then
          return Result;
@@ -361,5 +422,20 @@ package body Axe.Wiki_View_Servlets is
    begin
       return League.Strings.To_Universal_String ("Wiki Rendering Servlet");
    end Get_Servlet_Info;
+
+   -------------------
+   -- Get_Wiki_File --
+   -------------------
+
+   function Get_Wiki_File
+    (Request : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+      return League.Strings.Universal_String
+   is
+      Result : League.Strings.Universal_String := Get_File_Name (Request);
+   begin
+      Result.Append (".wiki");
+
+      return Result;
+   end Get_Wiki_File;
 
 end Axe.Wiki_View_Servlets;

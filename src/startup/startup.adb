@@ -98,6 +98,7 @@ package body Startup is
         (+"WikiRendering",
          Servlet_Access'(new Axe.Wiki_View_Servlets.Wiki_View_Servlet));
       Registry.Add_Mapping (+"/");
+      Registry.Add_Mapping (+"/edit_wiki/*");
 
       --  TODO: /arm/*
       --  TODO: set_password.html
