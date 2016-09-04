@@ -27,10 +27,8 @@
 ------------------------------------------------------------------------------
 
 with Ada.Directories;
-with Ada.Streams.Stream_IO;
 
 with League.Calendars.Ada_Conversions;
-with League.Calendars.ISO_8601;
 with League.Holders;
 with League.IRIs;
 with League.String_Vectors;
@@ -47,11 +45,11 @@ with XML.Templates.Processors;
 with XML.Templates.Streams.Holders;
 
 with Matreshka.Internals.SAX_Locators;
-with Matreshka.RFC2616_Dates;
 
 with Servlet.Contexts;
 
 with Axe.Read_File;
+with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
 with Axe.Wiki.Parser;
 
@@ -109,14 +107,16 @@ package body Axe.Wiki_View_Servlets is
    UTF_8   : constant League.Strings.Universal_String := +"utf-8";
    Decoder : constant League.Text_Codecs.Text_Codec :=
      League.Text_Codecs.Codec (UTF_8);
-   Wiki_Prefix : constant League.Strings.Universal_String := +"/wiki.prefix";
-   Wiki_Suffix : constant League.Strings.Universal_String := +"/wiki.suffix";
-   Wiki_Page   : constant League.Strings.Universal_String := +"wikiPage";
+   Page_XHTML   : constant League.Strings.Universal_String :=
+     +"/page.xhtml.tmpl";
+   Sidebar_File : constant League.Strings.Universal_String :=
+     +"/wiki/layout.wiki";
+   Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
+   Sidebar      : constant League.Strings.Universal_String := +"sidebar";
 
    function Get_File_Name
-     (Self     : Wiki_View_Servlet'Class;
-      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
-       return League.Strings.Universal_String;
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+      return League.Strings.Universal_String;
    --  Return virtual file name in context space
 
    --------------------
@@ -131,7 +131,9 @@ package body Axe.Wiki_View_Servlets is
 
       overriding function Base_URI
         (Self : not null access constant Dummy_Shared_Locator)
-         return League.IRIs.IRI is
+         return League.IRIs.IRI
+      is
+         pragma Unreferenced (Self);
       begin
          return Result : League.IRIs.IRI;
       end Base_URI;
@@ -141,8 +143,10 @@ package body Axe.Wiki_View_Servlets is
       --------------
 
       overriding function Encoding
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String is
+       (Self : not null access constant Dummy_Shared_Locator)
+         return League.Strings.Universal_String
+      is
+         pragma Unreferenced (Self);
       begin
          return UTF_8;
       end Encoding;
@@ -158,47 +162,92 @@ package body Axe.Wiki_View_Servlets is
       Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
       Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
+      pragma Unreferenced (Self);
+
       function Read_Template return League.Strings.Universal_String;
       --  Read page template using wiki.prefix and wiki suffix text fixles
+
+      function Wiki_Content return League.Holders.Holder;
+      --  Return rendered wiki content wrapped into
+      --  Holder of XML.Templates.Streams.Holders
+
+      function Sidebar_Content return League.Holders.Holder;
+      --  Return rendered sidebar menu wrapped into
+      --  Holder of XML.Templates.Streams.Holders
 
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
       File_Name : constant League.Strings.Universal_String
-        := Get_File_Name (Self, Request);
+        := Get_File_Name (Request);
+      Wiki_File : constant League.Strings.Universal_String
+        := File_Name & ".wiki";
       Real_Name : constant League.Strings.Universal_String
-        := Context.Get_Real_Path (File_Name);
+        := Context.Get_Real_Path (Wiki_File);
       Name      : constant String := Real_Name.To_UTF_8_String;
-      Text      : constant League.Strings.Universal_String :=
-        Axe.Read_File (Real_Name, Decoder);
-      Handler   : Axe.Wiki.HTML_Output.Context;
       Input     : aliased XML.SAX.Input_Sources.Strings.String_Input_Source;
       Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
-      Event     : aliased XML.SAX.Event_Writers.Event_Writer;
       Filter    : aliased XML.Templates.Processors.Template_Processor;
       Writer    : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
       Output    : aliased XML.SAX.Output_Destinations.Strings
         .String_Output_Destination;
-      Locator   : XML.SAX.Locators.SAX_Locator;
 
       -------------------
       -- Read_Template --
       -------------------
 
       function Read_Template return League.Strings.Universal_String is
-         Prefix : constant League.Strings.Universal_String :=
-           Context.Get_Real_Path (Wiki_Prefix);
-         Suffix : constant League.Strings.Universal_String :=
-           Context.Get_Real_Path (Wiki_Suffix);
+         Template : constant League.Strings.Universal_String :=
+           Context.Get_Real_Path (Page_XHTML);
          Result : League.Strings.Universal_String;
       begin
-         Result.Append (Axe.Read_File (Prefix, Decoder));
-         Result.Append ("${");
-         Result.Append (Wiki_Page);
-         Result.Append ("}");
-         Result.Append (Axe.Read_File (Suffix, Decoder));
+         Result.Append (Axe.Read_File (Template, Decoder));
 
          return Result;
       end Read_Template;
+
+      ---------------------
+      -- Sidebar_Content --
+      ---------------------
+
+      function Sidebar_Content return League.Holders.Holder is
+         Sidebar   : Axe.Sidebars.Sidebar;
+         File_Name : constant League.Strings.Universal_String
+           := Context.Get_Real_Path (Sidebar_File);
+         Text      : constant League.Strings.Universal_String :=
+           Axe.Read_File (File_Name, Decoder);
+         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+      begin
+         Sidebar.Initialize (Text);
+
+         --  Set document locator to avoid constraint error
+         Event.Set_Document_Locator
+           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
+
+         Sidebar.Expand (Event'Unchecked_Access, File_Name, "/");
+
+         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+      end Sidebar_Content;
+
+      ------------------
+      -- Wiki_Content --
+      ------------------
+
+      function Wiki_Content return League.Holders.Holder is
+         Text      : constant League.Strings.Universal_String :=
+           Axe.Read_File (Real_Name, Decoder);
+         Handler   : Axe.Wiki.HTML_Output.Context;
+         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+      begin
+         --  Set document locator to avoid constraint error
+         Event.Set_Document_Locator
+           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
+
+         --  Parse Wiki page
+         Handler.Initialize (Event'Unchecked_Access, "/");
+         Axe.Wiki.Parser.Parse (Text, Handler);
+
+         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+      end Wiki_Content;
 
    begin
       if not Ada.Directories.Exists (Name) then
@@ -218,24 +267,19 @@ package body Axe.Wiki_View_Servlets is
       Filter.Set_Content_Handler (Writer'Unchecked_Access);
       Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
 
-      --  Set document locator to avoid constraint error
-      Event.Set_Document_Locator
-        (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
-
-      --  Parse Wiki page
-      Handler.Initialize (Event'Unchecked_Access, "/");
-      Axe.Wiki.Parser.Parse (Text, Handler);
-
       --  Bind wiki page content
-      Filter.Set_Parameter
-        (Wiki_Page,
-         XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream));
+      Filter.Set_Parameter (Wiki_Page, Wiki_Content);
+      Filter.Set_Parameter (Sidebar, Sidebar_Content);
 
       --  Configure template persing output
       Writer.Set_Output_Destination (Output'Unchecked_Access);
 
       --  Process template
       Reader.Parse;
+
+      if not Filter.Error_String.Is_Empty then
+         raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
+      end if;
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (+"text/html");
@@ -249,12 +293,9 @@ package body Axe.Wiki_View_Servlets is
    -------------------
 
    function Get_File_Name
-     (Self     : Wiki_View_Servlet'Class;
-      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
        return League.Strings.Universal_String
    is
-      Context      : constant access Servlet.Contexts.Servlet_Context'Class
-        := Request.Get_Servlet_Context;
       Servlet_Path : constant League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
       Path_Info    : constant League.String_Vectors.Universal_String_Vector
@@ -265,7 +306,7 @@ package body Axe.Wiki_View_Servlets is
       Path.Append (League.Strings.Empty_Universal_String);
       Path.Append (Servlet_Path);
       Path.Append (Path_Info);
-      return Path.Join ('/') & ".wiki";
+      return Path.Join ('/');
    end Get_File_Name;
 
    -----------------------
@@ -277,20 +318,51 @@ package body Axe.Wiki_View_Servlets is
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
       return League.Calendars.Date_Time
    is
+      procedure Check_File (File : League.Strings.Universal_String);
+      --  Update Result and Exist using given "virtual" file name
+
+      Result    : League.Calendars.Date_Time;
+      Exist     : Boolean := True;
+      First     : Boolean := True;
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name : constant League.Strings.Universal_String
-        := Get_File_Name (Self, Request);
-      Real_Name : constant League.Strings.Universal_String
-        := Context.Get_Real_Path (File_Name);
-      Name      : constant String := Real_Name.To_UTF_8_String;
+
+      ----------------
+      -- Check_File --
+      ----------------
+
+      procedure Check_File (File : League.Strings.Universal_String) is
+         use type League.Calendars.Date_Time;
+
+         Real_Name : constant League.Strings.Universal_String
+           := Context.Get_Real_Path (File);
+         Name      : constant String := Real_Name.To_UTF_8_String;
+         Date_Time : League.Calendars.Date_Time;
+
+      begin
+         if Ada.Directories.Exists (Name) then
+            Date_Time := League.Calendars.Ada_Conversions.From_Ada_Time
+              (Ada.Directories.Modification_Time (Name));
+
+            if First or else Result < Date_Time then
+               First := False;
+               Result := Date_Time;
+            end if;
+         else
+            Exist := False;
+         end if;
+      end Check_File;
+
    begin
-      if Ada.Directories.Exists (Name) then
-         return League.Calendars.Ada_Conversions.From_Ada_Time
-           (Ada.Directories.Modification_Time (Name));
+      Check_File (Get_File_Name (Request));
+      Check_File (Page_XHTML);
+      Check_File (Sidebar_File);
+
+      if Exist then
+         return Result;
       else
-         return Servlet.HTTP_Servlets.HTTP_Servlet (Self).Get_Last_Modified
-                  (Request);
+         return Servlet.HTTP_Servlets.HTTP_Servlet (Self)
+           .Get_Last_Modified (Request);
       end if;
    end Get_Last_Modified;
 
@@ -298,9 +370,10 @@ package body Axe.Wiki_View_Servlets is
    -- Get_Servlet_Info --
    ----------------------
 
-   overriding function Get_Servlet_Info
-     (Self : Wiki_View_Servlet)
-      return League.Strings.Universal_String is
+   overriding function Get_Servlet_Info (Self : Wiki_View_Servlet)
+     return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
    begin
       return League.Strings.To_Universal_String ("Wiki Rendering Servlet");
    end Get_Servlet_Info;

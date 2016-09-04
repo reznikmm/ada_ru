@@ -417,6 +417,7 @@ package body Axe.Wiki.Parser is
 
       function Get_Heading_Id
         (From, To : Positive) return U.Universal_String is
+         pragma Unreferenced (From, To);
       begin
          return U.To_Universal_String ("x");
       end Get_Heading_Id;

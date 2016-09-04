@@ -53,13 +53,8 @@ library project Server is
       "-gnat12",        --  Enable Ada 2012 mode
       "-gnatW8",        --  Interpret source files as UTF-8 encoded.
       "-gnatwe",        --  Warnings as errors
-      "-gnatwjkmrv",
       --  Enable warnings:
-      --   j+   turn on warnings for obsolescent (annex J) feature
-      --   k+   turn on warnings on constant variable
-      --   m+   turn on warnings for variable assigned but not read
-      --   r+   turn on warnings for redundant construct
-      --   v*+  turn on warnings for unassigned variable
+      "-gnatwa",
       "-gnatyaAbcdefhiIkmnoOprsStux");
       --  Enable style checks:
       --   a    check attribute casing

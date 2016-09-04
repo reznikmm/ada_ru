@@ -26,17 +26,13 @@
 --  $Date:$
 ------------------------------------------------------------------------------
 
-with League.Regexps;
 with XML.SAX.Attributes;
 
 package body Axe.Wiki.HTML_Output is
    package U renames League.Strings;
-   package R renames League.Regexps;
 
    function "+" (Text : Wide_Wide_String) return U.Universal_String
      renames U.To_Universal_String;
-
-   E : constant U.Universal_String := U.Empty_Universal_String;
 
    XHTML  : constant U.Universal_String := +"http://www.w3.org/1999/xhtml";
    PRE    : constant U.Universal_String := +"pre";
@@ -91,61 +87,61 @@ package body Axe.Wiki.HTML_Output is
    begin
       case Info.Kind is
          when Special_Format =>
-            Self.Writer.End_Element (E, PRE, PRE);
+            Self.Writer.End_Element (XHTML, PRE, PRE);
          when Preformat =>
-            Self.Writer.End_Element (E, PRE, PRE);
+            Self.Writer.End_Element (XHTML, PRE, PRE);
          when Bold_Italic =>
-            Self.Writer.End_Element (E, I, I);
-            Self.Writer.End_Element (E, STRONG, STRONG);
+            Self.Writer.End_Element (XHTML, I, I);
+            Self.Writer.End_Element (XHTML, STRONG, STRONG);
          when Bold =>
-            Self.Writer.End_Element (E, STRONG, STRONG);
+            Self.Writer.End_Element (XHTML, STRONG, STRONG);
          when Italic =>
-            Self.Writer.End_Element (E, I, I);
+            Self.Writer.End_Element (XHTML, I, I);
          when Underline =>
-            Self.Writer.End_Element (E, SPAN, SPAN);
+            Self.Writer.End_Element (XHTML, SPAN, SPAN);
          when Monospace | Monospace_2 =>
-            Self.Writer.End_Element (E, TT, TT);
+            Self.Writer.End_Element (XHTML, TT, TT);
             Self.In_Mono := False;
          when Strike =>
-            Self.Writer.End_Element (E, DEL, DEL);
+            Self.Writer.End_Element (XHTML, DEL, DEL);
          when Superscript =>
-            Self.Writer.End_Element (E, SUP, SUP);
+            Self.Writer.End_Element (XHTML, SUP, SUP);
          when Subscript =>
-            Self.Writer.End_Element (E, SUB, SUB);
+            Self.Writer.End_Element (XHTML, SUB, SUB);
          when Heading_1 =>
-            Self.Writer.End_Element (E, H1, H1);
+            Self.Writer.End_Element (XHTML, H1, H1);
          when Heading_2 =>
-            Self.Writer.End_Element (E, H2, H2);
+            Self.Writer.End_Element (XHTML, H2, H2);
          when Heading_3 =>
-            Self.Writer.End_Element (E, H3, H3);
+            Self.Writer.End_Element (XHTML, H3, H3);
          when Paragraph =>
-            Self.Writer.End_Element (E, P, P);
+            Self.Writer.End_Element (XHTML, P, P);
          when Break =>
             null;
          when Ordered_List =>
-            Self.Writer.End_Element (E, UL, UL);
+            Self.Writer.End_Element (XHTML, UL, UL);
          when Numbered_List =>
-            Self.Writer.End_Element (E, OL, OL);
+            Self.Writer.End_Element (XHTML, OL, OL);
          when List_Item =>
-            Self.Writer.End_Element (E, LI, LI);
+            Self.Writer.End_Element (XHTML, LI, LI);
          when Table_Row =>
-            Self.Writer.End_Element (E, TR, TR);
+            Self.Writer.End_Element (XHTML, TR, TR);
 
             if Info.Table_Boundary then
-               Self.Writer.End_Element (E, TABLE, TABLE);
+               Self.Writer.End_Element (XHTML, TABLE, TABLE);
             end if;
          when Table_Cell =>
-            Self.Writer.End_Element (E, TD, TD);
+            Self.Writer.End_Element (XHTML, TD, TD);
          when HTTP_Link | Boxed_Link | Boxed_Wiki_Link =>
             if Self.Img_Link then
-               Self.Writer.End_Element (E, IMG, IMG);
+               Self.Writer.End_Element (XHTML, IMG, IMG);
             else
-               Self.Writer.End_Element (E, A, A);
+               Self.Writer.End_Element (XHTML, A, A);
             end if;
          when Horizontal_Line =>
             null;
          when Anchor =>
-            Self.Writer.End_Element (E, A, A);
+            Self.Writer.End_Element (XHTML, A, A);
       end case;
    end End_Element;
 
@@ -242,7 +238,7 @@ package body Axe.Wiki.HTML_Output is
             Self.Writer.Start_Element (XHTML, P, P);
          when Break =>
             Self.Writer.Start_Element (XHTML, BR, BR);
-            Self.Writer.End_Element (E, BR, BR);
+            Self.Writer.End_Element (XHTML, BR, BR);
          when Ordered_List =>
             Self.Writer.Start_Element (XHTML, UL, UL);
          when Numbered_List =>
@@ -264,7 +260,7 @@ package body Axe.Wiki.HTML_Output is
             Self.Link (Info);
          when Horizontal_Line =>
             Self.Writer.Start_Element (XHTML, HR, HR);
-            Self.Writer.End_Element (E, HR, HR);
+            Self.Writer.End_Element (XHTML, HR, HR);
          when Anchor =>
             Attributes.Set_Value (NAME, Info.Anchor_Name);
             Self.Writer.Start_Element (XHTML, A, A, Attributes);

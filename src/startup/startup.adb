@@ -54,7 +54,7 @@ package body Startup is
      (Self    : in out Servlet_Container_Initializer;
       Context : in out Servlet.Contexts.Servlet_Context'Class)
    is
-      Value    : League.Strings.Universal_String;
+      pragma Unreferenced (Self);
 
       Registry : access
         Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
