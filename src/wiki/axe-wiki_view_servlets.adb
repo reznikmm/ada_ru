@@ -53,6 +53,9 @@ with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
 with Axe.Wiki.Parser;
 
+with Ada.Wide_Wide_Text_IO;
+with Ada.Characters.Wide_Wide_Latin_1;
+
 package body Axe.Wiki_View_Servlets is
 
    use type League.Strings.Universal_String;
@@ -104,6 +107,18 @@ package body Axe.Wiki_View_Servlets is
      (Text : Wide_Wide_String) return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
 
+   function String_Carriage_Return
+    (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+   --  Drop 0x0D characters from Text and return result
+
+   procedure Render_Wiki
+     (File_Name : League.Strings.Universal_String;
+      Text      : League.Strings.Universal_String;
+      Is_Edit   : Boolean;
+      Context   : access Servlet.Contexts.Servlet_Context'Class;
+      Response  : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
+
    UTF_8   : constant League.Strings.Universal_String := +"utf-8";
    Decoder : constant League.Text_Codecs.Text_Codec :=
      League.Text_Codecs.Codec (UTF_8);
@@ -113,18 +128,22 @@ package body Axe.Wiki_View_Servlets is
      +"/edit_wiki.xhtml.tmpl";
    Sidebar_File : constant League.Strings.Universal_String :=
      +"/wiki/layout.wiki";
-   Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
-   Sidebar      : constant League.Strings.Universal_String := +"sidebar";
    Edit_Wiki    : constant League.Strings.Universal_String := +"edit_wiki";
-   URI          : constant League.Strings.Universal_String := +"URI";
+   Location     : constant League.Strings.Universal_String := +"Location";
+   Post         : constant League.Strings.Universal_String := +"post";
+   Preview      : constant League.Strings.Universal_String := +"preview";
+   Sidebar      : constant League.Strings.Universal_String := +"sidebar";
+   Text         : constant League.Strings.Universal_String := +"text";
+   URI          : constant League.Strings.Universal_String := +"uri";
+   Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
 
    function Get_File_Name
-     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+    (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
       return League.Strings.Universal_String;
    --  Return virtual file name in context space
 
    function Get_Wiki_File
-     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+    (File_Name : League.Strings.Universal_String)
       return League.Strings.Universal_String;
    --  Return corresponding .wiki virtual file name in context space
 
@@ -173,167 +192,81 @@ package body Axe.Wiki_View_Servlets is
    is
       pragma Unreferenced (Self);
 
-      function Wiki_Content return League.Holders.Holder;
-      --  Return rendered wiki content wrapped into
-      --  Holder of XML.Templates.Streams.Holders
-
-      function Edit_Wiki_Content return League.Holders.Holder;
-      --  Return edit wiki form with wiki content inside it, wrapped into
-      --  Holder of XML.Templates.Streams.Holders
-
-      function Sidebar_Content return League.Holders.Holder;
-      --  Return rendered sidebar menu wrapped into
-      --  Holder of XML.Templates.Streams.Holders
-
-      Context   : constant access Servlet.Contexts.Servlet_Context'Class
+      Context      : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      Wiki_File : constant League.Strings.Universal_String
-        := Get_Wiki_File (Request);
-      Real_Name : constant League.Strings.Universal_String
+      File_Name    : constant League.Strings.Universal_String
+        := Get_File_Name (Request);
+      Wiki_File    : constant League.Strings.Universal_String
+        := Get_Wiki_File (File_Name);
+      Real_Name    : constant League.Strings.Universal_String
         := Context.Get_Real_Path (Wiki_File);
-      Name      : constant String := Real_Name.To_UTF_8_String;
-      Input     : aliased XML.SAX.Input_Sources.Streams.Files
-        .File_Input_Source;
-      Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
-      Filter    : aliased XML.Templates.Processors.Template_Processor;
-      Writer    : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
-      Output    : aliased XML.SAX.Output_Destinations.Strings
-        .String_Output_Destination;
-
-      -----------------------
-      -- Edit_Wiki_Content --
-      -----------------------
-
-      function Edit_Wiki_Content return League.Holders.Holder is
-         Servlet_Path : constant League.String_Vectors.Universal_String_Vector
-           := Request.Get_Servlet_Path;
-      begin
-         if Servlet_Path.Length /= 1
-           or else Servlet_Path.Element (1) /= Edit_Wiki
-         then
-            return XML.Templates.Streams.Holders.To_Holder
-              (XML.Templates.Streams.XML_Stream_Element_Vectors.Empty_Vector);
-         end if;
-
-         declare
-            Input     : aliased XML.SAX.Input_Sources.Streams.Files
-              .File_Input_Source;
-            Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
-            Filter    : aliased XML.Templates.Processors.Template_Processor;
-            Event     : aliased XML.SAX.Event_Writers.Event_Writer;
-         begin
-            --  Set template input
-            Input.Open_By_File_Name (Context.Get_Real_Path (Edit_XHTML));
-
-            --  Configure reader
-            Reader.Set_Input_Source (Input'Unchecked_Access);
-            Reader.Set_Content_Handler (Filter'Unchecked_Access);
-            Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
-
-            --  Configure template processor
-            Filter.Set_Content_Handler (Event'Unchecked_Access);
-            Filter.Set_Lexical_Handler (Event'Unchecked_Access);
-
-            --  Bind wiki page content
-            Filter.Set_Parameter (URI, League.Holders.To_Holder (Wiki_File));
-            Filter.Set_Parameter
-              (Wiki_Page,
-               League.Holders.To_Holder (Axe.Read_File (Real_Name, Decoder)));
-
-            --  Process template
-            Reader.Parse;
-
-            if not Filter.Error_String.Is_Empty then
-               raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
-            end if;
-
-            return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
-         end;
-      end Edit_Wiki_Content;
-
-      ---------------------
-      -- Sidebar_Content --
-      ---------------------
-
-      function Sidebar_Content return League.Holders.Holder is
-         Sidebar   : Axe.Sidebars.Sidebar;
-         File_Name : constant League.Strings.Universal_String
-           := Context.Get_Real_Path (Sidebar_File);
-         Text      : constant League.Strings.Universal_String :=
-           Axe.Read_File (File_Name, Decoder);
-         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
-      begin
-         Sidebar.Initialize (Text);
-
-         --  Set document locator to avoid constraint error
-         Event.Set_Document_Locator
-           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
-
-         Sidebar.Expand (Event'Unchecked_Access, File_Name, "/");
-
-         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
-      end Sidebar_Content;
-
-      ------------------
-      -- Wiki_Content --
-      ------------------
-
-      function Wiki_Content return League.Holders.Holder is
-         Text      : constant League.Strings.Universal_String :=
-           Axe.Read_File (Real_Name, Decoder);
-         Handler   : Axe.Wiki.HTML_Output.Context;
-         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
-      begin
-         --  Set document locator to avoid constraint error
-         Event.Set_Document_Locator
-           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
-
-         --  Parse Wiki page
-         Handler.Initialize (Event'Unchecked_Access, "/");
-         Axe.Wiki.Parser.Parse (Text, Handler);
-
-         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
-      end Wiki_Content;
-
+      Name         : constant String := Real_Name.To_UTF_8_String;
+      Servlet_Path : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Servlet_Path;
+      Is_Edit      : constant Boolean := Servlet_Path.Length = 1
+        and then Servlet_Path.Element (1) = Edit_Wiki;
    begin
-      if not Ada.Directories.Exists (Name) then
+      if Ada.Directories.Exists (Name) then
+         Render_Wiki
+           (File_Name => File_Name,
+            Text      => Axe.Read_File (Real_Name, Decoder),
+            Is_Edit   => Is_Edit,
+            Context   => Context,
+            Response  => Response);
+      elsif Is_Edit then
+         Render_Wiki
+           (File_Name => File_Name,
+            Text      => League.Strings.Empty_Universal_String,
+            Is_Edit   => True,
+            Context   => Context,
+            Response  => Response);
+      else
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
-         return;
       end if;
-
-      --  Set template input
-      Input.Open_By_File_Name (Context.Get_Real_Path (Page_XHTML));
-
-      --  Configure reader
-      Reader.Set_Input_Source (Input'Unchecked_Access);
-      Reader.Set_Content_Handler (Filter'Unchecked_Access);
-      Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
-
-      --  Configure template processor
-      Filter.Set_Content_Handler (Writer'Unchecked_Access);
-      Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
-
-      --  Bind wiki page content
-      Filter.Set_Parameter (Wiki_Page, Wiki_Content);
-      Filter.Set_Parameter (Sidebar, Sidebar_Content);
-      Filter.Set_Parameter (Edit_Wiki, Edit_Wiki_Content);
-
-      --  Configure template persing output
-      Writer.Set_Output_Destination (Output'Unchecked_Access);
-
-      --  Process template
-      Reader.Parse;
-
-      if not Filter.Error_String.Is_Empty then
-         raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
-      end if;
-
-      Response.Set_Status (Servlet.HTTP_Responses.OK);
-      Response.Set_Content_Type (+"text/html");
-      Response.Set_Character_Encoding (UTF_8);
-
-      Response.Get_Output_Stream.Write (Output.Get_Text);
    end Do_Get;
+
+   -------------
+   -- Do_Post --
+   -------------
+
+   overriding procedure Do_Post
+    (Self     : in out Wiki_View_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
+   is
+      pragma Unreferenced (Self);
+
+      Context : constant access Servlet.Contexts.Servlet_Context'Class
+        := Request.Get_Servlet_Context;
+      File_Name : constant League.Strings.Universal_String :=
+        Request.Get_Parameter (Axe.Wiki_View_Servlets.URI);
+      Post : constant League.Strings.Universal_String :=
+        Request.Get_Parameter (Axe.Wiki_View_Servlets.Post);
+      Text : constant League.Strings.Universal_String :=
+        String_Carriage_Return
+          (Request.Get_Parameter (Axe.Wiki_View_Servlets.Text));
+   begin
+      if Post = Preview then
+         Render_Wiki (File_Name, Text, True, Context, Response);
+      else
+         declare
+            use Ada.Wide_Wide_Text_IO;
+
+            Wiki_File    : constant League.Strings.Universal_String
+              := Get_Wiki_File (File_Name);
+            Real_Name    : constant League.Strings.Universal_String
+              := Context.Get_Real_Path (Wiki_File);
+            File : File_Type;
+         begin
+            Create (File, Name => Real_Name.To_UTF_8_String, Form => "WCEM=8");
+            Put (File, Text.To_Wide_Wide_String);
+            Close (File);
+
+            Response.Set_Status (Servlet.HTTP_Responses.Moved_Temporarily);
+            Response.Set_Header (Location, File_Name);
+         end;
+      end if;
+   end Do_Post;
 
    -------------------
    -- Get_File_Name --
@@ -370,6 +303,8 @@ package body Axe.Wiki_View_Servlets is
       First     : Boolean := True;
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
+      File_Name : constant League.Strings.Universal_String
+        := Get_File_Name (Request);
 
       ----------------
       -- Check_File --
@@ -398,7 +333,7 @@ package body Axe.Wiki_View_Servlets is
       end Check_File;
 
    begin
-      Check_File (Get_Wiki_File (Request));
+      Check_File (Get_Wiki_File (File_Name));
       Check_File (Page_XHTML);
       Check_File (Sidebar_File);
       Check_File (Edit_XHTML);
@@ -428,10 +363,10 @@ package body Axe.Wiki_View_Servlets is
    -------------------
 
    function Get_Wiki_File
-    (Request : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+    (File_Name : League.Strings.Universal_String)
       return League.Strings.Universal_String
    is
-      Result : League.Strings.Universal_String := Get_File_Name (Request);
+      Result : League.Strings.Universal_String := File_Name;
    begin
       Result.Append (".wiki");
 
@@ -451,5 +386,171 @@ package body Axe.Wiki_View_Servlets is
    begin
       return (Servlet.HTTP_Servlets.HTTP_Servlet with null record);
    end Instantiate;
+
+   --------------------
+   -- Render_Preview --
+   --------------------
+
+   procedure Render_Wiki
+     (File_Name : League.Strings.Universal_String;
+      Text      : League.Strings.Universal_String;
+      Is_Edit   : Boolean;
+      Context   : access Servlet.Contexts.Servlet_Context'Class;
+      Response  : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
+   is
+      function Wiki_Content return League.Holders.Holder;
+      --  Return rendered wiki content wrapped into
+      --  Holder of XML.Templates.Streams.Holders
+
+      function Edit_Wiki_Content return League.Holders.Holder;
+      --  Return edit wiki form with wiki content inside it, wrapped into
+      --  Holder of XML.Templates.Streams.Holders
+
+      function Sidebar_Content return League.Holders.Holder;
+      --  Return rendered sidebar menu wrapped into
+      --  Holder of XML.Templates.Streams.Holders
+
+      Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Reader : aliased XML.SAX.Simple_Readers.Simple_Reader;
+      Filter : aliased XML.Templates.Processors.Template_Processor;
+      Writer : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
+      Output : aliased XML.SAX.Output_Destinations.Strings
+        .String_Output_Destination;
+
+      -----------------------
+      -- Edit_Wiki_Content --
+      -----------------------
+
+      function Edit_Wiki_Content return League.Holders.Holder is
+         Input     : aliased XML.SAX.Input_Sources.Streams.Files
+           .File_Input_Source;
+         Reader    : aliased XML.SAX.Simple_Readers.Simple_Reader;
+         Filter    : aliased XML.Templates.Processors.Template_Processor;
+         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+      begin
+         --  Set template input
+         Input.Open_By_File_Name (Context.Get_Real_Path (Edit_XHTML));
+
+         --  Configure reader
+         Reader.Set_Input_Source (Input'Unchecked_Access);
+         Reader.Set_Content_Handler (Filter'Unchecked_Access);
+         Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
+
+         --  Configure template processor
+         Filter.Set_Content_Handler (Event'Unchecked_Access);
+         Filter.Set_Lexical_Handler (Event'Unchecked_Access);
+
+         --  Bind wiki page content
+         Filter.Set_Parameter (URI, League.Holders.To_Holder (File_Name));
+         Filter.Set_Parameter (Wiki_Page, League.Holders.To_Holder (Text));
+
+         --  Process template
+         Reader.Parse;
+
+         if not Filter.Error_String.Is_Empty then
+            raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
+         end if;
+
+         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+      end Edit_Wiki_Content;
+
+      ---------------------
+      -- Sidebar_Content --
+      ---------------------
+
+      function Sidebar_Content return League.Holders.Holder is
+         Sidebar   : Axe.Sidebars.Sidebar;
+         Real_Name : constant League.Strings.Universal_String
+           := Context.Get_Real_Path (Sidebar_File);
+         Text      : constant League.Strings.Universal_String :=
+           Axe.Read_File (Real_Name, Decoder);
+         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+      begin
+         Sidebar.Initialize (Text);
+
+         --  Set document locator to avoid constraint error
+         Event.Set_Document_Locator
+           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
+
+         Sidebar.Expand (Event'Unchecked_Access, File_Name, "/");
+
+         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+      end Sidebar_Content;
+
+      ------------------
+      -- Wiki_Content --
+      ------------------
+
+      function Wiki_Content return League.Holders.Holder is
+         Handler   : Axe.Wiki.HTML_Output.Context;
+         Event     : aliased XML.SAX.Event_Writers.Event_Writer;
+      begin
+         --  Set document locator to avoid constraint error
+         Event.Set_Document_Locator
+           (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
+
+         --  Parse Wiki page
+         Handler.Initialize (Event'Unchecked_Access, "/");
+         Axe.Wiki.Parser.Parse (Text, Handler);
+
+         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+      end Wiki_Content;
+
+   begin
+      --  Set template input
+      Input.Open_By_File_Name (Context.Get_Real_Path (Page_XHTML));
+
+      --  Configure reader
+      Reader.Set_Input_Source (Input'Unchecked_Access);
+      Reader.Set_Content_Handler (Filter'Unchecked_Access);
+      Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
+
+      --  Configure template processor
+      Filter.Set_Content_Handler (Writer'Unchecked_Access);
+      Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
+
+      --  Bind wiki page content
+      Filter.Set_Parameter (Wiki_Page, Wiki_Content);
+      Filter.Set_Parameter (Sidebar, Sidebar_Content);
+
+      if Is_Edit then
+         Filter.Set_Parameter (Edit_Wiki, Edit_Wiki_Content);
+      else
+         Filter.Set_Parameter
+           (Edit_Wiki,
+            XML.Templates.Streams.Holders.To_Holder
+              (XML.Templates.Streams.XML_Stream_Element_Vectors.Empty_Vector));
+      end if;
+
+      --  Configure template persing output
+      Writer.Set_Output_Destination (Output'Unchecked_Access);
+
+      --  Process template
+      Reader.Parse;
+
+      if not Filter.Error_String.Is_Empty then
+         raise Constraint_Error with Filter.Error_String.To_UTF_8_String;
+      end if;
+
+      Response.Set_Status (Servlet.HTTP_Responses.OK);
+      Response.Set_Content_Type (+"text/html");
+      Response.Set_Character_Encoding (UTF_8);
+
+      Response.Get_Output_Stream.Write (Output.Get_Text);
+   end Render_Wiki;
+
+   ----------------------------
+   -- String_Carriage_Return --
+   ----------------------------
+
+   function String_Carriage_Return
+    (Text : League.Strings.Universal_String)
+     return League.Strings.Universal_String
+   is
+      List : constant League.String_Vectors.Universal_String_Vector :=
+        Text.Split (Ada.Characters.Wide_Wide_Latin_1.CR);
+   begin
+      return List.Join ("");
+   end String_Carriage_Return;
 
 end Axe.Wiki_View_Servlets;

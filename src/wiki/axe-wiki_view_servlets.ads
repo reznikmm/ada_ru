@@ -59,6 +59,11 @@ private
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
       return League.Calendars.Date_Time;
 
+   overriding procedure Do_Post
+    (Self     : in out Wiki_View_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
+
    overriding function Get_Servlet_Info
     (Self : Wiki_View_Servlet) return League.Strings.Universal_String;
 
