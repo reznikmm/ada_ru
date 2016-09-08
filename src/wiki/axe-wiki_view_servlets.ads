@@ -31,6 +31,7 @@
 private with League.Calendars;
 private with League.Strings;
 
+private with Servlet.Generic_Servlets;
 private with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
@@ -60,5 +61,10 @@ private
 
    overriding function Get_Servlet_Info
     (Self : Wiki_View_Servlet) return League.Strings.Universal_String;
+
+   overriding function Instantiate
+    (Parameters : not null access
+       Servlet.Generic_Servlets.Instantiation_Parameters'Class)
+         return Wiki_View_Servlet;
 
 end Axe.Wiki_View_Servlets;

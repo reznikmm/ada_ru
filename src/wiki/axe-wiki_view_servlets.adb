@@ -438,4 +438,18 @@ package body Axe.Wiki_View_Servlets is
       return Result;
    end Get_Wiki_File;
 
+   -----------------
+   -- Instantiate --
+   -----------------
+
+   overriding function Instantiate
+    (Parameters : not null access
+       Servlet.Generic_Servlets.Instantiation_Parameters'Class)
+         return Wiki_View_Servlet
+   is
+      pragma Unreferenced (Parameters);
+   begin
+      return (Servlet.HTTP_Servlets.HTTP_Servlet with null record);
+   end Instantiate;
+
 end Axe.Wiki_View_Servlets;
