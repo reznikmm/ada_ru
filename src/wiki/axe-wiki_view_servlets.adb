@@ -28,9 +28,11 @@
 
 with Ada.Directories;
 
+with League.Base_Codecs;
 with League.Calendars.Ada_Conversions;
 with League.Holders;
 with League.IRIs;
+with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
 
@@ -119,6 +121,11 @@ package body Axe.Wiki_View_Servlets is
       Context   : access Servlet.Contexts.Servlet_Context'Class;
       Response  : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
 
+   procedure Chech_Authorization
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+      Success  : out Boolean);
+
    UTF_8   : constant League.Strings.Universal_String := +"utf-8";
    Decoder : constant League.Text_Codecs.Text_Codec :=
      League.Text_Codecs.Codec (UTF_8);
@@ -128,6 +135,9 @@ package body Axe.Wiki_View_Servlets is
      +"/edit_wiki.xhtml.tmpl";
    Sidebar_File : constant League.Strings.Universal_String :=
      +"/wiki/layout.wiki";
+   Authorization : constant League.Strings.Universal_String :=
+     +"Authorization";
+
    Edit_Wiki    : constant League.Strings.Universal_String := +"edit_wiki";
    Location     : constant League.Strings.Universal_String := +"Location";
    Post         : constant League.Strings.Universal_String := +"post";
@@ -180,6 +190,108 @@ package body Axe.Wiki_View_Servlets is
       end Encoding;
 
    end Dummy_Locators;
+
+   -------------------------
+   -- Chech_Authorization --
+   -------------------------
+
+   procedure Chech_Authorization
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+      Success  : out Boolean)
+   is
+      Auth : constant League.String_Vectors.Universal_String_Vector :=
+        Request.Get_Headers (Authorization);
+
+      procedure Authenticate (Realm : League.Strings.Universal_String);
+
+      function Valid return Boolean;
+
+      ------------------
+      -- Authenticate --
+      ------------------
+
+      procedure Authenticate
+        (Realm : League.Strings.Universal_String)
+      is
+         Value : League.Strings.Universal_String;
+      begin
+         Value.Append ("Basic ");
+         Value.Append ("realm=""");
+         Value.Append (Realm);
+         Value.Append ("""");
+
+         Response.Set_Header (+"WWW-Authenticate", Value);
+
+         Response.Set_Status (Servlet.HTTP_Responses.Unauthorized);
+      end Authenticate;
+
+      -----------
+      -- Valid --
+      -----------
+
+      function Valid return Boolean is
+         Ok   : Boolean;
+         Raw  : League.Stream_Element_Vectors.Stream_Element_Vector;
+         Text : League.Strings.Universal_String;
+         List : League.String_Vectors.Universal_String_Vector;
+      begin
+         if Auth.Length < 1 then
+            return False;
+         end if;
+
+         List := Auth.Element (1).Split (' ');
+
+         if List.Length < 2 then
+            return False;
+         elsif List.Element (1) /= +"Basic" then
+            return False;
+         end if;
+
+         League.Base_Codecs.From_Base_64 (List.Element (2), Raw, Ok);
+
+         if not Ok then
+            return False;
+         end if;
+
+         begin
+            Text := Decoder.Decode (Raw);
+         exception
+            when Constraint_Error =>
+               return False;
+         end;
+
+         declare
+            Pair : constant League.String_Vectors.Universal_String_Vector :=
+              Text.Split (':');
+            File  : League.Strings.Universal_String;
+            Text  : League.Strings.Universal_String;
+         begin
+            if Pair.Length < 2 then
+               return False;
+            end if;
+
+            File.Append ("/password/");
+            File.Append (Pair.Element (1));
+            File := Request.Get_Servlet_Context.Get_Real_Path (File);
+            Text := Axe.Read_File (File, Decoder);
+            Text :=
+              Text.Head (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF) - 1);
+
+            return Text = Pair.Element (2);
+         exception
+            when Ada.Wide_Wide_Text_IO.Name_Error =>
+               return False;
+         end;
+      end Valid;
+
+   begin
+      Success := Valid;
+
+      if not Success then
+         Authenticate (+"Ada RU WiKi");
+      end if;
+   end Chech_Authorization;
 
    ------------
    -- Do_Get --
@@ -236,6 +348,7 @@ package body Axe.Wiki_View_Servlets is
    is
       pragma Unreferenced (Self);
 
+      Success : Boolean;
       Context : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
       File_Name : constant League.Strings.Universal_String :=
@@ -246,7 +359,11 @@ package body Axe.Wiki_View_Servlets is
         String_Carriage_Return
           (Request.Get_Parameter (Axe.Wiki_View_Servlets.Text));
    begin
-      if Post = Preview then
+      Chech_Authorization (Request, Response, Success);
+
+      if not Success then
+         return;
+      elsif Post = Preview then
          Render_Wiki (File_Name, Text, True, Context, Response);
       else
          declare
