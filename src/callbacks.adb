@@ -103,7 +103,8 @@ package body Callbacks is
       Preview_End   : constant String := "</div'>";
 
       Edit_Start : constant String :=
-        "<form method='post' action='/edit_wiki/'>"
+        "<form method='post' action='/edit_wiki/' "
+        & "enctype='multipart/form-data'>"
         & "<input type='hidden' name='uri' value='" & URI
         & "'><textarea name='text' rows='30' cols='80'>";
 
