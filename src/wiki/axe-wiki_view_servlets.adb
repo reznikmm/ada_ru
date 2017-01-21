@@ -115,7 +115,7 @@ package body Axe.Wiki_View_Servlets is
    --  Drop 0x0D characters from Text and return result
 
    procedure Render_Wiki
-     (File_Name : League.Strings.Universal_String;
+     (URI       : League.Strings.Universal_String;
       Text      : League.Strings.Universal_String;
       Is_Edit   : Boolean;
       Context   : access Servlet.Contexts.Servlet_Context'Class;
@@ -147,13 +147,13 @@ package body Axe.Wiki_View_Servlets is
    URI          : constant League.Strings.Universal_String := +"uri";
    Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
 
-   function Get_File_Name
+   function Get_URI
     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
       return League.Strings.Universal_String;
-   --  Return virtual file name in context space
+   --  Return URI of request
 
    function Get_Wiki_File
-    (File_Name : League.Strings.Universal_String)
+    (URI : League.Strings.Universal_String)
       return League.Strings.Universal_String;
    --  Return corresponding .wiki virtual file name in context space
 
@@ -306,28 +306,27 @@ package body Axe.Wiki_View_Servlets is
 
       Context      : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name    : constant League.Strings.Universal_String
-        := Get_File_Name (Request);
+      URI          : constant League.Strings.Universal_String
+        := Get_URI (Request);
       Wiki_File    : constant League.Strings.Universal_String
-        := Get_Wiki_File (File_Name);
+        := Get_Wiki_File (URI);
       Real_Name    : constant League.Strings.Universal_String
         := Context.Get_Real_Path (Wiki_File);
-      Name         : constant String := Real_Name.To_UTF_8_String;
       Servlet_Path : constant League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
       Is_Edit      : constant Boolean := Servlet_Path.Length = 1
         and then Servlet_Path.Element (1) = Edit_Wiki;
    begin
-      if Ada.Directories.Exists (Name) then
+      if Ada.Directories.Exists (Real_Name.To_UTF_8_String) then
          Render_Wiki
-           (File_Name => File_Name,
+           (URI       => URI,
             Text      => Axe.Read_File (Real_Name, Decoder),
             Is_Edit   => Is_Edit,
             Context   => Context,
             Response  => Response);
       elsif Is_Edit then
          Render_Wiki
-           (File_Name => File_Name,
+           (URI       => URI,
             Text      => League.Strings.Empty_Universal_String,
             Is_Edit   => True,
             Context   => Context,
@@ -351,7 +350,7 @@ package body Axe.Wiki_View_Servlets is
       Success : Boolean;
       Context : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name : constant League.Strings.Universal_String :=
+      URI  : League.Strings.Universal_String :=
         Request.Get_Parameter (Axe.Wiki_View_Servlets.URI);
       Post : constant League.Strings.Universal_String :=
         Request.Get_Parameter (Axe.Wiki_View_Servlets.Post);
@@ -364,13 +363,13 @@ package body Axe.Wiki_View_Servlets is
       if not Success then
          return;
       elsif Post = Preview then
-         Render_Wiki (File_Name, Text, True, Context, Response);
+         Render_Wiki (URI, Text, True, Context, Response);
       else
          declare
             use Ada.Wide_Wide_Text_IO;
 
             Wiki_File    : constant League.Strings.Universal_String
-              := Get_Wiki_File (File_Name);
+              := Get_Wiki_File (URI);
             Real_Name    : constant League.Strings.Universal_String
               := Context.Get_Real_Path (Wiki_File);
             File : File_Type;
@@ -379,29 +378,15 @@ package body Axe.Wiki_View_Servlets is
             Put (File, Text.To_Wide_Wide_String);
             Close (File);
 
+            if URI.Is_Empty then
+               URI.Append ("/");
+            end if;
+
             Response.Set_Status (Servlet.HTTP_Responses.Moved_Temporarily);
-            Response.Set_Header (Location, File_Name);
+            Response.Set_Header (Location, URI);
          end;
       end if;
    end Do_Post;
-
-   -------------------
-   -- Get_File_Name --
-   -------------------
-
-   function Get_File_Name
-     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
-       return League.Strings.Universal_String
-   is
-      Path_Info    : constant League.String_Vectors.Universal_String_Vector
-        := Request.Get_Path_Info;
-      Path         : League.String_Vectors.Universal_String_Vector;
-   begin
-      --  Add empty string to have leading '/'
-      Path.Append (League.Strings.Empty_Universal_String);
-      Path.Append (Path_Info);
-      return Path.Join ('/');
-   end Get_File_Name;
 
    -----------------------
    -- Get_Last_Modified --
@@ -420,8 +405,8 @@ package body Axe.Wiki_View_Servlets is
       First     : Boolean := True;
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name : constant League.Strings.Universal_String
-        := Get_File_Name (Request);
+      Wiki_File : constant League.Strings.Universal_String
+        := Get_Wiki_File (Get_URI (Request));
 
       ----------------
       -- Check_File --
@@ -450,7 +435,7 @@ package body Axe.Wiki_View_Servlets is
       end Check_File;
 
    begin
-      Check_File (Get_Wiki_File (File_Name));
+      Check_File (Wiki_File);
       Check_File (Page_XHTML);
       Check_File (Sidebar_File);
       Check_File (Edit_XHTML);
@@ -475,16 +460,38 @@ package body Axe.Wiki_View_Servlets is
       return League.Strings.To_Universal_String ("Wiki Rendering Servlet");
    end Get_Servlet_Info;
 
+   -------------
+   -- Get_URI --
+   -------------
+
+   function Get_URI
+     (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+       return League.Strings.Universal_String
+   is
+      Path_Info    : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Path_Info;
+      Path         : League.String_Vectors.Universal_String_Vector;
+   begin
+      --  Add empty string to have leading '/'
+      Path.Append (League.Strings.Empty_Universal_String);
+      Path.Append (Path_Info);
+      return Path.Join ('/');
+   end Get_URI;
+
    -------------------
    -- Get_Wiki_File --
    -------------------
 
    function Get_Wiki_File
-    (File_Name : League.Strings.Universal_String)
+    (URI : League.Strings.Universal_String)
       return League.Strings.Universal_String
    is
-      Result : League.Strings.Universal_String := File_Name;
+      Result : League.Strings.Universal_String := URI;
    begin
+      if Result.Is_Empty then
+         Result.Append ("/index.html");
+      end if;
+
       Result.Append (".wiki");
 
       return Result;
@@ -509,7 +516,7 @@ package body Axe.Wiki_View_Servlets is
    --------------------
 
    procedure Render_Wiki
-     (File_Name : League.Strings.Universal_String;
+     (URI       : League.Strings.Universal_String;
       Text      : League.Strings.Universal_String;
       Is_Edit   : Boolean;
       Context   : access Servlet.Contexts.Servlet_Context'Class;
@@ -558,7 +565,8 @@ package body Axe.Wiki_View_Servlets is
          Filter.Set_Lexical_Handler (Event'Unchecked_Access);
 
          --  Bind wiki page content
-         Filter.Set_Parameter (URI, League.Holders.To_Holder (File_Name));
+         Filter.Set_Parameter
+           (Wiki_View_Servlets.URI, League.Holders.To_Holder (URI));
          Filter.Set_Parameter (Wiki_Page, League.Holders.To_Holder (Text));
 
          --  Process template
@@ -589,7 +597,7 @@ package body Axe.Wiki_View_Servlets is
          Event.Set_Document_Locator
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
-         Sidebar.Expand (Event'Unchecked_Access, File_Name, "/");
+         Sidebar.Expand (Event'Unchecked_Access, URI, "/");
 
          return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
       end Sidebar_Content;
