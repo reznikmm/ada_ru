@@ -1,4 +1,40 @@
 <?xml version='1.0'?>
 <web-app xmlns='http://forge.ada-ru.org/matreshka/xml/ns/spikedogdd'>
   <library-name>ada_ru</library-name>
+
+  <servlet>
+    <servlet-name>StaticResource</servlet-name>
+    <servlet-tag>AWFC.STATIC_RESOURCE_SERVLETS.STATIC_RESOURCE_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StaticResource</servlet-name>
+    <url-pattern>/acats/*</url-pattern>
+    <url-pattern>/arm83/*</url-pattern>
+    <url-pattern>/asis_ugrg_RU/*</url-pattern>
+    <url-pattern>/files/*</url-pattern>
+    <url-pattern>/glade_UG_RU/*</url-pattern>
+    <url-pattern>/graphics/*</url-pattern>
+    <url-pattern>/GtkAda/*</url-pattern>
+    <url-pattern>/i432/*</url-pattern>
+    <url-pattern>/icons/*</url-pattern>
+    <url-pattern>/Lovelace/*</url-pattern>
+    <url-pattern>/V-0.4w/*</url-pattern>
+    <url-pattern>*.exe</url-pattern>
+    <url-pattern>*.wiki</url-pattern>
+    <url-pattern>*.css</url-pattern>
+    <url-pattern>*.xml</url-pattern>
+    <url-pattern>*.png</url-pattern>
+    <url-pattern>*.jpg</url-pattern>
+    <url-pattern>*.txt</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>WikiRendering</servlet-name>
+    <servlet-tag>AXE.WIKI_VIEW_SERVLETS.WIKI_VIEW_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WikiRendering</servlet-name>
+    <url-pattern>/</url-pattern>
+    <url-pattern>/edit_wiki/*</url-pattern>
+  </servlet-mapping>
 </web-app>
