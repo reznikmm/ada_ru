@@ -34,7 +34,6 @@ package body Axe.Wiki.HTML_Output is
    function "+" (Text : Wide_Wide_String) return U.Universal_String
      renames U.To_Universal_String;
 
-   XHTML  : constant U.Universal_String := +"http://www.w3.org/1999/xhtml";
    PRE    : constant U.Universal_String := +"pre";
    I      : constant U.Universal_String := +"i";
    STRONG : constant U.Universal_String := +"strong";
@@ -72,9 +71,18 @@ package body Axe.Wiki.HTML_Output is
 
    overriding procedure Characters
      (Self : in out Context;
-      Text : League.Strings.Universal_String) is
+      Text : League.Strings.Universal_String)
+   is
+      Special : Axe.Wiki.Specials.Special_Format_Access;
    begin
-      Self.Writer.Characters (Text);
+      if Self.Special.Is_Empty then
+         Self.Writer.Characters (Text);
+      elsif Self.Map.Contains (Self.Special) then
+         Special := Self.Map.Element (Self.Special);
+         Special.Process (Text, Self.Writer);
+      else
+         Self.Writer.Characters ("Unknown format: " & Self.Special);
+      end if;
    end Characters;
 
    -----------------
@@ -83,11 +91,13 @@ package body Axe.Wiki.HTML_Output is
 
    overriding procedure End_Element
      (Self : in out Context;
-      Info : Element_Info) is
+      Info : Element_Info)
+   is
+      XHTML : constant League.Strings.Universal_String := Self.Namespace;
    begin
       case Info.Kind is
          when Special_Format =>
-            Self.Writer.End_Element (XHTML, PRE, PRE);
+            Self.Special.Clear;
          when Preformat =>
             Self.Writer.End_Element (XHTML, PRE, PRE);
          when Bold_Italic =>
@@ -152,12 +162,14 @@ package body Axe.Wiki.HTML_Output is
    procedure Initialize
      (Self            : out Context;
       Writer          : access XML.SAX.Writers.SAX_Writer'Class;
+      Namespace       : League.Strings.Universal_String;
       Wiki_URI_Prefix : Wide_Wide_String)
    is
    begin
       Self.Wiki_URI  := U.To_Universal_String (Wiki_URI_Prefix);
       Self.Writer    := Writer;
       Self.In_Mono   := False;
+      Self.Namespace := Namespace;
    end Initialize;
 
    ----------
@@ -171,7 +183,8 @@ package body Axe.Wiki.HTML_Output is
       Attributes     : XML.SAX.Attributes.SAX_Attributes
         := XML.SAX.Attributes.Empty_SAX_Attributes;
 
-      URL : U.Universal_String := Info.Link;
+      XHTML : constant League.Strings.Universal_String := Self.Namespace;
+      URL   : U.Universal_String := Info.Link;
    begin
       if URL.Starts_With ("wiki:") then
          URL.Replace (1, 5, Self.Wiki_URI);
@@ -193,6 +206,18 @@ package body Axe.Wiki.HTML_Output is
       end if;
    end Link;
 
+   -----------------------------
+   -- Register_Special_Format --
+   -----------------------------
+
+   procedure Register_Special_Format
+     (Self  : in out Context;
+      Name  : League.Strings.Universal_String;
+      Value : Axe.Wiki.Specials.Special_Format_Access) is
+   begin
+      Self.Map.Include (Name, Value);
+   end Register_Special_Format;
+
    -------------------
    -- Start_Element --
    -------------------
@@ -201,12 +226,14 @@ package body Axe.Wiki.HTML_Output is
      (Self : in out Context;
       Info : Element_Info)
    is
-      Attributes     : XML.SAX.Attributes.SAX_Attributes
+      XHTML : constant League.Strings.Universal_String := Self.Namespace;
+
+      Attributes : XML.SAX.Attributes.SAX_Attributes
         := XML.SAX.Attributes.Empty_SAX_Attributes;
    begin
       case Info.Kind is
          when Special_Format =>
-            Self.Writer.Start_Element (XHTML, PRE, PRE);
+            Self.Special := Info.Format;
          when Preformat =>
             Self.Writer.Start_Element (XHTML, PRE, PRE);
          when Bold_Italic =>

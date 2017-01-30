@@ -54,6 +54,7 @@ with Axe.Read_File;
 with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
 with Axe.Wiki.Parser;
+with Axe.Wiki.Specials.Ada;
 
 with Ada.Wide_Wide_Text_IO;
 with Ada.Characters.Wide_Wide_Latin_1;
@@ -137,6 +138,8 @@ package body Axe.Wiki_View_Servlets is
      +"/wiki/layout.wiki";
    Authorization : constant League.Strings.Universal_String :=
      +"Authorization";
+   XHTML         : constant League.Strings.Universal_String :=
+     +"http://www.w3.org/1999/xhtml";
 
    Edit_Wiki    : constant League.Strings.Universal_String := +"edit_wiki";
    Location     : constant League.Strings.Universal_String := +"Location";
@@ -608,6 +611,7 @@ package body Axe.Wiki_View_Servlets is
 
       function Wiki_Content return League.Holders.Holder is
          Handler   : Axe.Wiki.HTML_Output.Context;
+         Ada       : aliased Axe.Wiki.Specials.Ada.Ada_Format;
          Event     : aliased XML.SAX.Event_Writers.Event_Writer;
       begin
          --  Set document locator to avoid constraint error
@@ -615,7 +619,9 @@ package body Axe.Wiki_View_Servlets is
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
          --  Parse Wiki page
-         Handler.Initialize (Event'Unchecked_Access, "/");
+         Handler.Initialize (Event'Unchecked_Access, XHTML, "/");
+         Ada.Initialize (XHTML);
+         Handler.Register_Special_Format (+"ada", Ada'Unchecked_Access);
          Axe.Wiki.Parser.Parse (Text, Handler);
 
          return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);

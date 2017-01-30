@@ -26,7 +26,12 @@
 --  $Date:$
 ------------------------------------------------------------------------------
 
+with Ada.Containers.Hashed_Maps;
+
+with League.Strings.Hash;
+
 with Axe.Wiki.Parser;
+with Axe.Wiki.Specials;
 with XML.SAX.Writers;
 
 package Axe.Wiki.HTML_Output is
@@ -48,15 +53,31 @@ package Axe.Wiki.HTML_Output is
    procedure Initialize
      (Self            : out Context;
       Writer          : access XML.SAX.Writers.SAX_Writer'Class;
+      Namespace       : League.Strings.Universal_String;
       Wiki_URI_Prefix : Wide_Wide_String);
+
+   procedure Register_Special_Format
+     (Self  : in out Context;
+      Name  : League.Strings.Universal_String;
+      Value : Axe.Wiki.Specials.Special_Format_Access);
 
 private
 
+   package Maps is new Ada.Containers.Hashed_Maps
+     (Key_Type        => League.Strings.Universal_String,
+      Element_Type    => Axe.Wiki.Specials.Special_Format_Access,
+      Hash            => League.Strings.Hash,
+      Equivalent_Keys => League.Strings."=",
+      "="             => Axe.Wiki.Specials."=");
+
    type Context is new Axe.Wiki.Parser.Wiki_Handler with record
-      Writer   : access XML.SAX.Writers.SAX_Writer'Class;
-      Wiki_URI : League.Strings.Universal_String;
-      In_Mono  : Boolean;
-      Img_Link : Boolean;
+      Map       : Maps.Map;
+      Writer    : access XML.SAX.Writers.SAX_Writer'Class;
+      Wiki_URI  : League.Strings.Universal_String;
+      Special   : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String;
+      In_Mono   : Boolean;
+      Img_Link  : Boolean;
    end record;
 
    procedure Link
