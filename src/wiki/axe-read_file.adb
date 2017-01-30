@@ -51,7 +51,7 @@ is
    Last   : Ada.Streams.Stream_Element_Offset;
 begin
    Ada.Streams.Stream_IO.Open
-     (File, Ada.Streams.Stream_IO.In_File, File_Name);
+     (File, Ada.Streams.Stream_IO.In_File, File_Name, "SHARED=NO");
    Ada.Streams.Stream_IO.Read (File, Data, Last);
    Ada.Streams.Stream_IO.Close (File);
 
