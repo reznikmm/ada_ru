@@ -26,6 +26,8 @@
 --  $Date:$
 ------------------------------------------------------------------------------
 
+with Ada.Characters.Wide_Wide_Latin_1;
+
 with League.Characters;
 with League.Regexps;
 with League.String_Vectors;
@@ -56,6 +58,10 @@ package body Axe.Wiki.Parser is
 
    function "+" (X : Wide_Wide_String) return League.Regexps.Regexp_Pattern;
 
+   procedure Parse_Internal
+     (Text : U.Universal_String;
+      Data : in out Wiki_Handler'Class);
+
    ---------
    -- "+" --
    ---------
@@ -66,7 +72,8 @@ package body Axe.Wiki.Parser is
    end"+";
 
    LF : constant League.Characters.Universal_Character :=
-     League.Characters.To_Universal_Character (Wide_Wide_Character'Val (10));
+     League.Characters.To_Universal_Character
+       (Ada.Characters.Wide_Wide_Latin_1.LF);
 
    Regexp : constant
      array (Element_Kinds) of League.Regexps.Regexp_Pattern :=
@@ -103,6 +110,26 @@ package body Axe.Wiki.Parser is
    -----------
 
    procedure Parse
+     (Text : U.Universal_String;
+      Data : in out Wiki_Handler'Class)
+   is
+      use type League.Strings.Universal_String;
+
+      New_Line : constant Wide_Wide_String :=
+        (1 => Ada.Characters.Wide_Wide_Latin_1.LF);
+   begin
+      if Text.Starts_With (New_Line) then
+         Parse_Internal (Text, Data);
+      else
+         Parse_Internal (New_Line & Text, Data);
+      end if;
+   end Parse;
+
+   --------------------
+   -- Parse_Internal --
+   --------------------
+
+   procedure Parse_Internal
      (Text : U.Universal_String;
       Data : in out Wiki_Handler'Class)
    is
@@ -486,6 +513,6 @@ package body Axe.Wiki.Parser is
 
       Expand (1, Text.Length);
       Close_Para;
-   end Parse;
+   end Parse_Internal;
 
 end Axe.Wiki.Parser;
