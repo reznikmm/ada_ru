@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2017, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -26,63 +26,76 @@
 --  $Date:$
 ------------------------------------------------------------------------------
 
-with Ada.Containers.Hashed_Maps;
+package body Axe.Wiki.Titles is
 
-with League.Strings.Hash;
-
-with Axe.Wiki.Parser;
-with Axe.Wiki.Specials;
-with XML.SAX.Writers;
-
-package Axe.Wiki.HTML_Output is
-
-   type Handler is new Axe.Wiki.Parser.Wiki_Handler with private;
-
-   overriding procedure Start_Element
-     (Self : in out Handler;
-      Info : Element_Info);
-
-   overriding procedure End_Element
-     (Self : in out Handler;
-      Info : Element_Info);
+   ----------------
+   -- Characters --
+   ----------------
 
    overriding procedure Characters
      (Self : in out Handler;
-      Text : League.Strings.Universal_String);
+      Text : League.Strings.Universal_String) is
+   begin
+      if Self.In_Heading and not Self.Found then
+         Self.Title := Text;
+         Self.Found := True;
+      end if;
+
+      Self.Nested.Characters (Text);
+   end Characters;
+
+   -----------------
+   -- End_Element --
+   -----------------
+
+   overriding procedure End_Element
+     (Self : in out Handler;
+      Info : Element_Info) is
+   begin
+      if Info.Kind in Heading then
+         Self.In_Heading := False;
+      end if;
+
+      Self.Nested.End_Element (Info);
+   end End_Element;
+
+   ----------------
+   -- Initialize --
+   ----------------
 
    procedure Initialize
-     (Self            : out Handler;
-      Writer          : access XML.SAX.Writers.SAX_Writer'Class;
-      Namespace       : League.Strings.Universal_String;
-      Wiki_URI_Prefix : Wide_Wide_String);
+     (Self    : out Handler;
+      Default : League.Strings.Universal_String)
+   is
+   begin
+      Self.Title := Default;
+      Self.Found := False;
+      Self.In_Heading := False;
+   end Initialize;
 
-   procedure Register_Special_Format
-     (Self  : in out Handler;
-      Name  : League.Strings.Universal_String;
-      Value : Axe.Wiki.Specials.Special_Format_Access);
+   -------------------
+   -- Start_Element --
+   -------------------
 
-private
-
-   package Maps is new Ada.Containers.Hashed_Maps
-     (Key_Type        => League.Strings.Universal_String,
-      Element_Type    => Axe.Wiki.Specials.Special_Format_Access,
-      Hash            => League.Strings.Hash,
-      Equivalent_Keys => League.Strings."=",
-      "="             => Axe.Wiki.Specials."=");
-
-   type Handler is new Axe.Wiki.Parser.Wiki_Handler with record
-      Map       : Maps.Map;
-      Writer    : access XML.SAX.Writers.SAX_Writer'Class;
-      Wiki_URI  : League.Strings.Universal_String;
-      Special   : League.Strings.Universal_String;
-      Namespace : League.Strings.Universal_String;
-      In_Mono   : Boolean;
-      Img_Link  : Boolean;
-   end record;
-
-   procedure Link
+   overriding procedure Start_Element
      (Self : in out Handler;
-      Info : Element_Info);
-   --  make <a> or <img> element
+      Info : Element_Info) is
+   begin
+      if Info.Kind in Heading then
+         Self.In_Heading := True;
+      end if;
 
-end Axe.Wiki.HTML_Output;
+      Self.Nested.Start_Element (Info);
+   end Start_Element;
+
+   -----------
+   -- Title --
+   -----------
+
+   function Title
+     (Self : Handler) return League.Strings.Universal_String is
+   begin
+      return Self.Title;
+   end Title;
+
+end Axe.Wiki.Titles;

@@ -70,7 +70,7 @@ package body Axe.Wiki.HTML_Output is
    ----------------
 
    overriding procedure Characters
-     (Self : in out Context;
+     (Self : in out Handler;
       Text : League.Strings.Universal_String)
    is
       Special : Axe.Wiki.Specials.Special_Format_Access;
@@ -90,7 +90,7 @@ package body Axe.Wiki.HTML_Output is
    -----------------
 
    overriding procedure End_Element
-     (Self : in out Context;
+     (Self : in out Handler;
       Info : Element_Info)
    is
       XHTML : constant League.Strings.Universal_String := Self.Namespace;
@@ -160,7 +160,7 @@ package body Axe.Wiki.HTML_Output is
    ----------------
 
    procedure Initialize
-     (Self            : out Context;
+     (Self            : out Handler;
       Writer          : access XML.SAX.Writers.SAX_Writer'Class;
       Namespace       : League.Strings.Universal_String;
       Wiki_URI_Prefix : Wide_Wide_String)
@@ -177,7 +177,7 @@ package body Axe.Wiki.HTML_Output is
    ----------
 
    procedure Link
-     (Self : in out Context;
+     (Self : in out Handler;
       Info : Element_Info)
    is
       Attributes     : XML.SAX.Attributes.SAX_Attributes
@@ -211,7 +211,7 @@ package body Axe.Wiki.HTML_Output is
    -----------------------------
 
    procedure Register_Special_Format
-     (Self  : in out Context;
+     (Self  : in out Handler;
       Name  : League.Strings.Universal_String;
       Value : Axe.Wiki.Specials.Special_Format_Access) is
    begin
@@ -223,7 +223,7 @@ package body Axe.Wiki.HTML_Output is
    -------------------
 
    overriding procedure Start_Element
-     (Self : in out Context;
+     (Self : in out Handler;
       Info : Element_Info)
    is
       XHTML : constant League.Strings.Universal_String := Self.Namespace;

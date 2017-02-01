@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2017, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -26,17 +26,27 @@
 --  $Date:$
 ------------------------------------------------------------------------------
 
-with Ada.Containers.Hashed_Maps;
-
-with League.Strings.Hash;
-
 with Axe.Wiki.Parser;
-with Axe.Wiki.Specials;
-with XML.SAX.Writers;
 
-package Axe.Wiki.HTML_Output is
+package Axe.Wiki.Titles is
 
-   type Handler is new Axe.Wiki.Parser.Wiki_Handler with private;
+   type Handler (Nested : not null access Axe.Wiki.Parser.Wiki_Handler'Class)
+     is new Axe.Wiki.Parser.Wiki_Handler with private;
+
+   procedure Initialize
+     (Self    : out Handler;
+      Default : League.Strings.Universal_String);
+
+   function Title (Self : Handler) return League.Strings.Universal_String;
+
+private
+
+   type Handler (Nested : not null access Axe.Wiki.Parser.Wiki_Handler'Class)
+     is new Axe.Wiki.Parser.Wiki_Handler with record
+       Title      : League.Strings.Universal_String;
+       Found      : Boolean := False;
+       In_Heading : Boolean := False;
+   end record;
 
    overriding procedure Start_Element
      (Self : in out Handler;
@@ -50,39 +60,4 @@ package Axe.Wiki.HTML_Output is
      (Self : in out Handler;
       Text : League.Strings.Universal_String);
 
-   procedure Initialize
-     (Self            : out Handler;
-      Writer          : access XML.SAX.Writers.SAX_Writer'Class;
-      Namespace       : League.Strings.Universal_String;
-      Wiki_URI_Prefix : Wide_Wide_String);
-
-   procedure Register_Special_Format
-     (Self  : in out Handler;
-      Name  : League.Strings.Universal_String;
-      Value : Axe.Wiki.Specials.Special_Format_Access);
-
-private
-
-   package Maps is new Ada.Containers.Hashed_Maps
-     (Key_Type        => League.Strings.Universal_String,
-      Element_Type    => Axe.Wiki.Specials.Special_Format_Access,
-      Hash            => League.Strings.Hash,
-      Equivalent_Keys => League.Strings."=",
-      "="             => Axe.Wiki.Specials."=");
-
-   type Handler is new Axe.Wiki.Parser.Wiki_Handler with record
-      Map       : Maps.Map;
-      Writer    : access XML.SAX.Writers.SAX_Writer'Class;
-      Wiki_URI  : League.Strings.Universal_String;
-      Special   : League.Strings.Universal_String;
-      Namespace : League.Strings.Universal_String;
-      In_Mono   : Boolean;
-      Img_Link  : Boolean;
-   end record;
-
-   procedure Link
-     (Self : in out Handler;
-      Info : Element_Info);
-   --  make <a> or <img> element
-
-end Axe.Wiki.HTML_Output;
+end Axe.Wiki.Titles;

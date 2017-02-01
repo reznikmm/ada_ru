@@ -53,6 +53,7 @@ with Servlet.Contexts;
 with Axe.Read_File;
 with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
+with Axe.Wiki.Titles;
 with Axe.Wiki.Parser;
 with Axe.Wiki.Specials.Ada;
 
@@ -147,6 +148,7 @@ package body Axe.Wiki_View_Servlets is
    Preview      : constant League.Strings.Universal_String := +"preview";
    Sidebar      : constant League.Strings.Universal_String := +"sidebar";
    Text         : constant League.Strings.Universal_String := +"text";
+   Title_Name   : constant League.Strings.Universal_String := +"title";
    URI          : constant League.Strings.Universal_String := +"uri";
    Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
 
@@ -525,9 +527,11 @@ package body Axe.Wiki_View_Servlets is
       Context   : access Servlet.Contexts.Servlet_Context'Class;
       Response  : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
-      function Wiki_Content return League.Holders.Holder;
+      procedure Wiki_Content
+        (Content : out League.Holders.Holder;
+         Title   : out League.Strings.Universal_String);
       --  Return rendered wiki content wrapped into
-      --  Holder of XML.Templates.Streams.Holders
+      --  Holder of XML.Templates.Streams.Holders. Also return page title.
 
       function Edit_Wiki_Content return League.Holders.Holder;
       --  Return edit wiki form with wiki content inside it, wrapped into
@@ -609,8 +613,12 @@ package body Axe.Wiki_View_Servlets is
       -- Wiki_Content --
       ------------------
 
-      function Wiki_Content return League.Holders.Holder is
-         Handler   : Axe.Wiki.HTML_Output.Context;
+      procedure Wiki_Content
+        (Content : out League.Holders.Holder;
+         Title   : out League.Strings.Universal_String)
+      is
+         Handler   : aliased Axe.Wiki.HTML_Output.Handler;
+         Get_Title : Axe.Wiki.Titles.Handler (Handler'Access);
          Ada       : aliased Axe.Wiki.Specials.Ada.Ada_Format;
          Event     : aliased XML.SAX.Event_Writers.Event_Writer;
       begin
@@ -619,14 +627,18 @@ package body Axe.Wiki_View_Servlets is
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
          --  Parse Wiki page
+         Get_Title.Initialize (URI);
          Handler.Initialize (Event'Unchecked_Access, XHTML, "/");
          Ada.Initialize (XHTML);
          Handler.Register_Special_Format (+"ada", Ada'Unchecked_Access);
-         Axe.Wiki.Parser.Parse (Text, Handler);
+         Axe.Wiki.Parser.Parse (Text, Get_Title);
 
-         return XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+         Content := XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
+         Title := Get_Title.Title;
       end Wiki_Content;
 
+      Content : League.Holders.Holder;
+      Title   : League.Strings.Universal_String;
    begin
       --  Set template input
       Input.Open_By_File_Name (Context.Get_Real_Path (Page_XHTML));
@@ -641,7 +653,9 @@ package body Axe.Wiki_View_Servlets is
       Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
 
       --  Bind wiki page content
-      Filter.Set_Parameter (Wiki_Page, Wiki_Content);
+      Wiki_Content (Content, Title);
+      Filter.Set_Parameter (Wiki_Page, Content);
+      Filter.Set_Parameter (Title_Name, League.Holders.To_Holder (Title));
       Filter.Set_Parameter (Sidebar, Sidebar_Content);
 
       if Is_Edit then
