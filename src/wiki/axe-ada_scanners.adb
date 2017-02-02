@@ -94,7 +94,7 @@ package body Axe.Ada_Scanners is
          Current_State := Self.Start;
          Self.Rule := 0;
          Self.From := Self.Next;
-         Self.To   := Self.Next - 1;
+         Self.To   := Self.Next;  --  If none match step one char as error
 
          loop
             Char := Self.Classes (Self.Next);
@@ -119,14 +119,15 @@ package body Axe.Ada_Scanners is
             end if;
          end loop;
 
+         Self.Next := Self.To;
+         Next;
+
          if Self.Rule = 0 then
-            Self.Next := Self.To + 1;
+
             Self.Rule := Rule_Index'Last;
             Self.Handler.Error (Self, Self.Rule, Result, Skip);
             return;
          else
-            Self.Next := Self.To;
-            Next;
 
             On_Accept (Self.Handler, Self, Self.Rule, Result, Skip);
 
