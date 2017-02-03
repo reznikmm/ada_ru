@@ -246,6 +246,7 @@ package body Axe.Wiki.Specials.Ada is
       Span    : constant League.Strings.Universal_String :=
         League.Strings.To_Universal_String ("span");
    begin
+      Last.Class := Self.Handler.New_Line;
       Scanner.Set_Source (Text);
       Scanner.Set_Handler (Self.Handler'Unchecked_Access);
 
@@ -263,8 +264,8 @@ package body Axe.Wiki.Specials.Ada is
             Token.Class := Self.Handler.Word;
          end if;
 
-         if Token.Class in Self.Handler.Space | Self.Handler.New_Line
-           or Last.Class = Token.Class
+         if Token.Class in Self.Handler.Space | Last.Class
+           and Token.Class /= Self.Handler.New_Line
          then
 
             Last.Text.Append (Token.Text);
@@ -284,6 +285,13 @@ package body Axe.Wiki.Specials.Ada is
             Writer.End_Element
               (Namespace_URI  => Self.Namespace,
                Local_Name     => Span);
+
+            if Token.Class = Self.Handler.New_Line then
+               --  Put new line characters before corresponding span
+               --  To use .new_line:before {conetent: xxx} to decorate lines
+               Writer.Characters (Token.Text);
+               Token.Text.Clear;
+            end if;
 
             Last := Token;
          end if;
