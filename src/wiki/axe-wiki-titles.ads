@@ -35,7 +35,6 @@ package Axe.Wiki.Titles is
 
    procedure Initialize
      (Self  : out Handler;
-      Title : League.Strings.Universal_String;
       Wiki_URI_Prefix : Wide_Wide_String);
 
    not overriding function Title

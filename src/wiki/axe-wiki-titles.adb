@@ -88,11 +88,8 @@ package body Axe.Wiki.Titles is
 
    procedure Initialize
      (Self  : out Handler;
-      Title : League.Strings.Universal_String;
-      Wiki_URI_Prefix : Wide_Wide_String)
-   is
+      Wiki_URI_Prefix : Wide_Wide_String) is
    begin
-      Self.Title := Title;
       Self.In_Heading := False;
       Self.Prefix.Append (Wiki_URI_Prefix);
    end Initialize;

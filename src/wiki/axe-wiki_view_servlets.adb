@@ -643,7 +643,7 @@ package body Axe.Wiki_View_Servlets is
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
          --  Parse Wiki page
-         Get_Title.Initialize (URI, Ada_Ru);
+         Get_Title.Initialize (Ada_Ru);
          Handler.Initialize (Event'Unchecked_Access, XHTML, "/");
          Ada.Initialize (XHTML);
          Handler.Register_Special_Format (+"ada", Ada'Unchecked_Access);
@@ -651,8 +651,13 @@ package body Axe.Wiki_View_Servlets is
 
          Content := XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
 
-         Open_Graph.Insert
-           (Title_Name, League.JSON.Values.To_JSON_Value (Get_Title.Title));
+         if Get_Title.Title.Is_Empty then
+            Open_Graph.Insert
+              (Title_Name, League.JSON.Values.To_JSON_Value (URI));
+         else
+            Open_Graph.Insert
+              (Title_Name, League.JSON.Values.To_JSON_Value (Get_Title.Title));
+         end if;
 
          if Get_Title.Image.Is_Empty then
             Open_Graph.Insert
