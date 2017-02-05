@@ -16,6 +16,7 @@
     <url-pattern>/graphics/*</url-pattern>
     <url-pattern>/GtkAda/*</url-pattern>
     <url-pattern>/i432/*</url-pattern>
+    <url-pattern>/saturn/*</url-pattern>
     <url-pattern>/icons/*</url-pattern>
     <url-pattern>/Lovelace/*</url-pattern>
     <url-pattern>/V-0.4w/*</url-pattern>

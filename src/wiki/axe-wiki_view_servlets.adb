@@ -31,10 +31,13 @@ with Ada.Directories;
 with League.Base_Codecs;
 with League.Calendars.Ada_Conversions;
 with League.Holders;
+with League.Holders.JSON_Objects;
 with League.IRIs;
 with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
+with League.JSON.Objects;
+with League.JSON.Values;
 
 with XML.SAX.Event_Writers;
 with XML.SAX.HTML5_Writers;
@@ -142,14 +145,26 @@ package body Axe.Wiki_View_Servlets is
    XHTML         : constant League.Strings.Universal_String :=
      +"http://www.w3.org/1999/xhtml";
 
+   Ada_Ru       : constant Wide_Wide_String := "http://www.ada-ru.org";
+   Article      : constant League.Strings.Universal_String := +"article";
+   Default_Img  : constant League.Strings.Universal_String
+     := +(Ada_Ru & "/graphics/ada_ru.png");
+   Descr        : constant League.Strings.Universal_String := +"description";
    Edit_Wiki    : constant League.Strings.Universal_String := +"edit_wiki";
+   Image        : constant League.Strings.Universal_String := +"image";
+   Locale       : constant League.Strings.Universal_String := +"ru_RU";
+   Locale_Name  : constant League.Strings.Universal_String := +"locale";
    Location     : constant League.Strings.Universal_String := +"Location";
+   OG_Name      : constant League.Strings.Universal_String := +"open_graph";
    Post         : constant League.Strings.Universal_String := +"post";
    Preview      : constant League.Strings.Universal_String := +"preview";
    Sidebar      : constant League.Strings.Universal_String := +"sidebar";
    Text         : constant League.Strings.Universal_String := +"text";
    Title_Name   : constant League.Strings.Universal_String := +"title";
+   Type_Name    : constant League.Strings.Universal_String := +"type";
    URI          : constant League.Strings.Universal_String := +"uri";
+   URL_Name     : constant League.Strings.Universal_String := +"url";
+   Website      : constant League.Strings.Universal_String := +"website";
    Wiki_Page    : constant League.Strings.Universal_String := +"wikiPage";
 
    function Get_URI
@@ -528,10 +543,11 @@ package body Axe.Wiki_View_Servlets is
       Response  : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
       procedure Wiki_Content
-        (Content : out League.Holders.Holder;
-         Title   : out League.Strings.Universal_String);
+        (Content    : out League.Holders.Holder;
+         Open_Graph : out League.JSON.Objects.JSON_Object);
       --  Return rendered wiki content wrapped into
-      --  Holder of XML.Templates.Streams.Holders. Also return page title.
+      --  Holder of XML.Templates.Streams.Holders. Also return page title,
+      --  image and description as Open_Graph.
 
       function Edit_Wiki_Content return League.Holders.Holder;
       --  Return edit wiki form with wiki content inside it, wrapped into
@@ -614,8 +630,8 @@ package body Axe.Wiki_View_Servlets is
       ------------------
 
       procedure Wiki_Content
-        (Content : out League.Holders.Holder;
-         Title   : out League.Strings.Universal_String)
+        (Content    : out League.Holders.Holder;
+         Open_Graph : out League.JSON.Objects.JSON_Object)
       is
          Handler   : aliased Axe.Wiki.HTML_Output.Handler;
          Get_Title : Axe.Wiki.Titles.Handler (Handler'Access);
@@ -627,18 +643,44 @@ package body Axe.Wiki_View_Servlets is
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
          --  Parse Wiki page
-         Get_Title.Initialize (URI);
+         Get_Title.Initialize (URI, Ada_Ru);
          Handler.Initialize (Event'Unchecked_Access, XHTML, "/");
          Ada.Initialize (XHTML);
          Handler.Register_Special_Format (+"ada", Ada'Unchecked_Access);
          Axe.Wiki.Parser.Parse (Text, Get_Title);
 
          Content := XML.Templates.Streams.Holders.To_Holder (Event.Get_Stream);
-         Title := Get_Title.Title;
+
+         Open_Graph.Insert
+           (Title_Name, League.JSON.Values.To_JSON_Value (Get_Title.Title));
+
+         if Get_Title.Image.Is_Empty then
+            Open_Graph.Insert
+              (Image, League.JSON.Values.To_JSON_Value (Default_Img));
+         else
+            Open_Graph.Insert
+              (Image, League.JSON.Values.To_JSON_Value (Get_Title.Image));
+         end if;
+
+         Open_Graph.Insert
+           (Descr, League.JSON.Values.To_JSON_Value (Get_Title.Description));
+
+         Open_Graph.Insert
+           (URL_Name, League.JSON.Values.To_JSON_Value (URI));
+         Open_Graph.Insert
+           (Locale_Name, League.JSON.Values.To_JSON_Value (Locale));
+
+         if URI.Is_Empty then
+            Open_Graph.Insert
+              (Type_Name, League.JSON.Values.To_JSON_Value (Website));
+         else
+            Open_Graph.Insert
+              (Type_Name, League.JSON.Values.To_JSON_Value (Article));
+         end if;
       end Wiki_Content;
 
-      Content : League.Holders.Holder;
-      Title   : League.Strings.Universal_String;
+      Content    : League.Holders.Holder;
+      Open_Graph : League.JSON.Objects.JSON_Object;
    begin
       --  Set template input
       Input.Open_By_File_Name (Context.Get_Real_Path (Page_XHTML));
@@ -653,10 +695,11 @@ package body Axe.Wiki_View_Servlets is
       Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
 
       --  Bind wiki page content
-      Wiki_Content (Content, Title);
-      Filter.Set_Parameter (Wiki_Page, Content);
-      Filter.Set_Parameter (Title_Name, League.Holders.To_Holder (Title));
+      Wiki_Content (Content, Open_Graph);
       Filter.Set_Parameter (Sidebar, Sidebar_Content);
+      Filter.Set_Parameter (Wiki_Page, Content);
+      Filter.Set_Parameter
+        (OG_Name, League.Holders.JSON_Objects.To_Holder (Open_Graph));
 
       if Is_Edit then
          Filter.Set_Parameter (Edit_Wiki, Edit_Wiki_Content);

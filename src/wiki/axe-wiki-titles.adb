@@ -36,13 +36,26 @@ package body Axe.Wiki.Titles is
      (Self : in out Handler;
       Text : League.Strings.Universal_String) is
    begin
-      if Self.In_Heading and not Self.Found then
-         Self.Title := Text;
-         Self.Found := True;
+      if Self.In_Heading then
+         if Self.Title.Is_Empty then
+            Self.Title := Text;
+         end if;
+      elsif Self.Description.Length < 300 then
+         Self.Description.Append (Text);
       end if;
 
       Self.Nested.Characters (Text);
    end Characters;
+
+   -----------------
+   -- Description --
+   -----------------
+
+   not overriding function Description
+     (Self : Handler) return League.Strings.Universal_String is
+   begin
+      return Self.Description;
+   end Description;
 
    -----------------
    -- End_Element --
@@ -59,18 +72,29 @@ package body Axe.Wiki.Titles is
       Self.Nested.End_Element (Info);
    end End_Element;
 
+   -----------
+   -- Image --
+   -----------
+
+   not overriding function Image
+     (Self : Handler) return League.Strings.Universal_String is
+   begin
+      return Self.Image;
+   end Image;
+
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize
-     (Self    : out Handler;
-      Default : League.Strings.Universal_String)
+     (Self  : out Handler;
+      Title : League.Strings.Universal_String;
+      Wiki_URI_Prefix : Wide_Wide_String)
    is
    begin
-      Self.Title := Default;
-      Self.Found := False;
+      Self.Title := Title;
       Self.In_Heading := False;
+      Self.Prefix.Append (Wiki_URI_Prefix);
    end Initialize;
 
    -------------------
@@ -83,6 +107,24 @@ package body Axe.Wiki.Titles is
    begin
       if Info.Kind in Heading then
          Self.In_Heading := True;
+      elsif Self.Image.Is_Empty and
+        Info.Kind in HTTP_Link | Boxed_Link | Boxed_Wiki_Link
+      then
+         declare
+            URL : League.Strings.Universal_String := Info.Link;
+         begin
+            if URL.Starts_With ("wiki:") then
+               URL.Replace (1, 5, Self.Prefix);
+            end if;
+
+            if URL.Ends_With (".png")
+              or else URL.Ends_With (".gif")
+              or else URL.Ends_With (".jpg")
+              or else URL.Ends_With (".svg")
+            then
+               Self.Image := URL;
+            end if;
+         end;
       end if;
 
       Self.Nested.Start_Element (Info);
@@ -92,7 +134,7 @@ package body Axe.Wiki.Titles is
    -- Title --
    -----------
 
-   function Title
+   not overriding function Title
      (Self : Handler) return League.Strings.Universal_String is
    begin
       return Self.Title;

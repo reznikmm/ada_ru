@@ -193,6 +193,7 @@ package body Axe.Wiki.HTML_Output is
       if URL.Ends_With (".png")
          or URL.Ends_With (".gif")
          or URL.Ends_With (".jpg")
+         or URL.Ends_With (".svg")
       then
          Attributes.Set_Value (SRC, URL);
          Attributes.Set_Value (ALT, Info.Title);

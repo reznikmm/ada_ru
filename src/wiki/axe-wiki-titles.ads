@@ -34,18 +34,28 @@ package Axe.Wiki.Titles is
      is new Axe.Wiki.Parser.Wiki_Handler with private;
 
    procedure Initialize
-     (Self    : out Handler;
-      Default : League.Strings.Universal_String);
+     (Self  : out Handler;
+      Title : League.Strings.Universal_String;
+      Wiki_URI_Prefix : Wide_Wide_String);
 
-   function Title (Self : Handler) return League.Strings.Universal_String;
+   not overriding function Title
+     (Self : Handler) return League.Strings.Universal_String;
+
+   not overriding function Description
+     (Self : Handler) return League.Strings.Universal_String;
+
+   not overriding function Image
+     (Self : Handler) return League.Strings.Universal_String;
 
 private
 
    type Handler (Nested : not null access Axe.Wiki.Parser.Wiki_Handler'Class)
      is new Axe.Wiki.Parser.Wiki_Handler with record
-       Title      : League.Strings.Universal_String;
-       Found      : Boolean := False;
-       In_Heading : Boolean := False;
+       Title       : League.Strings.Universal_String;
+       Description : League.Strings.Universal_String;
+       Image       : League.Strings.Universal_String;
+       Prefix      : League.Strings.Universal_String;
+       In_Heading  : Boolean := False;
    end record;
 
    overriding procedure Start_Element
