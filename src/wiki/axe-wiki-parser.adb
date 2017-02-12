@@ -98,8 +98,8 @@ package body Axe.Wiki.Parser is
       Numbered_List   => +("\n(\ +)1\. "),
       List_Item       => +"\#",  --  Dummy element, just for reporting
       HTTP_Link       => +"(http\:\/\/[^\ \n\,]+)",
-      Boxed_Link      => +"\[[a-zA-Z]+\:[^\ \]]*(\ ?[^\]]*)\]",
       Boxed_Wiki_Link => +"\[wiki\:[^\ \]]*(\ ?[^\]]*)\]",
+      Boxed_Link      => +"\[[a-zA-Z]+\:[^\ \]]*(\ ?[^\]]*)\]",
       Horizontal_Line => +("\n\-\-\-\-\n"),
       Anchor          => +"\[\#([^\]]+)\]",
       Table_Row       => +("\n\|\|"),

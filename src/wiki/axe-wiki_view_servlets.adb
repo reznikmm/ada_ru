@@ -56,9 +56,9 @@ with Servlet.Contexts;
 with Axe.Read_File;
 with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
-with Axe.Wiki.Titles;
 with Axe.Wiki.Parser;
 with Axe.Wiki.Specials.Ada;
+with Axe.Wiki.Titles;
 
 with Ada.Wide_Wide_Text_IO;
 with Ada.Characters.Wide_Wide_Latin_1;
@@ -365,7 +365,6 @@ package body Axe.Wiki_View_Servlets is
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
-      pragma Unreferenced (Self);
 
       Success : Boolean;
       Context : constant access Servlet.Contexts.Servlet_Context'Class
@@ -388,19 +387,24 @@ package body Axe.Wiki_View_Servlets is
          declare
             use Ada.Wide_Wide_Text_IO;
 
-            Wiki_File    : constant League.Strings.Universal_String
+            Wiki_File : constant League.Strings.Universal_String
               := Get_Wiki_File (URI);
-            Real_Name    : constant League.Strings.Universal_String
+            Real_Name : constant League.Strings.Universal_String
               := Context.Get_Real_Path (Wiki_File);
+            Name      : constant String := Real_Name.To_UTF_8_String;
+            Created   : constant Boolean := not Ada.Directories.Exists (Name);
             File : File_Type;
          begin
-            Create (File, Name => Real_Name.To_UTF_8_String, Form => "WCEM=8");
+            Create (File, Name => Name, Form => "WCEM=8");
             Put (File, Text.To_Wide_Wide_String);
             Close (File);
 
             if URI.Is_Empty then
                URI.Append ("/");
             end if;
+
+            Self.Event_Listener.On_Wiki_Saved
+              (URI, Text, League.Strings.Empty_Universal_String, Created);
 
             Response.Set_Status (Servlet.HTTP_Responses.Moved_Temporarily);
             Response.Set_Header (Location, URI);
@@ -528,7 +532,8 @@ package body Axe.Wiki_View_Servlets is
    is
       pragma Unreferenced (Parameters);
    begin
-      return (Servlet.HTTP_Servlets.HTTP_Servlet with null record);
+      return (Servlet.HTTP_Servlets.HTTP_Servlet with
+                Event_Listener => Axe.Events.Top_Listener);
    end Instantiate;
 
    --------------------
@@ -634,7 +639,7 @@ package body Axe.Wiki_View_Servlets is
          Open_Graph : out League.JSON.Objects.JSON_Object)
       is
          Handler   : aliased Axe.Wiki.HTML_Output.Handler;
-         Get_Title : Axe.Wiki.Titles.Handler (Handler'Access);
+         Get_Title : Axe.Wiki.Titles.Handler;
          Ada       : aliased Axe.Wiki.Specials.Ada.Ada_Format;
          Event     : aliased XML.SAX.Event_Writers.Event_Writer;
       begin
@@ -643,8 +648,8 @@ package body Axe.Wiki_View_Servlets is
            (XML.SAX.Locators.Internals.Create (Dummy_Locators.Locator'Access));
 
          --  Parse Wiki page
-         Get_Title.Initialize (Ada_Ru);
-         Handler.Initialize (Event'Unchecked_Access, XHTML, "/");
+         Get_Title.Initialize (Handler'Unchecked_Access, Ada_Ru);
+         Handler.Initialize (Event'Unchecked_Access, XHTML, "");
          Ada.Initialize (XHTML);
          Handler.Register_Special_Format (+"ada", Ada'Unchecked_Access);
          Axe.Wiki.Parser.Parse (Text, Get_Title);

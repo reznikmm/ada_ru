@@ -36,6 +36,8 @@ private with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
 
+with Axe.Events;
+
 package Axe.Wiki_View_Servlets is
 
    type Wiki_View_Servlet is
@@ -46,8 +48,10 @@ package Axe.Wiki_View_Servlets is
 
 private
 
-   type Wiki_View_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with null record;
+   type Wiki_View_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with
+   record
+      Event_Listener : not null Axe.Events.Listener_Access;
+   end record;
 
    overriding procedure Do_Get
     (Self     : in out Wiki_View_Servlet;

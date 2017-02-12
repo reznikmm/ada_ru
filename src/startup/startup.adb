@@ -34,6 +34,9 @@ pragma Unreferenced (AWFC.Static_Resource_Servlets);
 with Axe.Wiki_View_Servlets;
 pragma Unreferenced (Axe.Wiki_View_Servlets);
 
+with Axe.Events.Logs;
+with League.Strings;
+
 package body Startup is
 
    ----------------
@@ -44,8 +47,14 @@ package body Startup is
      (Self    : in out Servlet_Container_Initializer;
       Context : in out Servlet.Contexts.Servlet_Context'Class)
    is
-      pragma Unreferenced (Self, Context);
+      pragma Unreferenced (Self);
+      File : constant League.Strings.Universal_String :=
+        League.Strings.To_Universal_String ("/news.wiki");
+      Log  : constant Axe.Events.Logs.Event_Log_Writer_Access :=
+        new Axe.Events.Logs.Event_Log_Writer;
    begin
+      Log.Initialize (Context.Get_Real_Path (File));
+      Axe.Events.Top_Listener := Axe.Events.Listener_Access (Log);
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*
       --  TODO: set_password.html

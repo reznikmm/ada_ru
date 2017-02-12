@@ -44,7 +44,9 @@ package body Axe.Wiki.Titles is
          Self.Description.Append (Text);
       end if;
 
-      Self.Nested.Characters (Text);
+      if Self.Nested /= null then
+         Self.Nested.Characters (Text);
+      end if;
    end Characters;
 
    -----------------
@@ -69,7 +71,9 @@ package body Axe.Wiki.Titles is
          Self.In_Heading := False;
       end if;
 
-      Self.Nested.End_Element (Info);
+      if Self.Nested /= null then
+         Self.Nested.End_Element (Info);
+      end if;
    end End_Element;
 
    -----------
@@ -87,9 +91,11 @@ package body Axe.Wiki.Titles is
    ----------------
 
    procedure Initialize
-     (Self  : out Handler;
+     (Self            : out Handler;
+      Nested          : access Axe.Wiki.Parser.Wiki_Handler'Class;
       Wiki_URI_Prefix : Wide_Wide_String) is
    begin
+      Self.Nested := Nested;
       Self.In_Heading := False;
       Self.Prefix.Append (Wiki_URI_Prefix);
    end Initialize;
@@ -124,7 +130,9 @@ package body Axe.Wiki.Titles is
          end;
       end if;
 
-      Self.Nested.Start_Element (Info);
+      if Self.Nested /= null then
+         Self.Nested.Start_Element (Info);
+      end if;
    end Start_Element;
 
    -----------

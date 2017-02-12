@@ -30,11 +30,11 @@ with Axe.Wiki.Parser;
 
 package Axe.Wiki.Titles is
 
-   type Handler (Nested : not null access Axe.Wiki.Parser.Wiki_Handler'Class)
-     is new Axe.Wiki.Parser.Wiki_Handler with private;
+   type Handler is new Axe.Wiki.Parser.Wiki_Handler with private;
 
    procedure Initialize
-     (Self  : out Handler;
+     (Self            : out Handler;
+      Nested          : access Axe.Wiki.Parser.Wiki_Handler'Class;
       Wiki_URI_Prefix : Wide_Wide_String);
 
    not overriding function Title
@@ -48,8 +48,8 @@ package Axe.Wiki.Titles is
 
 private
 
-   type Handler (Nested : not null access Axe.Wiki.Parser.Wiki_Handler'Class)
-     is new Axe.Wiki.Parser.Wiki_Handler with record
+   type Handler is new Axe.Wiki.Parser.Wiki_Handler with record
+       Nested      : access Axe.Wiki.Parser.Wiki_Handler'Class;
        Title       : League.Strings.Universal_String;
        Description : League.Strings.Universal_String;
        Image       : League.Strings.Universal_String;
