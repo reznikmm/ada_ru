@@ -13,6 +13,4 @@ package Axe.Events is
 
    type Listener_Access is access all Listener'Class;
 
-   Top_Listener : Listener_Access;
-
 end Axe.Events;

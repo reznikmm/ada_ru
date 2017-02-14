@@ -29,10 +29,6 @@
     <url-pattern>*.txt</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>WikiRendering</servlet-name>
-    <servlet-tag>AXE.WIKI_VIEW_SERVLETS.WIKI_VIEW_SERVLET</servlet-tag>
-  </servlet>
   <servlet-mapping>
     <servlet-name>WikiRendering</servlet-name>
     <url-pattern>/</url-pattern>

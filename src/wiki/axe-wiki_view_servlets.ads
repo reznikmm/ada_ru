@@ -46,11 +46,15 @@ package Axe.Wiki_View_Servlets is
    type Wiki_View_Servlet_Access is
      access all Wiki_View_Servlet'Class;
 
+   not overriding procedure Set_Event_Listener
+     (Self  : in out Wiki_View_Servlet;
+      Value : access Axe.Events.Listener'Class);
+
 private
 
    type Wiki_View_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with
    record
-      Event_Listener : not null Axe.Events.Listener_Access;
+      Event_Listener : access Axe.Events.Listener'Class;
    end record;
 
    overriding procedure Do_Get

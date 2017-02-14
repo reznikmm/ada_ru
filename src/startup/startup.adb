@@ -32,7 +32,6 @@ with AWFC.Static_Resource_Servlets;
 pragma Unreferenced (AWFC.Static_Resource_Servlets);
 
 with Axe.Wiki_View_Servlets;
-pragma Unreferenced (Axe.Wiki_View_Servlets);
 
 with Axe.Events.Logs;
 with League.Strings;
@@ -48,13 +47,20 @@ package body Startup is
       Context : in out Servlet.Contexts.Servlet_Context'Class)
    is
       pragma Unreferenced (Self);
-      File : constant League.Strings.Universal_String :=
-        League.Strings.To_Universal_String ("/news.wiki");
-      Log  : constant Axe.Events.Logs.Event_Log_Writer_Access :=
-        new Axe.Events.Logs.Event_Log_Writer;
+
+      function "+"
+        (Item : Wide_Wide_String) return League.Strings.Universal_String
+         renames League.Strings.To_Universal_String;
+
+      Log_Writer : constant Axe.Events.Logs.Event_Log_Writer_Access
+        := new Axe.Events.Logs.Event_Log_Writer;
+
+      Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
+        := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
-      Log.Initialize (Context.Get_Real_Path (File));
-      Axe.Events.Top_Listener := Axe.Events.Listener_Access (Log);
+      Log_Writer.Initialize (Context.Get_Real_Path (+"/news.wiki"));
+      Wiki_Servlet.Set_Event_Listener (Log_Writer);
+      Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*
       --  TODO: set_password.html

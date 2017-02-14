@@ -403,8 +403,10 @@ package body Axe.Wiki_View_Servlets is
                URI.Append ("/");
             end if;
 
-            Self.Event_Listener.On_Wiki_Saved
-              (URI, Text, League.Strings.Empty_Universal_String, Created);
+            if Self.Event_Listener /= null then
+               Self.Event_Listener.On_Wiki_Saved
+                 (URI, Text, League.Strings.Empty_Universal_String, Created);
+            end if;
 
             Response.Set_Status (Servlet.HTTP_Responses.Moved_Temporarily);
             Response.Set_Header (Location, URI);
@@ -533,7 +535,7 @@ package body Axe.Wiki_View_Servlets is
       pragma Unreferenced (Parameters);
    begin
       return (Servlet.HTTP_Servlets.HTTP_Servlet with
-                Event_Listener => Axe.Events.Top_Listener);
+                Event_Listener => null);
    end Instantiate;
 
    --------------------
@@ -736,6 +738,17 @@ package body Axe.Wiki_View_Servlets is
 
       Response.Get_Output_Stream.Write (Output.Get_Text);
    end Render_Wiki;
+
+   ------------------------
+   -- Set_Event_Listener --
+   ------------------------
+
+   not overriding procedure Set_Event_Listener
+     (Self  : in out Wiki_View_Servlet;
+      Value : access Axe.Events.Listener'Class) is
+   begin
+      Self.Event_Listener := Value;
+   end Set_Event_Listener;
 
    ----------------------------
    -- String_Carriage_Return --
