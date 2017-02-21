@@ -1,8 +1,11 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Wide_Wide_Text_IO;
 
-with Axe.Wiki.Titles;
+with Axe.Read_File;
 with Axe.Wiki.Parser;
+with Axe.Wiki.Titles;
+
+with League.Text_Codecs;
 
 package body Axe.Events.Logs is
 
@@ -14,10 +17,17 @@ package body Axe.Events.Logs is
    ----------------
 
    procedure Initialize
-     (Self : in out Event_Log_Writer'Class;
-      File : League.Strings.Universal_String) is
+     (Self     : in out Event_Log_Writer'Class;
+      File     : League.Strings.Universal_String;
+      Password : League.Strings.Universal_String)
+   is
+      Text : League.Strings.Universal_String :=
+        Axe.Read_File
+          (Password, League.Text_Codecs.Codec_For_Application_Locale);
    begin
+      Text := Text.Head (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF));
       Self.File := File;
+      Self.Bot.Initialize (Text);
    end Initialize;
 
    -------------------
@@ -36,6 +46,7 @@ package body Axe.Events.Logs is
       File  : Ada.Wide_Wide_Text_IO.File_Type;
       Info  : League.Strings.Universal_String;
       Title : Axe.Wiki.Titles.Handler;
+      URL   : League.Strings.Universal_String;
    begin
       if not Created then
          return;
@@ -57,6 +68,11 @@ package body Axe.Events.Logs is
         (File, Ada.Wide_Wide_Text_IO.Out_File, Name, "SHARED=NO,WCEM=8");
       Ada.Wide_Wide_Text_IO.Put_Line (File, Info.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Close (File);
+
+      URL.Append ("http://www.ada-ru.org");
+      URL.Append (URI);
+      Self.Bot.Send_Message (Title.Title);
+      Self.Bot.Send_Message (URL);
    end On_Wiki_Saved;
 
 end Axe.Events.Logs;

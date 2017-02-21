@@ -35,7 +35,8 @@ with "matreshka_xml.gpr";
 
 library project Server is
 
-   for Source_Dirs use ("../startup", "../opm", "../awfc", "../wiki");
+   for Source_Dirs use
+    ("../startup", "../opm", "../awfc", "../wiki", "../irc");
    for Object_Dir use ".objs";
 
    for Library_Name use "ada_ru";

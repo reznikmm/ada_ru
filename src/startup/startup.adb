@@ -58,7 +58,10 @@ package body Startup is
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
-      Log_Writer.Initialize (Context.Get_Real_Path (+"/news.wiki"));
+      Log_Writer.Initialize
+        (File     => Context.Get_Real_Path (+"/news.wiki"),
+         Password => Context.Get_Real_Path (+"/password/ada_ru"));
+
       Wiki_Servlet.Set_Event_Listener (Log_Writer);
       Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
       Ada.Text_IO.Put_Line ("I'm here!");
