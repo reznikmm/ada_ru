@@ -34,6 +34,7 @@ pragma Unreferenced (AWFC.Static_Resource_Servlets);
 with Axe.Wiki_View_Servlets;
 
 with Axe.Events.Logs;
+with XMPP.Sessions;
 with League.Strings;
 
 package body Startup is
@@ -58,6 +59,8 @@ package body Startup is
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
+      XMPP.Sessions.Initialize;
+
       Log_Writer.Initialize
         (File     => Context.Get_Real_Path (+"/news.wiki"),
          Password => Context.Get_Real_Path (+"/password/ada_ru"));

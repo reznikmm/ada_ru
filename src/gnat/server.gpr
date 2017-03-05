@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2016-2017, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ with "matreshka_spikedog_core.gpr";
 
 with "matreshka_sql.gpr";
 with "matreshka_xml.gpr";
+with "axmpp.gpr";
 
 library project Server is
 
