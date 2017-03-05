@@ -25,7 +25,8 @@ package body Axe.Events.Logs is
         Axe.Read_File
           (Password, League.Text_Codecs.Codec_For_Application_Locale);
    begin
-      Text := Text.Head (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF));
+      Text := Text.Head
+        (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF) - 1);
       Self.File := File;
       Self.Bot.Initialize (Text);
    end Initialize;

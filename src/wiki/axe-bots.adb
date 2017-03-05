@@ -118,7 +118,9 @@ package body Axe.Bots is
       Self.XMPP_Session.Set_Password (Password);
       Self.XMPP_Session.Set_Host (+"jabber.ru");
       Self.XMPP_Session.Set_Resource (+"server");
-      Self.XMPP_Session.Set_Stream_Handler (Self.XMPP_Listener'Access);
+      Self.XMPP_Session.Set_Stream_Handler
+        (Self.XMPP_Listener'Unchecked_Access);
+
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
    end Initialize;
 
