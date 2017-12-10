@@ -12,16 +12,16 @@ create table forums (
   subject  varchar not null);
 
 create table topics (
-  id       integer primary key,
+  starter  varchar primary key,
   forum    integer not null references forums,
-  starter  varchar not null,
   subject  varchar not null);
 
 create table users (
   nickname varchar primary key,
+  name     varchar not null,
   avatar   varchar);
 
 create table emails (
+  email    varchar primary key,
   nickname varchar not null references users,
-  main     char(1),
-  email    varchar not null);
+  main     char(1));

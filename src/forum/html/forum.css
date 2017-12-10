@@ -1,0 +1,32 @@
+#center {
+}
+.forum-list {
+    padding: 0.2em;
+}
+.forum-list div {
+    padding: 0em 0.5em;
+    border: grey solid 1px;
+}
+.forum-list-title {
+    background-color: grey;
+    color: white;
+}
+.forum-list-item {
+    background-color: white;
+    color: grey;
+}
+.forum-list-item a {
+    text-decoration: none;
+    color: grey;
+}
+
+/*
+ * -- DESKTOP (AND UP) MEDIA QUERIES --
+ */
+@media (min-width: 60em) {
+
+    #center {
+        margin: 0em 4em;
+    }
+}
+
