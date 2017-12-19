@@ -36,6 +36,13 @@ package body Forum.Forums.Holders is
          begin
             Value := Page_Iterable_Holders.To_Holder (Pages);
          end;
+      elsif Name = +"topics" then
+         declare
+            Image : constant Wide_Wide_String :=
+              Natural'Wide_Wide_Image (Object.Topics.Last_Index);
+         begin
+            Value := League.Holders.To_Holder (+Image (2 .. Image'Last));
+         end;
       else
          Success := False;
       end if;

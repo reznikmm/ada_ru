@@ -21,6 +21,10 @@ package body Forum.Writers is
       Template : League.Strings.Universal_String;
       Arg      : Parameter_Array);
 
+   ----------------------
+   -- Write_File_Index --
+   ----------------------
+
    procedure Write_File_Index
      (HTML     : String;
       Template : League.Strings.Universal_String;
@@ -62,16 +66,23 @@ package body Forum.Writers is
       Ada.Streams.Stream_IO.Close (File);
    end Write_File_Index;
 
-   procedure Write_Forum_Index (Value : League.Holders.Holder) is
+   -----------------------
+   -- Write_Forum_Index --
+   -----------------------
+
+   procedure Write_Forum_Index
+     (Root  : String;
+      Value : League.Holders.Holder) is
    begin
       Write_File_Index
-        ("index.html",
-         +"/tmp/index.html.tmpl",
+        (Root & "index.html",
+         +"index.html.tmpl",
          (1 => (+"forums", Value)));
    end Write_Forum_Index;
 
    procedure Write_Forum_Page
-     (Forum : League.Holders.Holder;
+     (Root  : String;
+      Forum : League.Holders.Holder;
       Page  : League.Holders.Holder)
    is
       Ok    : Boolean;
@@ -85,14 +96,19 @@ package body Forum.Writers is
       Code := League.Holders.Element (Id);
       Text := League.Holders.Element (Index);
       Write_File_Index
-        (Code.To_UTF_8_String & "x" & Text.To_UTF_8_String & ".html",
-         +"/tmp/forum-page.html.tmpl",
+        (Root & Code.To_UTF_8_String & "_" & Text.To_UTF_8_String & ".html",
+         +"forum-page.html.tmpl",
          ((+"page", Page),
           (+"forum", Forum)));
    end Write_Forum_Page;
 
+   ----------------------
+   -- Write_Topic_Page --
+   ----------------------
+
    procedure Write_Topic_Page
-     (Forum : League.Holders.Holder;
+     (Root  : String;
+      Forum : League.Holders.Holder;
       Topic : League.Holders.Holder;
       Page  : League.Holders.Holder)
    is
@@ -107,8 +123,9 @@ package body Forum.Writers is
       Code := League.Holders.Element (Id);
       Text := League.Holders.Element (Index);
       Write_File_Index
-        (Code.To_UTF_8_String & "p" & Text.To_UTF_8_String & ".html",
-         +"/tmp/topic-page.html.tmpl",
+        (Root & "p" & Code.To_UTF_8_String & "_" &
+           Text.To_UTF_8_String & ".html",
+         +"topic-page.html.tmpl",
          ((+"page", Page),
           (+"topic", Topic),
           (+"forum", Forum)));

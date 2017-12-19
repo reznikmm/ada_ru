@@ -20,12 +20,28 @@ package body Forum.Topics.Holders is
 
       if Name = +"subject" then
          Value := League.Holders.To_Holder (Object.Subject);
+      elsif Name = +"starter" then
+         declare
+            package PH renames Forum.Posts.Holders;
+            Post : constant PH.Post_Reference :=
+              (Self.Container.Context.Posts'Access,
+               Self.Starter);
+         begin
+            Value := PH.Compound_Holders.To_Holder (Post);
+         end;
       elsif Name = +"id" then
          declare
             Hash  : constant Ada.Containers.Hash_Type :=
               League.Strings.Hash (Self.Starter);
             Image : constant Wide_Wide_String :=
               Ada.Containers.Hash_Type'Wide_Wide_Image (Hash);
+         begin
+            Value := League.Holders.To_Holder (+Image (2 .. Image'Last));
+         end;
+      elsif Name = +"posts" then
+         declare
+            Image : constant Wide_Wide_String :=
+              Natural'Wide_Wide_Image (Object.Posts.Last_Index);
          begin
             Value := League.Holders.To_Holder (+Image (2 .. Image'Last));
          end;

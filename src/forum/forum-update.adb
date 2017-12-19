@@ -2,6 +2,7 @@ with SQL.Databases;
 with SQL.Options;
 
 with Matreshka.Internals.SQL_Drivers.SQLite3.Factory;
+with League.Application;
 
 with Forum.Contexts;
 with Forum.Posts;
@@ -10,6 +11,8 @@ with Forum.Users;
 with Forum.Writers;
 
 procedure Forum.Update is
+   Root   : constant String :=
+     League.Application.Arguments.Element (1).To_UTF_8_String;
    Option : SQL.Options.SQL_Options;
 begin
    Option.Set (+"filename", +"mail.db");
@@ -29,7 +32,7 @@ begin
       Context.Forums.Sort_Topics;
       Context.Topics.Sort_Posts;
       Top := Context.Forums.To_Holder;
-      Forum.Writers.Write_Forum_Index (Top);
+      Forum.Writers.Write_Forum_Index (Root, Top);
 
       declare
          procedure Each_Forum (Forum : League.Holders.Holder);
@@ -51,7 +54,7 @@ begin
                  League.Holders.First (Pages);
             begin
                while Cursor.Next loop
-                  Writers.Write_Forum_Page (Forum, Cursor.Element);
+                  Writers.Write_Forum_Page (Root, Forum, Cursor.Element);
                   Each_Page (Forum, Cursor.Element);
                end loop;
             end;
@@ -90,7 +93,8 @@ begin
                  League.Holders.First (Pages);
             begin
                while Cursor.Next loop
-                  Writers.Write_Topic_Page (Forum, Topic, Cursor.Element);
+                  Writers.Write_Topic_Page
+                    (Root, Forum, Topic, Cursor.Element);
                end loop;
             end;
          end Each_Topic;

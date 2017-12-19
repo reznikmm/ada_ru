@@ -19,6 +19,7 @@
     <url-pattern>/saturn/*</url-pattern>
     <url-pattern>/icons/*</url-pattern>
     <url-pattern>/Lovelace/*</url-pattern>
+    <url-pattern>/forum/*</url-pattern>
     <url-pattern>/V-0.4w/*</url-pattern>
     <url-pattern>/.well-known/acme-challenge/*</url-pattern>
     <url-pattern>*.exe</url-pattern>

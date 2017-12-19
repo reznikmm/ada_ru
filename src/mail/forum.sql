@@ -25,3 +25,5 @@ create table emails (
   email    varchar primary key,
   nickname varchar not null references users,
   main     char(1));
+
+INSERT INTO forums VALUES(1,10,'Обсуждение языка Ада');

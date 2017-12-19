@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns='http://www.w3.org/1999/xhtml'
+      xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+<head>
+  <title>Форум по Аде - ${forum.subject}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" type="text/css" href="forum.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous"/>
+</head>
+<body>
+  <div id="center" class="pure-g">
+    <div class="pure-u-1">
+      <h1><a href="index.html">Ada_Ru форум</a></h1>
+      <h2>${forum.subject}<mtl:if expression="page.prev is not null">. Страница ${page.index}</mtl:if></h2>
+      <div class="forum-list-title">
+        <h3>Список тем</h3>
+      </div>
+      <mtl:for expression="topic of page.topics">
+        <div class="forum-list-item">
+          <h3>
+            <a href="p${topic.id}_1.html">${topic.subject}</a>
+          </h3>
+          <p>${topic.starter.author.name} ${topic.starter.date}
+            (${topic.posts} ответов)</p>
+        </div>
+      </mtl:for>
+    </div>
+    <div class="pure-u-1">
+      <mtl:if expression="page.prev is not null">
+        <a class="pure-button" href="#"> &lt; </a>
+      </mtl:if>
+      <mtl:for expression="pg of forum.pages">
+        <a class="pure-button" href="${forum.id}_${pg.index}.html">${pg.index}</a>
+      </mtl:for>
+    </div>
+  </div>
+</body>
+</html>

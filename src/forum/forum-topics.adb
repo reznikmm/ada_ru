@@ -57,9 +57,11 @@ package body Forum.Topics is
       Starter  : League.Strings.Universal_String;
       Subject  : League.Strings.Universal_String) is
    begin
-      Self.Topic_Map.Insert
-        (Starter, Topic'(Starter, 1, Subject, Date, Posts => <>));
-      Forums.Add_Topic (1, Starter);
+      if not Self.Topic_Map.Contains (Starter) then
+         Self.Topic_Map.Insert
+           (Starter, Topic'(Starter, 1, Subject, Date, Posts => <>));
+         Forums.Add_Topic (1, Starter);
+      end if;
    end Create_Topic;
 
    ---------------
