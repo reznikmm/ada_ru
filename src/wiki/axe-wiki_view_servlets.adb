@@ -498,6 +498,10 @@ package body Axe.Wiki_View_Servlets is
         := Request.Get_Path_Info;
       Path         : League.String_Vectors.Universal_String_Vector;
    begin
+      if Path_Info.Length = 1 and then Path_Info (1).Is_Empty then
+         return League.Strings.Empty_Universal_String;
+      end if;
+
       --  Add empty string to have leading '/'
       Path.Append (League.Strings.Empty_Universal_String);
       Path.Append (Path_Info);
