@@ -30,12 +30,17 @@ with Ada.Text_IO;
 
 with AWFC.Static_Resource_Servlets;
 pragma Unreferenced (AWFC.Static_Resource_Servlets);
+with Servlet.OAuth;
 
 with Axe.Wiki_View_Servlets;
 
 with Axe.Events.Logs;
 with XMPP.Sessions;
 with League.Strings;
+with Servlet.Generic_Servlets;
+with Sessions.Managers;
+with Spikedog.HTTP_Session_Managers;
+with Spikedog.Servlet_Contexts;
 
 package body Startup is
 
@@ -53,12 +58,26 @@ package body Startup is
         (Item : Wide_Wide_String) return League.Strings.Universal_String
          renames League.Strings.To_Universal_String;
 
+      Manager  : constant Sessions.Managers.HTTP_Session_Manager_Access :=
+        new Sessions.Managers.HTTP_Session_Manager;
+
       Log_Writer : constant Axe.Events.Logs.Event_Log_Writer_Access
         := new Axe.Events.Logs.Event_Log_Writer;
+
+      Dummy : aliased Servlet.Generic_Servlets.Instantiation_Parameters;
+
+      OAuth_Servlet : constant Servlet.OAuth.OAuth_Servlet_Access :=
+        new Servlet.OAuth.OAuth_Servlet'
+          (Servlet.OAuth.Instantiate (Dummy'Unchecked_Access));
 
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
+      Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
+        (Context).Set_Session_Manager
+          (Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access
+             (Manager));
+
       XMPP.Sessions.Initialize;
 
       Log_Writer.Initialize
@@ -66,7 +85,9 @@ package body Startup is
          Password => Context.Get_Real_Path (+"/password/ada_ru"));
 
       Wiki_Servlet.Set_Event_Listener (Log_Writer);
+      OAuth_Servlet.Set_Handler (Manager);
       Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
+      Context.Add_Servlet (+"OAuth", OAuth_Servlet);
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*
       --  TODO: set_password.html

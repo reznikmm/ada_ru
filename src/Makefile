@@ -1,5 +1,5 @@
 all:
-	gprbuild -p -P gnat/server.gpr
+	gprbuild -p -P gnat/server.gpr -XAWS_BUILD=relocatable
 
 deploy: all
 	mkdir -p install/WEB-INF/lib/x86_64-linux

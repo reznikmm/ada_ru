@@ -1,7 +1,6 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Streams;
 with Ada.Wide_Wide_Text_IO;
-with League.Characters;
 with League.String_Vectors;
 
 package body IRC.Sessions is
@@ -33,7 +32,6 @@ package body IRC.Sessions is
       procedure On_Command
         (Data : in out League.Stream_Element_Vectors.Stream_Element_Vector)
       is
-         use type League.Characters.Universal_Character;
          use type League.Strings.Universal_String;
 
          List : League.String_Vectors.Universal_String_Vector;
