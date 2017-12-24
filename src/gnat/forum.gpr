@@ -1,4 +1,4 @@
-with "matreshka_sql_sqlite3.gpr";
+with "matreshka_sql_postgresql.gpr";
 with "matreshka_xml.gpr";
 
 project Forum is

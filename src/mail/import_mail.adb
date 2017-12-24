@@ -37,7 +37,7 @@ with SQL.Options;
 with SQL.Databases;
 with SQL.Queries;
 
-with Matreshka.Internals.SQL_Drivers.SQLite3.Factory;
+with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
 
 with Matreshka.Internals.Strings;
 with Matreshka.Internals.Text_Codecs;
@@ -1261,17 +1261,17 @@ procedure Import_Mail is
    package body Storage is
       SQL_Text : constant League.Strings.Universal_String :=
         +("insert into posts (author, sent, parent, id, subject, text) " &
-            "values (:f,datetime(:d),:r,:i,:s,:t)");
+            "values (:f,(:d),:r,:i,:s,:t)");
       Format :  constant League.Strings.Universal_String :=
         +"yyyy-MM-dd HH:mm:ss";
 
       procedure Insert_Post (Value : Mails.Mail) is
          Option : SQL.Options.SQL_Options;
       begin
-         Option.Set (+"filename", +"mail.db");
+         Option.Set (+"dbname", +"mail");
          declare
             DB : SQL.Databases.SQL_Database :=
-              SQL.Databases.Create (+"SQLITE3", Option);
+              SQL.Databases.Create (+"POSTGRESQL", Option);
          begin
             DB.Open;
 

@@ -1,7 +1,7 @@
 with SQL.Databases;
 with SQL.Options;
 
-with Matreshka.Internals.SQL_Drivers.SQLite3.Factory;
+with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
 with League.Application;
 
 with Forum.Contexts;
@@ -15,13 +15,13 @@ procedure Forum.Update is
      League.Application.Arguments.Element (1).To_UTF_8_String;
    Option : SQL.Options.SQL_Options;
 begin
-   Option.Set (+"filename", +"mail.db");
+   Option.Set (+"dbname", +"mail");
 
    declare
       Context : aliased Forum.Contexts.Context;
       Top     : League.Holders.Holder;
       DB      : SQL.Databases.SQL_Database :=
-        SQL.Databases.Create (+"SQLITE3", Option);
+        SQL.Databases.Create (+"POSTGRESQL", Option);
    begin
       DB.Open;
       Context.Users.Initiaize (DB);
