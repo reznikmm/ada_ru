@@ -4,6 +4,7 @@ with AWS.Parameters;
 with AWS.Response;
 
 with League.Base_Codecs;
+with League.Holders;
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.JSON.Values;
@@ -23,6 +24,19 @@ package body Servlet.OAuth is
    function "+" (Text : Wide_Wide_String)
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
+
+   procedure Get_Token
+     (Self  : OAuth_Provider;
+      Code  : League.Strings.Universal_String;
+      Token : out League.Strings.Universal_String);
+
+   procedure Decode_Facebook_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info);
+
+   procedure Decode_Google_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info);
 
    ---------------
    -- Check_Key --
@@ -79,6 +93,73 @@ package body Servlet.OAuth is
       return Result;
    end Create_Key;
 
+   ---------------------------
+   -- Decode_Facebook_Token --
+   ---------------------------
+
+   procedure Decode_Facebook_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info)
+   is
+      Parameters : AWS.Parameters.List;
+      Document   : League.JSON.Documents.JSON_Document;
+      Object     : League.JSON.Objects.JSON_Object;
+   begin
+      Parameters.Add ("access_token", Token.To_UTF_8_String);
+      Parameters.Add ("fields", "id,name,email,picture");
+
+      declare
+         Full : constant String := AWS.Parameters.URI_Format (Parameters);
+         Data : AWS.Response.Data;
+      begin
+         Data := AWS.Client.Post
+           (URL          => "https://graph.facebook.com/v2.11/me",
+            Data         => Full (Full'First + 1 .. Full'Last),
+            Content_Type => "application/x-www-form-urlencoded");
+
+         if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+            Document := League.JSON.Documents.From_JSON
+              (AWS.Response.Message_Body (Data));
+            Object := Document.To_JSON_Object;
+            Info (User) := Object.Value (+"id").To_String;
+            Info (Name) := Object.Value (+"name").To_String;
+            Info (Mail) := Object.Value (+"email").To_String;
+            Object := Object.Value (+"picture").To_Object;
+            Object := Object.Value (+"data").To_Object;
+            Info (Avatar) := Object.Value (+"url").To_String;
+         end if;
+      end;
+   end Decode_Facebook_Token;
+
+   -------------------------
+   -- Decode_Google_Token --
+   -------------------------
+
+   procedure Decode_Google_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info)
+   is
+      Parts      : League.String_Vectors.Universal_String_Vector;
+      Encoded    : League.Strings.Universal_String;
+      Claim_Set  : League.JSON.Documents.JSON_Document;
+      Object     : League.JSON.Objects.JSON_Object;
+   begin
+      Parts := Token.Split ('.');
+      Encoded := Parts.Element (2);
+
+      while Encoded.Length mod 4 /= 0 loop
+         Encoded.Append ('=');
+      end loop;
+
+      Claim_Set := League.JSON.Documents.From_JSON
+        (League.Base_Codecs.From_Base_64_URL (Encoded));
+      Object := Claim_Set.To_JSON_Object;
+      Info (User) := Object.Value (+"sub").To_String;
+      Info (Mail) := Object.Value (+"email").To_String;
+      Info (Name)  := Object.Value (+"name").To_String;
+      Info (Avatar)  := Object.Value (+"picture").To_String;
+   end Decode_Google_Token;
+
    ------------
    -- Do_Get --
    ------------
@@ -126,7 +207,12 @@ package body Servlet.OAuth is
 
          --  Bind wiki page content
          Filter.Set_Parameter (+"state", League.Holders.To_Holder (Key));
-         Filter.Set_Parameter (+"client_id", Self.Client_Id);
+
+         for P in Self.OAuth_Providers.Iterate loop
+            Filter.Set_Parameter
+              (OAuth_Provider_Maps.Key (P),
+               League.Holders.To_Holder (Self.OAuth_Providers (P).Client_Id));
+         end loop;
 
          --  Configure XML writer.
 
@@ -139,13 +225,24 @@ package body Servlet.OAuth is
 
       use type League.Strings.Universal_String;
 
-      Info   : User_Info;
+      Token : League.Strings.Universal_String;
+      Info  : User_Info;
    begin
-      if Path = +"/google" then
+      if Self.OAuth_Providers.Contains (Path.Tail_From (2)) then
          if Self.Cache.Check_Key
            (Session, Request.Get_Parameter (+"state"))
          then
-            Self.Get_Token (Request.Get_Parameter (+"code"), Info);
+            Get_Token
+              (Self.OAuth_Providers (Path.Tail_From (2)),
+               Request.Get_Parameter (+"code"),
+               Token);
+
+            if Path = +"/google" then
+               Decode_Google_Token (Token, Info);
+            elsif Path = +"/facebook" then
+               Decode_Facebook_Token (Token, Info);
+            end if;
+
             Self.Handler.Do_Login (Info, Request, Response);
 
             return;
@@ -180,36 +277,21 @@ package body Servlet.OAuth is
    -- Get_Token --
    ---------------
 
-   not overriding procedure Get_Token
-     (Self   : OAuth_Servlet;
-      Code   : League.Strings.Universal_String;
-      Info   : out User_Info)
+   procedure Get_Token
+     (Self  : OAuth_Provider;
+      Code  : League.Strings.Universal_String;
+      Token : out League.Strings.Universal_String)
    is
       Parameters : AWS.Parameters.List;
       Document   : League.JSON.Documents.JSON_Document;
       Object     : League.JSON.Objects.JSON_Object;
-      Id_Token   : League.Strings.Universal_String;
-      Parts      : League.String_Vectors.Universal_String_Vector;
-      Encoded    : League.Strings.Universal_String;
-      Claim_Set  : League.JSON.Documents.JSON_Document;
    begin
       Parameters.Add ("code", Code.To_UTF_8_String);
+      Parameters.Add ("client_id", Self.Client_Id.To_UTF_8_String);
+      Parameters.Add ("client_secret", Self.Client_Secret.To_UTF_8_String);
+      Parameters.Add ("redirect_uri", Self.Redirect_URI.To_UTF_8_String);
+      Parameters.Add ("grant_type", "authorization_code");
 
-      Parameters.Add
-        ("client_id",
-         League.Holders.Element (Self.Client_Id).To_UTF_8_String);
-
-      Parameters.Add
-        ("client_secret",
-         Self.Client_Secret.To_UTF_8_String);
-
-      Parameters.Add
-        ("redirect_uri",
-         Self.Redirect_URI.To_UTF_8_String);
-
-      Parameters.Add
-        ("grant_type",
-         "authorization_code");
       declare
          Full : constant String := AWS.Parameters.URI_Format (Parameters);
          Data : AWS.Response.Data;
@@ -223,21 +305,7 @@ package body Servlet.OAuth is
             Document := League.JSON.Documents.From_JSON
               (AWS.Response.Message_Body (Data));
             Object := Document.To_JSON_Object;
-            Id_Token := Object.Value (+"id_token").To_String;
-            Parts := Id_Token.Split ('.');
-            Encoded := Parts.Element (2);
-
-            while Encoded.Length mod 4 /= 0 loop
-               Encoded.Append ('=');
-            end loop;
-
-            Claim_Set := League.JSON.Documents.From_JSON
-              (League.Base_Codecs.From_Base_64_URL (Encoded));
-            Object := Claim_Set.To_JSON_Object;
-            Info (User) := Object.Value (+"sub").To_String;
-            Info (Mail) := Object.Value (+"email").To_String;
-            Info (Name)  := Object.Value (+"name").To_String;
-            Info (Avatar)  := Object.Value (+"picture").To_String;
+            Token := Object.Value (Self.Token_Key).To_String;
          end if;
       end;
    end Get_Token;
@@ -252,22 +320,53 @@ package body Servlet.OAuth is
       return OAuth_Servlet
    is
       pragma Unreferenced (Parameters);
+
+      procedure Add_OAuth_Provider
+        (Map      : in out OAuth_Provider_Maps.Map;
+         Name     : League.Strings.Universal_String;
+         Settings : League.Settings.Settings);
+
+      ------------------------
+      -- Add_OAuth_Provider --
+      ------------------------
+
+      procedure Add_OAuth_Provider
+        (Map      : in out OAuth_Provider_Maps.Map;
+         Name     : League.Strings.Universal_String;
+         Settings : League.Settings.Settings)
+      is
+         use type League.Strings.Universal_String;
+
+         Prefix    : constant League.Strings.Universal_String :=
+           "/" & Name & "/";
+         Client_Id : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "client_id");
+         Token_End_Point : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "token_endpoint");
+         Client_Secret : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "client_secret");
+         Redirect_URI : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "redirect_uri");
+         Token_Key : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "token_key");
+
+         Item : OAuth_Provider;
+      begin
+         Item.Client_Id := League.Holders.Element (Client_Id);
+         Item.Token_End_Point := League.Holders.Element (Token_End_Point);
+         Item.Client_Secret := League.Holders.Element (Client_Secret);
+         Item.Redirect_URI := League.Holders.Element (Redirect_URI);
+         Item.Token_Key := League.Holders.Element (Token_Key);
+
+         Map.Insert (Name, Item);
+      end Add_OAuth_Provider;
+
       Settings  : League.Settings.Settings;
-      Client_Id : constant League.Holders.Holder :=
-        Settings.Value (+"/oauth/client_id");
-      Token_End_Point : constant League.Holders.Holder :=
-        Settings.Value (+"/oauth/token_endpoint");
-      Client_Secret : constant League.Holders.Holder :=
-        Settings.Value (+"/oauth/client_secret");
-      Redirect_URI : constant League.Holders.Holder :=
-        Settings.Value (+"/oauth/redirect_uri");
    begin
-      return (Servlet.HTTP_Servlets.HTTP_Servlet with
-                Client_Id => Client_Id,
-                Token_End_Point => League.Holders.Element (Token_End_Point),
-                Client_Secret => League.Holders.Element (Client_Secret),
-                Redirect_URI => League.Holders.Element (Redirect_URI),
-                others => <>);
+      return Result : OAuth_Servlet do
+         Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"facebook", Settings);
+      end return;
    end Instantiate;
 
    -----------------

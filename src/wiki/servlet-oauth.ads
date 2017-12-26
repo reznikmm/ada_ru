@@ -8,7 +8,6 @@ private with Ada.Containers.Doubly_Linked_Lists;
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Numerics.Discrete_Random;
 private with Ada.Streams;
-private with League.Holders;
 private with League.Strings.Hash;
 private with Servlet.Generic_Servlets;
 
@@ -26,8 +25,7 @@ package Servlet.OAuth is
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
        is abstract;
 
-   type OAuth_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with private;
+   type OAuth_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with private;
 
    not overriding procedure Set_Handler
     (Self  : in out OAuth_Servlet;
@@ -36,6 +34,20 @@ package Servlet.OAuth is
    type OAuth_Servlet_Access is access all OAuth_Servlet'Class;
 
 private
+
+   type OAuth_Provider is record
+      Client_Id       : League.Strings.Universal_String;
+      Token_End_Point : League.Strings.Universal_String;
+      Client_Secret   : League.Strings.Universal_String;
+      Redirect_URI    : League.Strings.Universal_String;
+      Token_Key       : League.Strings.Universal_String;
+   end record;
+
+   package OAuth_Provider_Maps is new Ada.Containers.Hashed_Maps
+     (Key_Type        => League.Strings.Universal_String,
+      Element_Type    => OAuth_Provider,
+      Hash            => League.Strings.Hash,
+      Equivalent_Keys => League.Strings."=");
 
    package String_Lists is new Ada.Containers.Doubly_Linked_Lists
      (League.Strings.Universal_String, League.Strings."=");
@@ -70,14 +82,10 @@ private
       Key        : League.Strings.Universal_String)
       return Boolean;
 
-   type OAuth_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with record
+   type OAuth_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
       Handler         : access Login_Handler'Class;
       Cache           : State_Cache;
-      Client_Id       : League.Holders.Holder;
-      Token_End_Point : League.Strings.Universal_String;
-      Client_Secret   : League.Strings.Universal_String;
-      Redirect_URI    : League.Strings.Universal_String;
+      OAuth_Providers : OAuth_Provider_Maps.Map;
    end record;
 
    overriding procedure Do_Get
@@ -92,10 +100,5 @@ private
     (Parameters : not null access
        Servlet.Generic_Servlets.Instantiation_Parameters'Class)
          return OAuth_Servlet;
-
-   not overriding procedure Get_Token
-     (Self   : OAuth_Servlet;
-      Code   : League.Strings.Universal_String;
-      Info   : out User_Info);
 
 end Servlet.OAuth;
