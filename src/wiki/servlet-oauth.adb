@@ -1,10 +1,12 @@
 with AWS.Client;
+with AWS.Headers;
 with AWS.Messages;
 with AWS.Parameters;
 with AWS.Response;
 
 with League.Base_Codecs;
 with League.Holders;
+with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.JSON.Values;
@@ -31,6 +33,10 @@ package body Servlet.OAuth is
       Token : out League.Strings.Universal_String);
 
    procedure Decode_Facebook_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info);
+
+   procedure Decode_Github_Token
      (Token : League.Strings.Universal_String;
       Info  : out User_Info);
 
@@ -130,6 +136,61 @@ package body Servlet.OAuth is
          end if;
       end;
    end Decode_Facebook_Token;
+
+   -------------------------
+   -- Decode_Github_Token --
+   -------------------------
+
+   procedure Decode_Github_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out User_Info)
+   is
+      Headers    : AWS.Headers.List;
+      Data       : AWS.Response.Data;
+      Document   : League.JSON.Documents.JSON_Document;
+      Object     : League.JSON.Objects.JSON_Object;
+      Vector     : League.JSON.Arrays.JSON_Array;
+   begin
+      Headers.Add ("Authorization", "token " & Token.To_UTF_8_String);
+      Headers.Add ("Accept", "application/vnd.github.v3+json");
+
+      Data := AWS.Client.Get
+        (URL     => "https://api.github.com/user",
+         Headers => Headers);
+
+      if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+         Document := League.JSON.Documents.From_JSON
+           (AWS.Response.Message_Body (Data));
+         Object := Document.To_JSON_Object;
+         Info (User) := Object.Value (+"login").To_String;  --  id???
+         Info (Name) := Object.Value (+"name").To_String;
+         Info (Mail) := Object.Value (+"email").To_String;
+         Info (Avatar) := Object.Value (+"avatar_url").To_String;
+
+         if Info (Mail).Is_Empty then
+            Data := AWS.Client.Get
+              (URL     => "https://api.github.com/user/emails",
+               Headers => Headers);
+
+            if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+               Document := League.JSON.Documents.From_JSON
+                 (AWS.Response.Message_Body (Data));
+               Vector := Document.To_JSON_Array;
+
+               for J in 1 .. Vector.Length loop
+                  Object := Vector.Element (J).To_Object;
+
+                  if Object.Value (+"verified").To_Boolean and then
+                    (Info (Mail).Is_Empty or else
+                     Object.Value (+"primary").To_Boolean)
+                  then
+                     Info (Mail) := Object.Value (+"email").To_String;
+                  end if;
+               end loop;
+            end if;
+         end if;
+      end if;
+   end Decode_Github_Token;
 
    -------------------------
    -- Decode_Google_Token --
@@ -241,6 +302,8 @@ package body Servlet.OAuth is
                Decode_Google_Token (Token, Info);
             elsif Path = +"/facebook" then
                Decode_Facebook_Token (Token, Info);
+            elsif Path = +"/github" then
+               Decode_Github_Token (Token, Info);
             end if;
 
             Self.Handler.Do_Login (Info, Request, Response);
@@ -282,10 +345,12 @@ package body Servlet.OAuth is
       Code  : League.Strings.Universal_String;
       Token : out League.Strings.Universal_String)
    is
+      Headers    : AWS.Headers.List;
       Parameters : AWS.Parameters.List;
       Document   : League.JSON.Documents.JSON_Document;
       Object     : League.JSON.Objects.JSON_Object;
    begin
+      Headers.Add ("Accept", "application/json");
       Parameters.Add ("code", Code.To_UTF_8_String);
       Parameters.Add ("client_id", Self.Client_Id.To_UTF_8_String);
       Parameters.Add ("client_secret", Self.Client_Secret.To_UTF_8_String);
@@ -299,7 +364,8 @@ package body Servlet.OAuth is
          Data := AWS.Client.Post
            (URL          => Self.Token_End_Point.To_UTF_8_String,
             Data         => Full (Full'First + 1 .. Full'Last),
-            Content_Type => "application/x-www-form-urlencoded");
+            Content_Type => "application/x-www-form-urlencoded",
+            Headers      => Headers);
 
          if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
             Document := League.JSON.Documents.From_JSON
@@ -364,8 +430,9 @@ package body Servlet.OAuth is
       Settings  : League.Settings.Settings;
    begin
       return Result : OAuth_Servlet do
-         Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"facebook", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"github", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
       end return;
    end Instantiate;
 
