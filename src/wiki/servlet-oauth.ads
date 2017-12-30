@@ -1,3 +1,4 @@
+with League.String_Vectors;
 with League.Strings;
 
 with Servlet.HTTP_Requests;
@@ -13,8 +14,12 @@ private with Servlet.Generic_Servlets;
 
 package Servlet.OAuth is
 
-   type User_Info_Kind is (User, Mail, Name, Avatar);
-   type User_Info is array (User_Info_Kind) of League.Strings.Universal_String;
+   type User_Info is record
+      User   : League.Strings.Universal_String;
+      Name   : League.Strings.Universal_String;
+      Avatar : League.Strings.Universal_String;
+      Mails  : League.String_Vectors.Universal_String_Vector;
+   end record;
 
    type Login_Handler is limited interface;
 

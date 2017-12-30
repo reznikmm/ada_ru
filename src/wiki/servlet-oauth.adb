@@ -12,7 +12,6 @@ with League.JSON.Objects;
 with League.JSON.Values;
 with League.Settings;
 with League.Stream_Element_Vectors;
-with League.String_Vectors;
 with Servlet.Contexts;
 with Servlet.HTTP_Sessions;
 with XML.SAX.Input_Sources.Streams.Files;
@@ -127,12 +126,12 @@ package body Servlet.OAuth is
             Document := League.JSON.Documents.From_JSON
               (AWS.Response.Message_Body (Data));
             Object := Document.To_JSON_Object;
-            Info (User) := Object.Value (+"id").To_String;
-            Info (Name) := Object.Value (+"name").To_String;
-            Info (Mail) := Object.Value (+"email").To_String;
+            Info.User := Object.Value (+"id").To_String;
+            Info.Name := Object.Value (+"name").To_String;
+            Info.Mails.Append (Object.Value (+"email").To_String);
             Object := Object.Value (+"picture").To_Object;
             Object := Object.Value (+"data").To_Object;
-            Info (Avatar) := Object.Value (+"url").To_String;
+            Info.Avatar := Object.Value (+"url").To_String;
          end if;
       end;
    end Decode_Facebook_Token;
@@ -147,6 +146,7 @@ package body Servlet.OAuth is
    is
       Headers    : AWS.Headers.List;
       Data       : AWS.Response.Data;
+      Mail       : League.Strings.Universal_String;
       Document   : League.JSON.Documents.JSON_Document;
       Object     : League.JSON.Objects.JSON_Object;
       Vector     : League.JSON.Arrays.JSON_Array;
@@ -162,32 +162,35 @@ package body Servlet.OAuth is
          Document := League.JSON.Documents.From_JSON
            (AWS.Response.Message_Body (Data));
          Object := Document.To_JSON_Object;
-         Info (User) := Object.Value (+"login").To_String;  --  id???
-         Info (Name) := Object.Value (+"name").To_String;
-         Info (Mail) := Object.Value (+"email").To_String;
-         Info (Avatar) := Object.Value (+"avatar_url").To_String;
+         Info.User := Object.Value (+"login").To_String;  --  id???
+         Info.Name := Object.Value (+"name").To_String;
+         Info.Avatar := Object.Value (+"avatar_url").To_String;
+         Mail := Object.Value (+"email").To_String;
 
-         if Info (Mail).Is_Empty then
-            Data := AWS.Client.Get
-              (URL     => "https://api.github.com/user/emails",
-               Headers => Headers);
+         Data := AWS.Client.Get
+           (URL     => "https://api.github.com/user/emails",
+            Headers => Headers);
 
-            if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
-               Document := League.JSON.Documents.From_JSON
-                 (AWS.Response.Message_Body (Data));
-               Vector := Document.To_JSON_Array;
+         if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+            Document := League.JSON.Documents.From_JSON
+              (AWS.Response.Message_Body (Data));
+            Vector := Document.To_JSON_Array;
 
-               for J in 1 .. Vector.Length loop
-                  Object := Vector.Element (J).To_Object;
+            for J in 1 .. Vector.Length loop
+               Object := Vector.Element (J).To_Object;
 
-                  if Object.Value (+"verified").To_Boolean and then
-                    (Info (Mail).Is_Empty or else
-                     Object.Value (+"primary").To_Boolean)
-                  then
-                     Info (Mail) := Object.Value (+"email").To_String;
+               if Object.Value (+"verified").To_Boolean then
+                  if Object.Value (+"primary").To_Boolean then
+                     Info.Mails.Insert (1, Object.Value (+"email").To_String);
+                  else
+                     Info.Mails.Append (Object.Value (+"email").To_String);
                   end if;
-               end loop;
-            end if;
+               end if;
+            end loop;
+         end if;
+
+         if Info.Mails.Index (Mail) = 0 then
+            Info.Mails.Append (Mail);
          end if;
       end if;
    end Decode_Github_Token;
@@ -215,10 +218,10 @@ package body Servlet.OAuth is
       Claim_Set := League.JSON.Documents.From_JSON
         (League.Base_Codecs.From_Base_64_URL (Encoded));
       Object := Claim_Set.To_JSON_Object;
-      Info (User) := Object.Value (+"sub").To_String;
-      Info (Mail) := Object.Value (+"email").To_String;
-      Info (Name)  := Object.Value (+"name").To_String;
-      Info (Avatar)  := Object.Value (+"picture").To_String;
+      Info.User := Object.Value (+"sub").To_String;
+      Info.Mails.Append (Object.Value (+"email").To_String);
+      Info.Name := Object.Value (+"name").To_String;
+      Info.Avatar := Object.Value (+"picture").To_String;
    end Decode_Google_Token;
 
    ------------
