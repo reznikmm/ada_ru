@@ -42,4 +42,13 @@
     <servlet-name>OAuth</servlet-name>
     <url-pattern>/oauth2/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>User</servlet-name>
+    <servlet-tag>SERVLET.USERS.USER_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>User</servlet-name>
+    <url-pattern>/user</url-pattern>
+  </servlet-mapping>
 </web-app>

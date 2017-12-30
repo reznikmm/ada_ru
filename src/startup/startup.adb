@@ -31,6 +31,8 @@ with Ada.Text_IO;
 with AWFC.Static_Resource_Servlets;
 pragma Unreferenced (AWFC.Static_Resource_Servlets);
 with Servlet.OAuth;
+with Servlet.Users;
+pragma Unreferenced (Servlet.Users);
 
 with Axe.Wiki_View_Servlets;
 
