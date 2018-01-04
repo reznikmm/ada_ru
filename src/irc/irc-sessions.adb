@@ -1,6 +1,5 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Streams;
-with Ada.Wide_Wide_Text_IO;
 with League.String_Vectors;
 
 package body IRC.Sessions is
@@ -46,7 +45,6 @@ package body IRC.Sessions is
             end if;
          end if;
 
-         Ada.Wide_Wide_Text_IO.Put_Line (Text.To_Wide_Wide_String);
          List := Text.Split (' ');
 
          declare

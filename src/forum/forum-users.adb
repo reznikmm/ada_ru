@@ -49,7 +49,7 @@ package body Forum.Users is
          Self.Insert_User.Bind_Value (+":f", League.Holders.To_Holder (Name));
          Self.Insert_User.Bind_Value (+":a", League.Holders.To_Holder (+""));
          Self.Insert_User.Execute;
-         Self.Insert_User.Finish;
+         --  Self.Insert_User.Finish;
 
          Self.User_Map.Insert (Nickname, User'(Nickname, Name, +""));
       end if;
@@ -58,7 +58,7 @@ package body Forum.Users is
       Self.Insert_EMail.Bind_Value
         (+":n", League.Holders.To_Holder (Nickname));
       Self.Insert_EMail.Execute;
-      Self.Insert_EMail.Finish;
+      --  Self.Insert_EMail.Finish;
       Self.Email_Map.Insert (Value, Nickname);
    end Create_User;
 

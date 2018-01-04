@@ -36,6 +36,9 @@ pragma Unreferenced (Servlet.Users);
 
 with Axe.Wiki_View_Servlets;
 
+with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
+pragma Unreferenced (Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory);
+
 with Axe.Events.Logs;
 with XMPP.Sessions;
 with League.Strings;
@@ -75,6 +78,8 @@ package body Startup is
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
+      Manager.Initialize;
+
       Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
         (Context).Set_Session_Manager
           (Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access

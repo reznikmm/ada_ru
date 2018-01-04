@@ -19,7 +19,8 @@ create table topics (
 create table users (
   nickname varchar primary key,
   name     varchar not null,
-  avatar   varchar);
+  avatar   varchar,
+  created timestamp default current_timestamp);
 
 create table emails (
   email    varchar primary key,

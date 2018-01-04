@@ -4,6 +4,7 @@ with Spikedog.HTTP_Session_Managers;
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Numerics.Discrete_Random;
 private with Ada.Streams;
+private with Databases;
 private with League.Strings.Hash;
 private with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Responses;
@@ -37,6 +38,7 @@ private
    with record
       Random : Stream_Element_Random.Generator;
       Map    : Session_Maps.Map;
+      Pool   : Databases.SQL_Database_Pool;
    end record;
 
    overriding function Is_Session_Identifier_Valid

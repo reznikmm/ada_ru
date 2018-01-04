@@ -32,6 +32,7 @@ with "matreshka_spikedog_api.gpr";
 with "matreshka_spikedog_core.gpr";
 
 with "matreshka_sql.gpr";
+with "matreshka_sql_postgresql.gpr";
 with "matreshka_xml.gpr";
 with "axmpp.gpr";
 
