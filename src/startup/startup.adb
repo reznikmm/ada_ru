@@ -78,7 +78,7 @@ package body Startup is
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
-      Manager.Initialize;
+      Manager.Initialize (Log_Writer);
 
       Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
         (Context).Set_Session_Manager

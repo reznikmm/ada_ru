@@ -31,6 +31,20 @@ package body Axe.Events.Logs is
       Self.Bot.Initialize (Text);
    end Initialize;
 
+   ---------------------
+   -- On_User_Created --
+   ---------------------
+
+   overriding procedure On_User_Created
+     (Self    : in out Event_Log_Writer;
+      Name    : League.Strings.Universal_String;
+      Avatar  : League.Strings.Universal_String)
+   is
+      use type League.Strings.Universal_String;
+   begin
+      Self.Bot.Send_Message ("New site user: " & Name & " " & Avatar);
+   end On_User_Created;
+
    -------------------
    -- On_Wiki_Saved --
    -------------------
@@ -70,7 +84,7 @@ package body Axe.Events.Logs is
       Ada.Wide_Wide_Text_IO.Put_Line (File, Info.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Close (File);
 
-      URL.Append ("http://www.ada-ru.org");
+      URL.Append ("https://www.ada-ru.org");
       URL.Append (URI);
       Self.Bot.Send_Message (Title.Title);
       Self.Bot.Send_Message (URL);

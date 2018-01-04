@@ -63,6 +63,8 @@ package body Sessions.Managers is
                Main := +"N";
             end loop;
          end;
+
+         Self.Events.On_User_Created (Info.Name, Info.Avatar);
       end Create_User;
 
       ---------------
@@ -131,7 +133,10 @@ package body Sessions.Managers is
    -- Initialize --
    ----------------
 
-   procedure Initialize (Self : in out HTTP_Session_Manager) is
+   procedure Initialize
+     (Self   : in out HTTP_Session_Manager;
+      Events : access Axe.Events.Listener'Class)
+   is
       Settings : League.Settings.Settings;
       Driver   : constant League.Holders.Holder :=
         Settings.Value (+"/db/driver");
@@ -143,6 +148,7 @@ package body Sessions.Managers is
       Stream_Element_Random.Reset (Self.Random);
       Option.Set (+"dbname", League.Holders.Element (Database));
       Self.Pool.Initialize (League.Holders.Element (Driver), Option);
+      Self.Events := Events;
    end Initialize;
 
    ---------------------------------

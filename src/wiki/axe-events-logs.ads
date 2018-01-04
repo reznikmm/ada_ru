@@ -24,4 +24,9 @@ private
       User    : League.Strings.Universal_String;
       Created : Boolean);
 
+   overriding procedure On_User_Created
+     (Self    : in out Event_Log_Writer;
+      Name    : League.Strings.Universal_String;
+      Avatar  : League.Strings.Universal_String);
+
 end Axe.Events.Logs;

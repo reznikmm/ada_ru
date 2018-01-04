@@ -1,5 +1,6 @@
 with Servlet.OAuth;
 with Spikedog.HTTP_Session_Managers;
+with Axe.Events;
 
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Numerics.Discrete_Random;
@@ -17,7 +18,9 @@ package Sessions.Managers is
 
    type HTTP_Session_Manager_Access is access all HTTP_Session_Manager'Class;
 
-   procedure Initialize (Self : in out HTTP_Session_Manager);
+   procedure Initialize
+     (Self   : in out HTTP_Session_Manager;
+      Events : access Axe.Events.Listener'Class);
 
 private
 
@@ -39,6 +42,7 @@ private
       Random : Stream_Element_Random.Generator;
       Map    : Session_Maps.Map;
       Pool   : Databases.SQL_Database_Pool;
+      Events : access Axe.Events.Listener'Class;
    end record;
 
    overriding function Is_Session_Identifier_Valid

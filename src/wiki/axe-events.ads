@@ -11,6 +11,11 @@ package Axe.Events is
       User    : League.Strings.Universal_String;
       Created : Boolean) is null;
 
+   not overriding procedure On_User_Created
+     (Self    : in out Listener;
+      Name    : League.Strings.Universal_String;
+      Avatar  : League.Strings.Universal_String) is null;
+
    type Listener_Access is access all Listener'Class;
 
 end Axe.Events;
