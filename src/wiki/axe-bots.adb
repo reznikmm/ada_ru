@@ -1,6 +1,10 @@
+with Ada.Calendar;
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
 
+with AWS.Response;
+
+with League.JSON.Documents;
 with League.JSON.Values;
 with XMPP.Presences;
 
@@ -32,6 +36,9 @@ package body Axe.Bots is
    --------------
 
    task body Bot_Loop is
+      use type Ada.Calendar.Time;
+
+      Time         : Ada.Calendar.Time;
       Target       : constant League.Strings.Universal_String := +"#ada";
       Jabber       : constant League.Strings.Universal_String :=
         +"ada-ru@conference.jabber.ru";
@@ -78,6 +85,7 @@ package body Axe.Bots is
 
          select
             Bot.Queue.Dequeue (Next_Message);
+            Time := Ada.Calendar.Clock;
 
             if Next_Message.Origin /= IRC_Origin then
                Bot.IRC_Session.Send_Message (Target, Next_Message.Text);
@@ -93,6 +101,12 @@ package body Axe.Bots is
                   Bot.XMPP_Session.Send_Object (Output);
                end;
             end if;
+
+            if Next_Message.Origin /= Telegram_Origin then
+               Bot.Send_Telegram (Next_Message.Text);
+            end if;
+
+            delay until Time + 1.0;  --  Avoid to Excess Flood errors
          else
             null;
          end select;
@@ -113,7 +127,8 @@ package body Axe.Bots is
 
    procedure Initialize
      (Self     : in out Bot;
-      Password : League.Strings.Universal_String) is
+      Password : League.Strings.Universal_String;
+      Token    : League.Strings.Universal_String) is
    begin
       Self.IRC_Session := new IRC.Sessions.Session
         (Self.IRC_Listener'Unchecked_Access);
@@ -127,6 +142,9 @@ package body Axe.Bots is
         (Self.XMPP_Listener'Unchecked_Access);
 
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
+
+      AWS.Client.Create (Self.Telegram, Host => "https://api.telegram.org");
+      Self.Token := Token;
    end Initialize;
 
    -------------
@@ -231,6 +249,33 @@ package body Axe.Bots is
    end Send_Message;
 
    -------------------
+   -- Send_Telegram --
+   -------------------
+
+   not overriding procedure Send_Telegram
+     (Self   : in out Bot;
+      Text   : League.Strings.Universal_String)
+   is
+      Object : League.JSON.Objects.JSON_Object;
+      Result : AWS.Response.Data;
+   begin
+      Object.Insert
+        (+"chat_id",
+         League.JSON.Values.To_JSON_Value (+"@adalang"));
+
+      Object.Insert
+        (+"text",
+         League.JSON.Values.To_JSON_Value (Text));
+
+      AWS.Client.Post
+        (Self.Telegram,
+         Result,
+         Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+         Content_Type => "application/json",
+         URI => "/bot" & Self.Token.To_UTF_8_String & "/sendMessage");
+   end Send_Telegram;
+
+   -------------------
    -- Session_State --
    -------------------
 
@@ -291,7 +336,7 @@ package body Axe.Bots is
          end;
       end if;
 
-      Self.Send_Message (Text);
+      Self.Send_Message (Text, Telegram_Origin);
    end Telegram;
 
 end Axe.Bots;

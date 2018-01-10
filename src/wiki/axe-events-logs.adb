@@ -19,7 +19,8 @@ package body Axe.Events.Logs is
    procedure Initialize
      (Self     : in out Event_Log_Writer'Class;
       File     : League.Strings.Universal_String;
-      Password : League.Strings.Universal_String)
+      Password : League.Strings.Universal_String;
+      Token    : League.Strings.Universal_String)
    is
       Text : League.Strings.Universal_String :=
         Axe.Read_File
@@ -28,7 +29,7 @@ package body Axe.Events.Logs is
       Text := Text.Head
         (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF) - 1);
       Self.File := File;
-      Self.Bot.Initialize (Text);
+      Self.Bot.Initialize (Text, Token);
    end Initialize;
 
    -----------------

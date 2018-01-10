@@ -42,6 +42,8 @@ pragma Unreferenced (Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory);
 
 with Axe.Events.Logs;
 with XMPP.Sessions;
+with League.Holders;
+with League.Settings;
 with League.Strings;
 with Servlet.Generic_Servlets;
 with Sessions.Managers;
@@ -82,6 +84,10 @@ package body Startup is
 
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
+
+      Settings  : League.Settings.Settings;
+      Token     : constant League.Strings.Universal_String :=
+        League.Holders.Element (Settings.Value (+"/telegram/token"));
    begin
       Manager.Initialize (Log_Writer);
 
@@ -94,10 +100,12 @@ package body Startup is
 
       Log_Writer.Initialize
         (File     => Context.Get_Real_Path (+"/news.wiki"),
-         Password => Context.Get_Real_Path (+"/password/ada_ru"));
+         Password => Context.Get_Real_Path (+"/password/ada_ru"),
+         Token    => Token);
 
       Wiki_Servlet.Set_Event_Listener (Log_Writer);
       OAuth_Servlet.Set_Handler (Manager);
+      Telegram_Servlet.Initialize (Token);
       Telegram_Servlet.Set_Listener (Log_Writer);
       Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
       Context.Add_Servlet (+"OAuth", OAuth_Servlet);

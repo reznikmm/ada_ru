@@ -1,11 +1,9 @@
 with Ada.Streams;
 with Ada.Wide_Wide_Text_IO;
 
-with League.Holders;
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.JSON.Values;
-with League.Settings;
 with League.Stream_Element_Vectors;
 with League.Text_Codecs;
 
@@ -65,6 +63,17 @@ package body Servlet.Telegram is
       return +"Telegram Servlet";
    end Get_Servlet_Info;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+     (Self  : in out Telegram_Servlet'Class;
+      Token : League.Strings.Universal_String) is
+   begin
+      Self.Token := Token;
+   end Initialize;
+
    -----------------
    -- Instantiate --
    -----------------
@@ -75,13 +84,8 @@ package body Servlet.Telegram is
       return Telegram_Servlet
    is
       pragma Unreferenced (Parameters);
-      Settings  : League.Settings.Settings;
-      Token     : constant League.Holders.Holder :=
-        Settings.Value (+"/telegram/token");
    begin
-      return Result : Telegram_Servlet do
-         Result.Token := League.Holders.Element (Token);
-      end return;
+      return Result : Telegram_Servlet;
    end Instantiate;
 
    ------------------

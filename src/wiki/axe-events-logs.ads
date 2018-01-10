@@ -8,7 +8,8 @@ package Axe.Events.Logs is
    procedure Initialize
      (Self     : in out Event_Log_Writer'Class;
       File     : League.Strings.Universal_String;
-      Password : League.Strings.Universal_String);
+      Password : League.Strings.Universal_String;
+      Token    : League.Strings.Universal_String);
 
 private
 

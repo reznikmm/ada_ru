@@ -12,6 +12,10 @@ package Servlet.Telegram is
    type Telegram_Servlet is
      new Servlet.HTTP_Servlets.HTTP_Servlet with private;
 
+   procedure Initialize
+     (Self  : in out Telegram_Servlet'Class;
+      Token : League.Strings.Universal_String);
+
    not overriding procedure Set_Listener
     (Self  : in out Telegram_Servlet;
      Value : access Axe.Events.Listener'Class);
