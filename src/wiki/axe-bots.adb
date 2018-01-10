@@ -1,6 +1,7 @@
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
 
+with League.JSON.Values;
 with XMPP.Presences;
 
 package body Axe.Bots is
@@ -249,5 +250,48 @@ package body Axe.Bots is
             Nick_Name => +"ada_ru");
       end if;
    end Session_State;
+
+   --------------
+   -- Telegram --
+   --------------
+
+   not overriding procedure Telegram
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object)
+   is
+      pragma Unreferenced (Result);
+
+      use type League.Strings.Universal_String;
+      Chat : constant League.JSON.Objects.JSON_Object :=
+        Message.Value (+"chat").To_Object;
+      From : constant League.JSON.Values.JSON_Value := Message.Value (+"from");
+      Text : League.Strings.Universal_String;
+   begin
+      if not Message.Contains (+"text") or not Chat.Contains (+"username") then
+         return;
+      elsif Chat.Value (+"username").To_String /= +"adalang" then
+         return;
+      end if;
+
+      Text := Message.Value (+"text").To_String;
+
+      if From.Is_Object then
+         declare
+            Object : constant League.JSON.Objects.JSON_Object :=
+              From.To_Object;
+         begin
+            if Object.Contains (+"username") then
+               Text.Prepend
+                 ("(" & Object.Value (+"username").To_String & ") ");
+            else
+               Text.Prepend
+                 ("(" & Object.Value (+"first_name").To_String & ") ");
+            end if;
+         end;
+      end if;
+
+      Self.Send_Message (Text);
+   end Telegram;
 
 end Axe.Bots;

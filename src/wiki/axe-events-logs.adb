@@ -31,6 +31,18 @@ package body Axe.Events.Logs is
       Self.Bot.Initialize (Text);
    end Initialize;
 
+   -----------------
+   -- On_Telegram --
+   -----------------
+
+   overriding procedure On_Telegram
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object) is
+   begin
+      Self.Bot.Telegram (Message, Result);
+   end On_Telegram;
+
    ---------------------
    -- On_User_Created --
    ---------------------

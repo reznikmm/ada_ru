@@ -29,4 +29,9 @@ private
       Name    : League.Strings.Universal_String;
       Avatar  : League.Strings.Universal_String);
 
+   overriding procedure On_Telegram
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object);
+
 end Axe.Events.Logs;

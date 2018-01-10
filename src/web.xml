@@ -43,6 +43,11 @@
     <url-pattern>/oauth2/*</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>Telegram</servlet-name>
+    <url-pattern>/telegram</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>User</servlet-name>
     <servlet-tag>SERVLET.USERS.USER_SERVLET</servlet-tag>

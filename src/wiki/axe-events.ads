@@ -1,4 +1,5 @@
 with League.Strings;
+with League.JSON.Objects;
 
 package Axe.Events is
 
@@ -15,6 +16,11 @@ package Axe.Events is
      (Self    : in out Listener;
       Name    : League.Strings.Universal_String;
       Avatar  : League.Strings.Universal_String) is null;
+
+   not overriding procedure On_Telegram
+     (Self    : in out Listener;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object) is null;
 
    type Listener_Access is access all Listener'Class;
 

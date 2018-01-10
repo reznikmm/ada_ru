@@ -1,4 +1,6 @@
+with League.JSON.Objects;
 with League.Strings;
+
 private with IRC.Listeners;
 private with IRC.Sessions;
 private with Ada.Containers.Bounded_Synchronized_Queues;
@@ -22,6 +24,11 @@ package Axe.Bots is
      (Self   : in out Bot;
       Text   : League.Strings.Universal_String;
       Origin : Origin_Kind := Other_Origin);
+
+   not overriding procedure Telegram
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object);
 
 private
 

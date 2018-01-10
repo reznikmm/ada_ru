@@ -33,6 +33,7 @@ pragma Unreferenced (AWFC.Static_Resource_Servlets);
 with Servlet.OAuth;
 with Servlet.Users;
 pragma Unreferenced (Servlet.Users);
+with Servlet.Telegram;
 
 with Axe.Wiki_View_Servlets;
 
@@ -75,6 +76,10 @@ package body Startup is
         new Servlet.OAuth.OAuth_Servlet'
           (Servlet.OAuth.Instantiate (Dummy'Unchecked_Access));
 
+      Telegram_Servlet : constant Servlet.Telegram.Telegram_Servlet_Access :=
+        new Servlet.Telegram.Telegram_Servlet'
+          (Servlet.Telegram.Instantiate (Dummy'Unchecked_Access));
+
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
    begin
@@ -93,8 +98,10 @@ package body Startup is
 
       Wiki_Servlet.Set_Event_Listener (Log_Writer);
       OAuth_Servlet.Set_Handler (Manager);
+      Telegram_Servlet.Set_Listener (Log_Writer);
       Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
       Context.Add_Servlet (+"OAuth", OAuth_Servlet);
+      Context.Add_Servlet (+"Telegram", Telegram_Servlet);
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*
       --  TODO: set_password.html
