@@ -1,7 +1,6 @@
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
 
-with XMPP.Messages;
 with XMPP.Presences;
 
 package body Axe.Bots is
@@ -35,7 +34,7 @@ package body Axe.Bots is
       Target       : constant League.Strings.Universal_String := +"#ada";
       Jabber       : constant League.Strings.Universal_String :=
         +"ada-ru@conference.jabber.ru";
-      Next_Message : League.Strings.Universal_String;
+      Next_Message : Original_Message;
 
       Socket   : GNAT.Sockets.Socket_Type;
       Read     : GNAT.Sockets.Socket_Set_Type;
@@ -78,16 +77,21 @@ package body Axe.Bots is
 
          select
             Bot.Queue.Dequeue (Next_Message);
-            Bot.IRC_Session.Send_Message (Target, Next_Message);
 
-            declare
-               Message : XMPP.Messages.XMPP_Message;
-            begin
-               Message.Set_To (Jabber);
-               Message.Set_Type (XMPP.Group_Chat);
-               Message.Set_Body (Next_Message);
-               Bot.XMPP_Session.Send_Object (Message);
-            end;
+            if Next_Message.Origin /= IRC_Origin then
+               Bot.IRC_Session.Send_Message (Target, Next_Message.Text);
+            end if;
+
+            if Next_Message.Origin /= XMPP_Origin then
+               declare
+                  Output : XMPP.Messages.XMPP_Message;
+               begin
+                  Output.Set_To (Jabber);
+                  Output.Set_Type (XMPP.Group_Chat);
+                  Output.Set_Body (Next_Message.Text);
+                  Bot.XMPP_Session.Send_Object (Output);
+               end;
+            end if;
          else
             null;
          end select;
@@ -124,6 +128,27 @@ package body Axe.Bots is
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
    end Initialize;
 
+   -------------
+   -- Message --
+   -------------
+
+   overriding procedure Message
+     (Self : in out XMPP_Listener;
+      Msg  : XMPP.Messages.XMPP_Message'Class)
+   is
+      use type League.Strings.Universal_String;
+      From : League.Strings.Universal_String := Msg.Get_From;
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_From.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_To.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_Body.To_Wide_Wide_String);
+
+      if not From.Ends_With ("/ada_ru") then
+         From := From.Tail_From (From.Last_Index ('/') + 1);
+         Self.Bot.Send_Message ("(" & From & ")" & Msg.Get_Body, XMPP_Origin);
+      end if;
+   end Message;
+
    ----------------
    -- On_Message --
    ----------------
@@ -135,13 +160,19 @@ package body Axe.Bots is
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String)
    is
-      pragma Unreferenced (Self);
+      use type League.Strings.Universal_String;
+      From : constant League.Strings.Universal_String :=
+        Source.Head_To (Source.Index ("!") - 1);
    begin
       Ada.Wide_Wide_Text_IO.Put (Source.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put (" : ");
       Ada.Wide_Wide_Text_IO.Put_Line (Text.To_Wide_Wide_String);
 
-      if not Target.Starts_With ("#") then
+      if Target.Starts_With ("#") then
+         if From /= +"ada_ru" then
+            Self.Bot.Send_Message ("(" & From & "): " & Text, IRC_Origin);
+         end if;
+      else
          Session.Send_Message (Source, Text);
       end if;
    end On_Message;
@@ -190,10 +221,11 @@ package body Axe.Bots is
    ------------------
 
    not overriding procedure Send_Message
-     (Self : in out Bot;
-      Text : League.Strings.Universal_String) is
+     (Self   : in out Bot;
+      Text   : League.Strings.Universal_String;
+      Origin : Origin_Kind := Other_Origin) is
    begin
-      Self.Queue.Enqueue (Text);
+      Self.Queue.Enqueue ((Text, Origin));
       GNAT.Sockets.Abort_Selector (Self.Selector);
    end Send_Message;
 
