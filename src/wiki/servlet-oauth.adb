@@ -12,6 +12,8 @@ with League.JSON.Objects;
 with League.JSON.Values;
 with League.Settings;
 with League.Stream_Element_Vectors;
+with League.String_Vectors;
+
 with Servlet.Contexts;
 with Servlet.HTTP_Sessions;
 with XML.SAX.Input_Sources.Streams.Files;
@@ -33,15 +35,15 @@ package body Servlet.OAuth is
 
    procedure Decode_Facebook_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info);
+      Info  : out Sessions.User_Info);
 
    procedure Decode_Github_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info);
+      Info  : out Sessions.User_Info);
 
    procedure Decode_Google_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info);
+      Info  : out Sessions.User_Info);
 
    ---------------
    -- Check_Key --
@@ -104,7 +106,7 @@ package body Servlet.OAuth is
 
    procedure Decode_Facebook_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info)
+      Info  : out Sessions.User_Info)
    is
       Parameters : AWS.Parameters.List;
       Document   : League.JSON.Documents.JSON_Document;
@@ -142,7 +144,7 @@ package body Servlet.OAuth is
 
    procedure Decode_Github_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info)
+      Info  : out Sessions.User_Info)
    is
       Headers    : AWS.Headers.List;
       Data       : AWS.Response.Data;
@@ -201,7 +203,7 @@ package body Servlet.OAuth is
 
    procedure Decode_Google_Token
      (Token : League.Strings.Universal_String;
-      Info  : out User_Info)
+      Info  : out Sessions.User_Info)
    is
       Parts      : League.String_Vectors.Universal_String_Vector;
       Encoded    : League.Strings.Universal_String;
@@ -290,7 +292,7 @@ package body Servlet.OAuth is
       use type League.Strings.Universal_String;
 
       Token : League.Strings.Universal_String;
-      Info  : User_Info;
+      Info  : Sessions.User_Info;
    begin
       if Self.OAuth_Providers.Contains (Path.Tail_From (2)) then
          if Self.Cache.Check_Key

@@ -15,7 +15,7 @@ package body Sessions is
    -------------------
 
    not overriding function Get_User_Info
-     (Self : HTTP_Session) return Servlet.OAuth.User_Info is
+     (Self : HTTP_Session) return User_Info is
    begin
       return Self.Info;
    end Get_User_Info;

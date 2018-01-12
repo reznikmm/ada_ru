@@ -20,7 +20,7 @@ package body Sessions.Managers is
 
    overriding procedure Do_Login
     (Self     : in out HTTP_Session_Manager;
-     Info     : Servlet.OAuth.User_Info;
+     Info     : Sessions.User_Info;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is

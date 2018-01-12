@@ -3,7 +3,6 @@ with League.JSON.Objects;
 with League.JSON.Values;
 
 with Sessions;
-with Servlet.OAuth;
 
 package body Servlet.Users is
 
@@ -25,7 +24,7 @@ package body Servlet.Users is
       Session : constant Sessions.HTTP_Session_Access :=
         Sessions.HTTP_Session_Access (Request.Get_Session);
 
-      Info : constant Servlet.OAuth.User_Info := Session.Get_User_Info;
+      Info : constant Sessions.User_Info := Session.Get_User_Info;
       Object : League.JSON.Objects.JSON_Object;
       Value  : League.JSON.Values.JSON_Value;
    begin

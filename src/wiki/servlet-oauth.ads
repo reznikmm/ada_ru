@@ -1,9 +1,9 @@
-with League.String_Vectors;
 with League.Strings;
 
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
+with Sessions;
 
 private with Ada.Containers.Doubly_Linked_Lists;
 private with Ada.Containers.Hashed_Maps;
@@ -14,18 +14,11 @@ private with Servlet.Generic_Servlets;
 
 package Servlet.OAuth is
 
-   type User_Info is record
-      User   : League.Strings.Universal_String;
-      Name   : League.Strings.Universal_String;
-      Avatar : League.Strings.Universal_String;
-      Mails  : League.String_Vectors.Universal_String_Vector;
-   end record;
-
    type Login_Handler is limited interface;
 
    not overriding procedure Do_Login
     (Self     : in out Login_Handler;
-     Info     : Servlet.OAuth.User_Info;
+     Info     : Sessions.User_Info;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
        is abstract;
