@@ -34,6 +34,8 @@ with Servlet.OAuth;
 with Servlet.Users;
 pragma Unreferenced (Servlet.Users);
 with Servlet.Telegram;
+with Servlet.Forum;
+pragma Unreferenced (Servlet.Forum);
 
 with Axe.Wiki_View_Servlets;
 

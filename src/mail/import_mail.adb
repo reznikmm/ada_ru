@@ -592,6 +592,8 @@ procedure Import_Mail is
            +"quoted-printable";
          X_Original_From  : constant League.Strings.Universal_String :=
            +"X-Original-From";
+         X_Forum_User  : constant League.Strings.Universal_String :=
+           +"X-Forum-User";
 
          Root    : constant Messages.Message :=
            Messages.Read_Message (Text, Data);
@@ -603,7 +605,11 @@ procedure Import_Mail is
            Root.Header (Content_Type, +"charset");
          Result  : Mail;
       begin
-         Result.From := Root.Header (X_Original_From);
+         Result.From := Root.Header (X_Forum_User);
+
+         if Result.From.Is_Empty then
+            Result.From := Root.Header (X_Original_From);
+         end if;
 
          if Result.From.Is_Empty then
             Result.From := Root.Header (+"From");
