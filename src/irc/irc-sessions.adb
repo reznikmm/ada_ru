@@ -258,20 +258,45 @@ package body IRC.Sessions is
       Target : League.Strings.Universal_String;
       Text   : League.Strings.Universal_String)
    is
-      Last   : Ada.Streams.Stream_Element_Offset;
-      pragma Unreferenced (Last);
-      Value  : League.Strings.Universal_String;
-      Vector : League.Stream_Element_Vectors.Stream_Element_Vector;
-   begin
-      Value.Append ("PRIVMSG ");
-      Value.Append (Target);
-      Value.Append (" :");
-      Value.Append (Text);
-      Value.Append (New_Line);
-      Vector := Self.Codec.Encode (Value);
+      procedure Send_Line (Text : League.Strings.Universal_String);
 
-      GNAT.Sockets.Send_Socket
-        (Self.Socket, Vector.To_Stream_Element_Array, Last);
+      ---------------
+      -- Send_Line --
+      ---------------
+
+      procedure Send_Line (Text : League.Strings.Universal_String) is
+         Value  : League.Strings.Universal_String;
+         Vector : League.Stream_Element_Vectors.Stream_Element_Vector;
+         Last   : Ada.Streams.Stream_Element_Offset;
+         pragma Unreferenced (Last);
+      begin
+         Value.Append ("PRIVMSG ");
+         Value.Append (Target);
+         Value.Append (" :");
+         Value.Append (Text);
+         Value.Append (New_Line);
+         Vector := Self.Codec.Encode (Value);
+
+         GNAT.Sockets.Send_Socket
+           (Self.Socket, Vector.To_Stream_Element_Array, Last);
+      end Send_Line;
+
+      List   : constant League.String_Vectors.Universal_String_Vector :=
+        Text.Split (Ada.Characters.Wide_Wide_Latin_1.LF);
+   begin
+      if List.Length > 1 then
+         for J in 1 .. List.Length loop
+            if J > 1 then
+               delay 0.3;
+            end if;
+
+            Send_Line (List (J));
+         end loop;
+
+      else
+         Send_Line (Text);
+      end if;
+
    end Send_Message;
 
 end IRC.Sessions;
