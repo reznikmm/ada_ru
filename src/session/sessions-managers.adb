@@ -25,8 +25,18 @@ package body Sessions.Managers is
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
 
-      function Find_User (DB : in out Databases.SQL_Database) return Boolean;
+      type Boolean_Set is array (Positive range <>) of Boolean;
+
+      function Find_User
+        (DB    : in out Databases.SQL_Database;
+         Nick  : in out League.Strings.Universal_String;
+         Found : in out Boolean_Set) return Boolean;
+
       procedure Create_User (DB : in out Databases.SQL_Database);
+      procedure Update_Mails
+        (DB    : in out Databases.SQL_Database;
+         Nick  : League.Strings.Universal_String;
+         Found : Boolean_Set);
 
       -----------------
       -- Create_User --
@@ -71,8 +81,13 @@ package body Sessions.Managers is
       -- Find_User --
       ---------------
 
-      function Find_User (DB : in out Databases.SQL_Database) return Boolean is
-         Query : SQL.Queries.SQL_Query := DB.Query;
+      function Find_User
+        (DB    : in out Databases.SQL_Database;
+         Nick  : in out League.Strings.Universal_String;
+         Found : in out Boolean_Set) return Boolean
+      is
+         Query  : SQL.Queries.SQL_Query := DB.Query;
+         Result : Boolean := False;
       begin
          Query.Prepare (+"select nickname from emails where email=:m");
          for J in 1 .. Info.Mails.Length loop
@@ -81,21 +96,50 @@ package body Sessions.Managers is
             Query.Execute;
 
             if Query.Next then
-               return True;
+               Nick := League.Holders.Element (Query.Value (1));
+               Result := True;
+               Found (J) := True;
             end if;
          end loop;
-         return False;
+
+         return Result;
       end Find_User;
 
+      ------------------
+      -- Update_Mails --
+      ------------------
+
+      procedure Update_Mails
+        (DB    : in out Databases.SQL_Database;
+         Nick  : League.Strings.Universal_String;
+         Found : Boolean_Set)
+      is
+         Query  : SQL.Queries.SQL_Query := DB.Query;
+      begin
+         Query.Prepare (+"insert into emails(email, nickname) values (:e,:k)");
+         for J in 1 .. Info.Mails.Length loop
+            if not Found (J) then
+               Query.Bind_Value
+                 (+":e", League.Holders.To_Holder (Info.Mails (J)));
+               Query.Bind_Value
+                 (+":k", League.Holders.To_Holder (Nick));
+               Query.Execute;
+            end if;
+         end loop;
+      end Update_Mails;
+
+      Found   : Boolean_Set (1 .. Info.Mails.Length);
       Session : Sessions.HTTP_Session renames
         Sessions.HTTP_Session (Request.Get_Session.all);
       DB : Databases.SQL_Database := Self.Pool.Create;
    begin
-      if not Find_User (DB) then
-         Create_User (DB);
-      end if;
-
       Session.Info := Info;
+
+      if not Find_User (DB, Session.Info.User, Found) then
+         Create_User (DB);
+      elsif Found'Length > 1 then
+         Update_Mails (DB, Session.Info.User, Found);
+      end if;
 
       Ada.Wide_Wide_Text_IO.Put_Line ("User=" & Info.User.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line ("Name=" & Info.Name.To_Wide_Wide_String);

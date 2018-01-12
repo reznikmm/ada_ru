@@ -191,7 +191,7 @@ package body Servlet.OAuth is
             end loop;
          end if;
 
-         if Info.Mails.Index (Mail) = 0 then
+         if Info.Mails.Index (Mail) = 0 and not Mail.Is_Empty then
             Info.Mails.Append (Mail);
          end if;
       end if;
