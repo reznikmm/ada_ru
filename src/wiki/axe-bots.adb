@@ -2,11 +2,13 @@ with Ada.Calendar;
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
 
+with AWS.Messages;
 with AWS.Response;
 
 with League.JSON.Documents;
 with League.JSON.Values;
 with XMPP.Presences;
+with XMPP.Logger;
 
 package body Axe.Bots is
 
@@ -134,6 +136,7 @@ package body Axe.Bots is
         (Self.IRC_Listener'Unchecked_Access);
       Self.IRC_Listener.Password := Password;
       Self.Network_Loop.Start;
+      XMPP.Logger.Enable_Debug;
       Self.XMPP_Session.Set_JID (+"ada_ru@jabber.ru");
       Self.XMPP_Session.Set_Password (Password);
       Self.XMPP_Session.Set_Host (+"jabber.ru");
@@ -143,7 +146,10 @@ package body Axe.Bots is
 
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
 
-      AWS.Client.Create (Self.Telegram, Host => "https://api.telegram.org");
+      AWS.Client.Set_Debug (True);
+
+      AWS.Client.Create (Self.Telegram, "https://api.telegram.org");
+
       Self.Token := Token;
    end Initialize;
 
@@ -157,14 +163,15 @@ package body Axe.Bots is
    is
       use type League.Strings.Universal_String;
       From : League.Strings.Universal_String := Msg.Get_From;
+      Text : constant League.Strings.Universal_String := Msg.Get_Body;
    begin
       Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_From.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_To.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line (Msg.Get_Body.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Text.To_Wide_Wide_String);
 
-      if not From.Ends_With ("/ada_ru") then
+      if not From.Ends_With ("/ada_ru") and not Text.Is_Empty then
          From := From.Tail_From (From.Last_Index ('/') + 1);
-         Self.Bot.Send_Message ("(" & From & ")" & Msg.Get_Body, XMPP_Origin);
+         Self.Bot.Send_Message ("(" & From & ")" & Text, XMPP_Origin);
       end if;
    end Message;
 
@@ -258,7 +265,10 @@ package body Axe.Bots is
    is
       Object : League.JSON.Objects.JSON_Object;
       Result : AWS.Response.Data;
+      Header : AWS.Client.Header_List;
    begin
+      Header.Add ("Connection", "Keep-Alive");
+
       Object.Insert
         (+"chat_id",
          League.JSON.Values.To_JSON_Value (+"@adalang"));
@@ -267,12 +277,19 @@ package body Axe.Bots is
         (+"text",
          League.JSON.Values.To_JSON_Value (Text));
 
-      AWS.Client.Post
-        (Self.Telegram,
-         Result,
-         Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
-         Content_Type => "application/json",
-         URI => "/bot" & Self.Token.To_UTF_8_String & "/sendMessage");
+      for J in 1 .. 2 loop
+         AWS.Client.Post
+           (Self.Telegram,
+            Result,
+            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+            Content_Type => "application/json",
+            URI => "/bot" & Self.Token.To_UTF_8_String & "/sendMessage",
+            Headers => Header);
+
+         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
+
+         AWS.Client.Clear_SSL_Session (Self.Telegram);
+      end loop;
    end Send_Telegram;
 
    -------------------
