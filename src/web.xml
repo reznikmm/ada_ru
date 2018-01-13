@@ -29,6 +29,7 @@
     <url-pattern>*.png</url-pattern>
     <url-pattern>*.jpg</url-pattern>
     <url-pattern>*.txt</url-pattern>
+    <url-pattern>*.js</url-pattern>
     <url-pattern>*.atom</url-pattern>
   </servlet-mapping>
 

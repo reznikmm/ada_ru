@@ -1,0 +1,16 @@
+with "matreshka_league.gpr";
+with "matreshka_webapi.gpr";
+
+project Client is
+
+   for Source_Dirs use ("../client");
+
+   for Object_Dir use ".js";
+
+   package Compiler is
+
+      for Default_Switches ("Ada") use ("-gnatW8");
+
+   end Compiler;
+
+end Client;

@@ -191,6 +191,7 @@ package body Sessions.Managers is
       Self.Map.Clear;
       Stream_Element_Random.Reset (Self.Random);
       Option.Set (+"dbname", League.Holders.Element (Database));
+      Stream_Element_Random.Reset (Self.Random);
       Self.Pool.Initialize (League.Holders.Element (Driver), Option);
       Self.Events := Events;
    end Initialize;

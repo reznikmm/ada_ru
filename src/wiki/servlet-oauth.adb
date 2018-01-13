@@ -87,7 +87,7 @@ package body Servlet.OAuth is
          Data.Append (Stream_Element_Random.Random (Self.Random));
       end loop;
 
-      Result := League.Base_Codecs.To_Base_64 (Data);
+      Result := League.Base_Codecs.To_Base_64_URL (Data);
 
       Self.Map.Insert (Session_Id, Result);
       Self.Queue.Append (Session_Id);
@@ -435,6 +435,7 @@ package body Servlet.OAuth is
       Settings  : League.Settings.Settings;
    begin
       return Result : OAuth_Servlet do
+         Stream_Element_Random.Reset (Result.Cache.Random);
          Add_OAuth_Provider (Result.OAuth_Providers, +"facebook", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"github", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);

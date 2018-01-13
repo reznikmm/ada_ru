@@ -28,13 +28,7 @@ package body Servlet.Users is
       Object : League.JSON.Objects.JSON_Object;
       Value  : League.JSON.Values.JSON_Value;
    begin
-      if Info.User.Is_Empty then
-         Value := League.JSON.Values.Null_JSON_Value;
-      else
-         Value := League.JSON.Values.To_JSON_Value (Info.User);
-      end if;
-
-      Object.Insert (+"user", Value);
+      Object.Insert (+"user", League.JSON.Values.To_JSON_Value (Info.User));
       Object.Insert (+"name", League.JSON.Values.To_JSON_Value (Info.Name));
       Object.Insert
         (+"avatar", League.JSON.Values.To_JSON_Value (Info.Avatar));
@@ -42,7 +36,8 @@ package body Servlet.Users is
       if Info.Mails.Length > 0 then
          Value := League.JSON.Values.To_JSON_Value (Info.Mails (1));
       else
-         Value := League.JSON.Values.Null_JSON_Value;
+         Value := League.JSON.Values.To_JSON_Value
+           (League.Strings.Empty_Universal_String);
       end if;
 
       Object.Insert (+"mail", Value);

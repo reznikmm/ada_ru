@@ -82,6 +82,8 @@ package body Forum.Posts.Holders is
          Value := League.Holders.To_Holder (Object.Subject);
       elsif Name = +"text" then
          Value := League.Holders.To_Holder (Cleanup_Text (Object.Text));
+      elsif Name = +"id" then
+         Value := League.Holders.To_Holder (Cleanup_Text (Object.Id));
       elsif Name = +"date" then
          declare
             Pattern : constant League.Strings.Universal_String :=

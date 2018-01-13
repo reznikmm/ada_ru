@@ -1,3 +1,12 @@
+#known_user {
+    display: none;
+}
+#known_user:checked ~ * .unknown_user {
+    display: none;
+}
+#known_user:not(:checked) ~ * .known_user {
+    display: none;
+}
 #center {
 }
 .forum-list {
