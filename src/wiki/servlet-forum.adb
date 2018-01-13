@@ -52,7 +52,7 @@ package body Servlet.Forum is
       Topic : constant League.Strings.Universal_String :=
         Request.Get_Parameter (+"topic");
 
-      Subject : League.Strings.Universal_String :=
+      Subject : constant League.Strings.Universal_String :=
         Request.Get_Parameter (+"subject");
 
       Text : League.Strings.Universal_String :=
@@ -79,15 +79,12 @@ package body Servlet.Forum is
         ("X-Forum-User: " &
            Escape_Header (Info.Name) & " <" & Info.Mails (1) & ">");
 
-      Header.Append ("From: " & Info.Name & " <ada_ru@forge.ada-ru.org>");
+      Header.Append
+        ("From: " & Escape_Header (Info.Name) & " <ada_ru@forge.ada-ru.org>");
 
       From := AWS.SMTP.E_Mail
         (Escape_Header (Info.Name).To_UTF_8_String,
          "ada_ru@forge.ada-ru.org");
-
-      if not Subject.Starts_With ("Re:") then
-         Subject.Append ("Re: ");
-      end if;
 
       Header.Append ("Subject: " & Escape_Header (Subject));
       Header.Append (+"Content-Type: text/plain; charset=utf-8");
