@@ -31,7 +31,8 @@ package body Servlet.OAuth is
    procedure Get_Token
      (Self  : OAuth_Provider;
       Code  : League.Strings.Universal_String;
-      Token : out League.Strings.Universal_String);
+      Token : out League.Strings.Universal_String;
+      EMail : out League.Strings.Universal_String);
 
    procedure Decode_Facebook_Token
      (Token : League.Strings.Universal_String;
@@ -42,6 +43,10 @@ package body Servlet.OAuth is
       Info  : out Sessions.User_Info);
 
    procedure Decode_Google_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out Sessions.User_Info);
+
+   procedure Decode_VK_Token
      (Token : League.Strings.Universal_String;
       Info  : out Sessions.User_Info);
 
@@ -226,6 +231,38 @@ package body Servlet.OAuth is
       Info.Avatar := Object.Value (+"picture").To_String;
    end Decode_Google_Token;
 
+   ---------------------
+   -- Decode_VK_Token --
+   ---------------------
+
+   procedure Decode_VK_Token
+     (Token : League.Strings.Universal_String;
+      Info  : out Sessions.User_Info)
+   is
+      use type League.Strings.Universal_String;
+      URL      : constant String :=
+        "https://api.vk.com/method/users.get?fields=screen_name,photo_50&" &
+        "access_token=" & Token.To_UTF_8_String;
+      Document : League.JSON.Documents.JSON_Document;
+      Vector   : League.JSON.Arrays.JSON_Array;
+      Object   : League.JSON.Objects.JSON_Object;
+      Data     : AWS.Response.Data;
+   begin
+      Data := AWS.Client.Get (URL);
+
+      if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+         Document := League.JSON.Documents.From_JSON
+           (AWS.Response.Message_Body (Data));
+         Object := Document.To_JSON_Object;
+         Vector := Object.Value (+"response").To_Array;
+         Object := Vector.First_Element.To_Object;
+         Info.User := Object.Value (+"screen_name").To_String;
+         Info.Name := Object.Value (+"first_name").To_String &
+          " " & Object.Value (+"last_name").To_String;
+         Info.Avatar := Object.Value (+"photo_50").To_String;
+      end if;
+   end Decode_VK_Token;
+
    ------------
    -- Do_Get --
    ------------
@@ -292,6 +329,7 @@ package body Servlet.OAuth is
       use type League.Strings.Universal_String;
 
       Token : League.Strings.Universal_String;
+      EMail : League.Strings.Universal_String;
       Info  : Sessions.User_Info;
    begin
       if Self.OAuth_Providers.Contains (Path.Tail_From (2)) then
@@ -301,7 +339,7 @@ package body Servlet.OAuth is
             Get_Token
               (Self.OAuth_Providers (Path.Tail_From (2)),
                Request.Get_Parameter (+"code"),
-               Token);
+               Token, EMail);
 
             if Path = +"/google" then
                Decode_Google_Token (Token, Info);
@@ -309,6 +347,12 @@ package body Servlet.OAuth is
                Decode_Facebook_Token (Token, Info);
             elsif Path = +"/github" then
                Decode_Github_Token (Token, Info);
+            elsif Path = +"/vk" then
+               Decode_VK_Token (Token, Info);
+            end if;
+
+            if not EMail.Is_Empty then
+               Info.Mails.Append (EMail);
             end if;
 
             Self.Handler.Do_Login (Info, Request, Response);
@@ -348,7 +392,8 @@ package body Servlet.OAuth is
    procedure Get_Token
      (Self  : OAuth_Provider;
       Code  : League.Strings.Universal_String;
-      Token : out League.Strings.Universal_String)
+      Token : out League.Strings.Universal_String;
+      EMail : out League.Strings.Universal_String)
    is
       Headers    : AWS.Headers.List;
       Parameters : AWS.Parameters.List;
@@ -377,6 +422,10 @@ package body Servlet.OAuth is
               (AWS.Response.Message_Body (Data));
             Object := Document.To_JSON_Object;
             Token := Object.Value (Self.Token_Key).To_String;
+
+            if Object.Contains (+"email") then
+               EMail := Object.Value (+"email").To_String;
+            end if;
          end if;
       end;
    end Get_Token;
@@ -439,6 +488,7 @@ package body Servlet.OAuth is
          Add_OAuth_Provider (Result.OAuth_Providers, +"facebook", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"github", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"vk", Settings);
       end return;
    end Instantiate;
 
