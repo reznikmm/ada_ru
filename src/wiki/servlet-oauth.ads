@@ -39,6 +39,7 @@ private
       Client_Secret   : League.Strings.Universal_String;
       Redirect_URI    : League.Strings.Universal_String;
       Token_Key       : League.Strings.Universal_String;
+      Secure_Key      : League.Strings.Universal_String;
    end record;
 
    package OAuth_Provider_Maps is new Ada.Containers.Hashed_Maps

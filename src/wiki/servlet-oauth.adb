@@ -4,6 +4,8 @@ with AWS.Messages;
 with AWS.Parameters;
 with AWS.Response;
 
+with GNAT.MD5;
+
 with League.Base_Codecs;
 with League.Holders;
 with League.JSON.Arrays;
@@ -49,6 +51,12 @@ package body Servlet.OAuth is
    procedure Decode_VK_Token
      (Token : League.Strings.Universal_String;
       Info  : out Sessions.User_Info);
+
+   procedure Decode_Mail_Ru_Token
+     (Token      : League.Strings.Universal_String;
+      Client_Id  : League.Strings.Universal_String;
+      Secure_Key : League.Strings.Universal_String;
+      Info       : out Sessions.User_Info);
 
    ---------------
    -- Check_Key --
@@ -231,6 +239,71 @@ package body Servlet.OAuth is
       Info.Avatar := Object.Value (+"picture").To_String;
    end Decode_Google_Token;
 
+   --------------------------
+   -- Decode_Mail_Ru_Token --
+   --------------------------
+
+   procedure Decode_Mail_Ru_Token
+     (Token      : League.Strings.Universal_String;
+      Client_Id  : League.Strings.Universal_String;
+      Secure_Key : League.Strings.Universal_String;
+      Info       : out Sessions.User_Info)
+   is
+      use type League.Strings.Universal_String;
+      Context    : GNAT.MD5.Context;
+      Parameters : AWS.Parameters.List;
+      Document   : League.JSON.Documents.JSON_Document;
+      Object     : League.JSON.Objects.JSON_Object;
+      Vector     : League.JSON.Arrays.JSON_Array;
+   begin
+      Parameters.Add ("app_id", Client_Id.To_UTF_8_String);
+      GNAT.MD5.Update (Context, "app_id=");
+      GNAT.MD5.Update (Context, Client_Id.To_UTF_8_String);
+
+      Parameters.Add ("method", "users.getInfo");
+      GNAT.MD5.Update (Context, "method=users.getInfo");
+
+      Parameters.Add ("secure", "1");
+      GNAT.MD5.Update (Context, "secure=1");
+
+      Parameters.Add ("session_key", Token.To_UTF_8_String);
+      GNAT.MD5.Update (Context, "session_key=");
+      GNAT.MD5.Update (Context, Token.To_UTF_8_String);
+
+      GNAT.MD5.Update (Context, Secure_Key.To_UTF_8_String);
+      Parameters.Add ("sig", GNAT.MD5.Digest (Context));
+
+      declare
+         Full : constant String := AWS.Parameters.URI_Format (Parameters);
+         Data : AWS.Response.Data;
+      begin
+         Data := AWS.Client.Post
+           (URL          => "http://www.appsmail.ru/platform/api",
+            Data         => Full (Full'First + 1 .. Full'Last),
+            Content_Type => "application/x-www-form-urlencoded");
+
+         if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
+            Document := League.JSON.Documents.From_JSON
+              (AWS.Response.Message_Body (Data));
+            Vector := Document.To_JSON_Array;
+            Object := Vector.First_Element.To_Object;
+
+            Info.User := Object.Value (+"uid").To_String;
+            Info.Name := Object.Value (+"nick").To_String;
+--              Info.Name := Object.Value (+"nick").To_String &
+--                " " & Object.Value (+"last_name").To_String;
+
+            if Object.Contains (+"pic") then
+               Info.Avatar := Object.Value (+"pic").To_String;
+            end if;
+
+            if Object.Contains (+"email") then
+               Info.Mails.Append (Object.Value (+"email").To_String);
+            end if;
+         end if;
+      end;
+   end Decode_Mail_Ru_Token;
+
    ---------------------
    -- Decode_VK_Token --
    ---------------------
@@ -349,6 +422,12 @@ package body Servlet.OAuth is
                Decode_Github_Token (Token, Info);
             elsif Path = +"/vk" then
                Decode_VK_Token (Token, Info);
+            elsif Path = +"/mailru" then
+               Decode_Mail_Ru_Token
+                 (Token,
+                  Self.OAuth_Providers (Path.Tail_From (2)).Client_Id,
+                  Self.OAuth_Providers (Path.Tail_From (2)).Secure_Key,
+                  Info);
             end if;
 
             if not EMail.Is_Empty then
@@ -469,7 +548,8 @@ package body Servlet.OAuth is
            Settings.Value (Prefix & "redirect_uri");
          Token_Key : constant League.Holders.Holder :=
            Settings.Value (Prefix & "token_key");
-
+         Secure_Key : constant League.Holders.Holder :=
+           Settings.Value (Prefix & "secure_key");
          Item : OAuth_Provider;
       begin
          Item.Client_Id := League.Holders.Element (Client_Id);
@@ -477,6 +557,9 @@ package body Servlet.OAuth is
          Item.Client_Secret := League.Holders.Element (Client_Secret);
          Item.Redirect_URI := League.Holders.Element (Redirect_URI);
          Item.Token_Key := League.Holders.Element (Token_Key);
+         if not League.Holders.Is_Empty (Secure_Key) then
+            Item.Secure_Key := League.Holders.Element (Secure_Key);
+         end if;
 
          Map.Insert (Name, Item);
       end Add_OAuth_Provider;
@@ -489,6 +572,7 @@ package body Servlet.OAuth is
          Add_OAuth_Provider (Result.OAuth_Providers, +"github", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"vk", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"mailru", Settings);
       end return;
    end Instantiate;
 
