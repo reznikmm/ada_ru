@@ -93,6 +93,15 @@ package body Forum.Posts.Holders is
          begin
             Value := League.Holders.To_Holder (Image);
          end;
+      elsif Name = +"date_iso" then
+         declare
+            Pattern : constant League.Strings.Universal_String :=
+             +"yyyy-MM-ddTHH:mm:ss";
+            Image   : constant League.Strings.Universal_String :=
+              League.Calendars.ISO_8601.Image (Pattern, Object.Date);
+         begin
+            Value := League.Holders.To_Holder (Image & "Z");
+         end;
       elsif Name = +"author" then
          declare
             User : constant Forum.Users.Holders.User_Reference :=

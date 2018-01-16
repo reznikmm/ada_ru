@@ -127,6 +127,17 @@ package body Forum.Forums.Holders is
       return TH.Compound_Holders.To_Holder (Topic);
    end Element;
 
+   overriding function Element
+     (Self : Last_Topics_Cursor) return League.Holders.Holder
+   is
+      package TH renames Standard.Forum.Topics.Holders;
+      Topic : constant TH.Topic_Reference :=
+        (Self.Container.Context.Topics'Access,
+         Self.Container.Last_Topics (Self.Position));
+   begin
+      return TH.Compound_Holders.To_Holder (Topic);
+   end Element;
+
    -----------
    -- First --
    -----------
@@ -146,6 +157,12 @@ package body Forum.Forums.Holders is
    begin
       return Topic_Cursor'
         (Self.Container, Self.Id, Self.From, Self.To, Self.From - 1);
+   end First;
+
+   function First (Self : aliased Container_Access)
+                   return Iterable.Cursor'Class is
+   begin
+      return Last_Topics_Cursor'(Self, 0);
    end First;
 
    ----------
@@ -173,6 +190,13 @@ package body Forum.Forums.Holders is
    begin
       Self.Index := Self.Index + 1;
       return Self.Index <= Self.To;
+   end Next;
+
+   overriding function Next (Self : in out Last_Topics_Cursor)
+     return Boolean is
+   begin
+      Self.Position := Self.Position + 1;
+      return Self.Position <= Self.Container.Last_Topics.Last_Index;
    end Next;
 
 end Forum.Forums.Holders;

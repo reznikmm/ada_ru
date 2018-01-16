@@ -23,6 +23,9 @@ package Forum.Forums is
    not overriding function To_Holder
      (Self  : aliased in out Container) return League.Holders.Holder;
 
+   not overriding function Last_Topics_Holder
+     (Self  : aliased in out Container) return League.Holders.Holder;
+
 private
 
    package String_Vector is new Ada.Containers.Vectors
@@ -46,7 +49,8 @@ private
 
    type Container (Context : access Standard.Forum.Contexts.Context) is
    tagged limited record
-      Forum_Map : Forum_Maps.Map;
+      Forum_Map   : Forum_Maps.Map;
+      Last_Topics : String_Vector.Vector;
    end record;
 
    type Container_Access is access all Container;

@@ -9,6 +9,22 @@ private package Forum.Forums.Holders is
 
    package Id_Vectors is new Ada.Containers.Vectors (Positive, Forum_Id);
 
+   function First (Self : aliased Container_Access)
+     return Iterable.Cursor'Class;
+
+   package Last_Topics_Iterable_Holders is
+     new League.Holders.Generic_Iterable_Holders (Container_Access, First);
+
+   type Last_Topics_Cursor is new Iterable.Cursor with record
+      Container : Container_Access;
+      Position  : Natural := 0;
+   end record;
+
+   overriding function Next (Self : in out Last_Topics_Cursor) return Boolean;
+
+   overriding function Element
+     (Self : Last_Topics_Cursor) return League.Holders.Holder;
+
    type Forum_List is record
       Container : Container_Access;
       Id_List   : Id_Vectors.Vector;

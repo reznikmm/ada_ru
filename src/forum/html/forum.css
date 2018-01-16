@@ -7,6 +7,11 @@
 #known_user:not(:checked) ~ * .known_user {
     display: none;
 }
+.feed {
+  margin-left: 3px;
+  padding: 0 0 0 19px;
+  background: url("../graphics/feed-icon-14x14.png") no-repeat 0 50%;
+}
 #center {
 }
 .forum-list {

@@ -54,12 +54,65 @@ package body Forum.Forums is
       end loop;
    end Initiaize;
 
+   not overriding function Last_Topics_Holder
+     (Self  : aliased in out Container) return League.Holders.Holder
+   is
+      Value : constant Container_Access := Self'Access;
+   begin
+      return Holders.Last_Topics_Iterable_Holders.To_Holder (Value);
+   end Last_Topics_Holder;
+
    -----------------
    -- Sort_Topics --
    -----------------
 
    not overriding procedure Sort_Topics (Self : in out Container) is
       procedure Sort_Topics (Topics : in out String_Vector.Vector);
+      procedure Add_To_Last_Topics
+        (Topic : League.Strings.Universal_String);
+
+      Max_Last_Topic : constant := 20;
+
+      procedure Add_To_Last_Topics
+        (Topic : League.Strings.Universal_String)
+      is
+         use type Ada.Containers.Count_Type;
+         function "<" (Left, Right : Positive) return Boolean;
+         procedure Swap (Left, Right : Positive);
+
+         function "<" (Left, Right : Positive) return Boolean is
+         begin
+            return not Self.Context.Posts.Before
+              (Self.Last_Topics (Left), Self.Last_Topics (Right));
+         end "<";
+
+         procedure Swap (Left, Right : Positive) is
+            Save : constant League.Strings.Universal_String :=
+              Self.Last_Topics (Left);
+         begin
+            Self.Last_Topics (Left) := Self.Last_Topics (Right);
+            Self.Last_Topics (Right) := Save;
+         end Swap;
+
+         procedure Sort is new Ada.Containers.Generic_Sort
+           (Positive, "<", Swap);
+      begin
+         if Self.Last_Topics.Length < Max_Last_Topic then
+            Self.Last_Topics.Append (Topic);
+            if Self.Last_Topics.Length = Max_Last_Topic then
+               Sort (1, Max_Last_Topic);
+            end if;
+         elsif not Self.Context.Posts.Before
+           (Topic, Self.Last_Topics.Last_Element)
+         then
+            Self.Last_Topics (Max_Last_Topic) := Topic;
+            Sort (1, Max_Last_Topic);
+         end if;
+      end Add_To_Last_Topics;
+
+      -----------------
+      -- Sort_Topics --
+      -----------------
 
       procedure Sort_Topics (Topics : in out String_Vector.Vector) is
          function "<" (Left, Right : Positive) return Boolean;
@@ -82,6 +135,10 @@ package body Forum.Forums is
            (Positive, "<", Swap);
       begin
          Sort (Topics.First_Index, Topics.Last_Index);
+
+         for Topic of Topics loop
+            Add_To_Last_Topics (Topic);
+         end loop;
       end Sort_Topics;
    begin
       for J of Self.Forum_Map loop

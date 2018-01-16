@@ -11,6 +11,13 @@
   <meta charset="utf-8"/>
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous"/>
   <link rel="stylesheet" href="forum.css"/>
+  <link rel="alternate" type="application/atom+xml" href="forum.atom"
+        title="Последние темы на форуме Ada_Ru"/>
+  <script src="/js/require.js"/>
+  <script>
+    require.config({xhtml:false, baseUrl: '/js'});
+    require(['logins'], function(logins) { logins.start(); });
+  </script>
   <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-18973607-5']);
@@ -24,11 +31,13 @@
   </script>
 </head>
 <body>
+  <input id="known_user" type="checkbox"/>
   <div id="center" class="pure-g">
     <div class="pure-u-1">
       <h1>Ada_Ru форум</h1>
       <p>Русскоязычный форум для обсуждения языка Ада и технологий
         программирования на его основе.
+        <a href="forum.atom" class="feed">Подписаться...</a>
       </p>
       <div class="forum-list-title">
         <h2>Список форумов</h2>
@@ -42,9 +51,11 @@
       </mtl:for>
     </div>
     <div class="pure-u-1 unknown_user">
+      <p>
       Чтобы создать новую тему на форуме либо оставить сообщение необходимо
       <a class="pure-button pure-button-primary" href="/oauth2">Зарегистрироваться</a>
       и <a class="pure-button pure-button-primary" href="/oauth2">Войти</a>
+      </p>
       <p/>
     </div>
   </div>

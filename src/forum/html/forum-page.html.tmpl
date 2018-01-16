@@ -32,6 +32,7 @@
     <div class="pure-u-1">
       <h1><a href="index.html">Ada_Ru форум</a></h1>
       <h2>${forum.subject}<mtl:if expression="page.prev is not null">. Страница ${page.index}</mtl:if></h2>
+      <p><a href="#create">Создать новую тему</a></p>
       <div class="forum-list-title">
         <h3>Список тем</h3>
       </div>
@@ -63,17 +64,21 @@
       </form>
     </div>
     <div class="pure-u-1">
+      <a name="create"/>
       <mtl:if expression="page.prev is not null">
         <a class="pure-button" href="#"> &lt; </a>
       </mtl:if>
+      Страницы:
       <mtl:for expression="pg of forum.pages">
         <a class="pure-button" href="${forum.id}_${pg.index}.html">${pg.index}</a>
       </mtl:for>
     </div>
     <div class="pure-u-1 unknown_user">
+    <p>
       Чтобы создать новую тему на форуме необходимо
       <a class="pure-button pure-button-primary" href="/oauth2">Зарегистрироваться</a>
       и <a class="pure-button pure-button-primary" href="/oauth2">Войти</a>
+    </p>
       <p/>
     </div>
   </div>

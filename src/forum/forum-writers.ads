@@ -1,6 +1,10 @@
 with League.Holders;
 
 package Forum.Writers is
+   procedure Write_Forum_Atom
+     (Root  : String;
+      Value : League.Holders.Holder);
+
    procedure Write_Forum_Index
      (Root  : String;
       Value : League.Holders.Holder);

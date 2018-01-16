@@ -31,6 +31,8 @@ begin
       Context.Posts.Assign_Topics (Context.Forums, Context.Topics);
       Context.Forums.Sort_Topics;
       Context.Topics.Sort_Posts;
+      Top := Context.Forums.Last_Topics_Holder;
+      Forum.Writers.Write_Forum_Atom (Root, Top);
       Top := Context.Forums.To_Holder;
       Forum.Writers.Write_Forum_Index (Root, Top);
 
