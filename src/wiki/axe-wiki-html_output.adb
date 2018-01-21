@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2016-2018, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,24 @@
 ------------------------------------------------------------------------------
 
 with XML.SAX.Attributes;
+with League.String_Vectors;
+with League.Characters.Latin;
 
 package body Axe.Wiki.HTML_Output is
    package U renames League.Strings;
 
    function "+" (Text : Wide_Wide_String) return U.Universal_String
      renames U.To_Universal_String;
+
+   function Improve_Typography
+     (Text : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Improve text by replacing some characters
+
+   Em_Dash : constant League.Characters.Universal_Character :=
+     League.Characters.To_Universal_Character ('—');
+   Hyphen : constant League.Characters.Universal_Character :=
+     League.Characters.To_Universal_Character ('-');
 
    PRE    : constant U.Universal_String := +"pre";
    I      : constant U.Universal_String := +"i";
@@ -64,6 +76,7 @@ package body Axe.Wiki.HTML_Output is
    WIKI   : constant U.Universal_String := +"wiki";
 
    use type U.Universal_String;
+   use type League.Characters.Universal_Character;
 
    ----------------
    -- Characters --
@@ -76,7 +89,7 @@ package body Axe.Wiki.HTML_Output is
       Special : Axe.Wiki.Specials.Special_Format_Access;
    begin
       if Self.Special.Is_Empty then
-         Self.Writer.Characters (Text);
+         Self.Writer.Characters (Improve_Typography (Text));
       elsif Self.Map.Contains (Self.Special) then
          Special := Self.Map.Element (Self.Special);
          Special.Process (Text, Self.Writer);
@@ -155,6 +168,189 @@ package body Axe.Wiki.HTML_Output is
       end case;
    end End_Element;
 
+   ------------------------
+   -- Improve_Typography --
+   ------------------------
+
+   function Improve_Typography
+     (Text : League.Strings.Universal_String)
+        return League.Strings.Universal_String
+   is
+      procedure Dont_Break_After_Short_Words
+        (Value : in out League.Strings.Universal_String);
+
+      procedure Replace_Quote_Characters
+        (Value : in out League.Strings.Universal_String);
+      --  Replace some characters like:
+      --    "Some text" => «Some text», but for short word use „a“
+
+      procedure Replace_N_Dash
+        (Value : in out League.Strings.Universal_String);
+      --     20-21 => 20–21 for decimal ranges
+
+      procedure Replace_Hyphen
+        (Value : in out League.Strings.Universal_String);
+      --     как-то => как‐то for real hyphen
+
+      procedure Dont_Break_After_Short_Words
+        (Value : in out League.Strings.Universal_String)
+      is
+         List   : constant League.String_Vectors.Universal_String_Vector :=
+           Value.Split (' ', Behavior => League.Strings.Skip_Empty);
+         Prev   : League.Strings.Universal_String;
+         Result : League.String_Vectors.Universal_String_Vector;
+
+         Ends_With_Space : constant Boolean := Value.Ends_With (" ");
+      begin
+         if Value.Starts_With (" ") then
+            --  Keep starting space if any
+            Result.Append (League.Strings.Empty_Universal_String);
+         end if;
+
+         for J in 1 .. List.Length loop
+            declare
+               Word : League.Strings.Universal_String := List (J);
+            begin
+               Replace_Quote_Characters (Word);
+               Replace_N_Dash (Word);
+               Replace_Hyphen (Word);
+
+               if not Prev.Is_Empty then
+                  Prev.Append (League.Characters.Latin.No_Break_Space);
+                  Prev.Append (Word);
+               end if;
+
+               if Word.Length = 1 and Word.Element (1) in Hyphen | Em_Dash then
+                  --  Use Em_Dash instead on Hyphen when it apears between
+                  --  spaces
+                  --  Keep em dash on the line
+                  if Result.Length > 1 then
+                     Result.Replace
+                       (Result.Length,
+                        Result (Result.Length) &
+                          League.Characters.Latin.No_Break_Space &
+                          Em_Dash);
+                  else
+                     Result.Append
+                       (League.Strings.Empty_Universal_String & Em_Dash);
+                  end if;
+               elsif J = 1 or Word.Length > 3 then
+                  if Prev.Is_Empty then
+                     Result.Append (Word);
+                  else
+                     Result.Append (Prev);
+                     Prev.Clear;
+                  end if;
+               elsif Prev.Is_Empty then
+                  Prev := Word;
+               end if;
+            end;
+         end loop;
+
+         if not Prev.Is_Empty then
+            Result.Append (Prev);
+         end if;
+
+         if Ends_With_Space then
+            --  Keep trailing space if any
+            Result.Append (League.Strings.Empty_Universal_String);
+         end if;
+
+         Value := Result.Join (" ");
+      end Dont_Break_After_Short_Words;
+
+      --------------------
+      -- Replace_Hyphen --
+      --------------------
+
+      procedure Replace_Hyphen (Value : in out League.Strings.Universal_String)
+      is
+         List : constant League.String_Vectors.Universal_String_Vector :=
+           Value.Split ('-');
+      begin
+         if List.Length > 1 then
+            Value := List (1);
+
+            for J in 2 .. List.Length loop
+               if List (J).Length > 0 and then
+                 List (J).Element (1).To_Wide_Wide_Character
+                    in 'а' .. 'я' | 'А' .. 'Я'
+               then
+                  Value.Append ("‐");
+               else
+                  Value.Append ("-");
+               end if;
+
+               Value.Append (List (J));
+            end loop;
+         end if;
+      end Replace_Hyphen;
+
+      --------------------
+      -- Replace_N_Dash --
+      --------------------
+
+      procedure Replace_N_Dash
+        (Value : in out League.Strings.Universal_String)
+      is
+         Hyphen_Index : Natural;
+      begin
+         Hyphen_Index := Value.Index (Hyphen);
+
+         if Hyphen_Index > 1 and
+           Value.Length - 1 <= Long_Integer'Wide_Wide_Width
+         then
+            for J in 1 .. Value.Length loop
+               if Value (J) /= Hyphen and
+                 Value (J).To_Wide_Wide_Character not in '0' .. '9'
+               then
+                  Hyphen_Index := 0;
+                  exit;
+               end if;
+            end loop;
+
+            if Hyphen_Index > 0
+              and then Value.Count (Hyphen) = 1
+              and then
+                Long_Integer'Wide_Wide_Value
+                  (Value.Head_To (Hyphen_Index - 1).To_Wide_Wide_String)
+                <
+                Long_Integer'Wide_Wide_Value
+                    (Value.Tail_From (Hyphen_Index + 1).To_Wide_Wide_String)
+            then
+               Value.Replace (Hyphen_Index, Hyphen_Index, "–");
+            end if;
+         end if;
+      end Replace_N_Dash;
+
+      ------------------------------
+      -- Replace_Quote_Characters --
+      ------------------------------
+
+      procedure Replace_Quote_Characters
+        (Value : in out League.Strings.Universal_String) is
+      begin
+         if Value.Starts_With ("""") then
+            Value.Replace (1, 1, "«");
+
+            if Value.Ends_With ("""") then
+               if Value.Length < 8 then
+                  Value := "„" & Value.Slice (2, Value.Length - 1) & "“";
+               else
+                  Value.Replace (Value.Length, Value.Length, "»");
+               end if;
+            end if;
+         elsif Value.Ends_With ("""") then
+            Value.Replace (Value.Length, Value.Length, "»");
+         end if;
+      end Replace_Quote_Characters;
+
+      Value : League.Strings.Universal_String := Text;
+   begin
+      Dont_Break_After_Short_Words (Value);
+      return Value;
+   end Improve_Typography;
+
    ----------------
    -- Initialize --
    ----------------
@@ -202,7 +398,7 @@ package body Axe.Wiki.HTML_Output is
       else
          Attributes.Set_Value (HREF, URL);
          Self.Writer.Start_Element (XHTML, A, A, Attributes);
-         Self.Writer.Characters (Info.Title);
+         Self.Characters (Info.Title);
          Self.Img_Link := False;
       end if;
    end Link;
