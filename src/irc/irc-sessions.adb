@@ -16,7 +16,8 @@ package body IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Socket : GNAT.Sockets.Socket_Type)
+      Socket : GNAT.Sockets.Socket_Type;
+      Closed : out Boolean)
    is
       use type Ada.Streams.Stream_Element;
       use type Ada.Streams.Stream_Element_Offset;
@@ -114,11 +115,14 @@ package body IRC.Sessions is
       Last    : Ada.Streams.Stream_Element_Offset;
    begin
       loop
-         GNAT.Sockets.Control_Socket (Socket, Request);
-
-         exit when Request.Size = 0;
-
          GNAT.Sockets.Receive_Socket (Socket, Data, Last);
+         Closed := Last = Data'First - 1;
+
+         if Closed then
+            GNAT.Sockets.Close_Socket (Socket);
+            return;
+         end if;
+
          First := Data'First;
 
          for J in 1 .. Last loop
@@ -130,6 +134,10 @@ package body IRC.Sessions is
          end loop;
 
          Self.Vector.Append (Data (First .. Last));
+
+         GNAT.Sockets.Control_Socket (Socket, Request);
+
+         exit when Request.Size = 0;
       end loop;
    end Check_Socket;
 

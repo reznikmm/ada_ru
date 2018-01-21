@@ -45,7 +45,8 @@ package IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Socket : GNAT.Sockets.Socket_Type);
+      Socket : GNAT.Sockets.Socket_Type;
+      Closed : out Boolean);
    --  This procedure called by driver when socket changes its state
 
 private

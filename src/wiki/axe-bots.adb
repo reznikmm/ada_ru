@@ -8,7 +8,6 @@ with AWS.Response;
 with League.JSON.Documents;
 with League.JSON.Values;
 with XMPP.Presences;
-with XMPP.Logger;
 
 package body Axe.Bots is
 
@@ -45,6 +44,7 @@ package body Axe.Bots is
       Jabber       : constant League.Strings.Universal_String :=
         +"ada-ru@conference.jabber.ru";
       Next_Message : Original_Message;
+      IRC_Closed   : Boolean := True;
 
       Socket   : GNAT.Sockets.Socket_Type;
       Read     : GNAT.Sockets.Socket_Set_Type;
@@ -56,18 +56,23 @@ package body Axe.Bots is
 
       Bot.XMPP_Session.Open;
 
-      Bot.IRC_Session.Connect
-        (Socket    => Socket,
-         Host      => +"irc.odessa.ua",
-         Port      => 7777,
-         Nick      => +"ada-ru",
-         Password  => +"",
-         User      => +"ada_ru",
-         Real_Name => +"Ada Ru Bot");
-
       GNAT.Sockets.Create_Selector (Bot.Selector);
 
       loop
+         if IRC_Closed then
+            Bot.IRC_Session.Connect
+              (Socket    => Socket,
+               Host      => +"irc.odessa.ua",
+               Port      => 7777,
+               Nick      => +"ada-ru",
+               Password  => +"",
+               User      => +"ada_ru",
+               Real_Name => +"Ada Ru Bot");
+
+            IRC_Closed := False;
+            Ada.Wide_Wide_Text_IO.Put_Line ("Connected to IRC");
+         end if;
+
          GNAT.Sockets.Set (Read, Socket);
          GNAT.Sockets.Set (Error, Socket);
 
@@ -81,7 +86,7 @@ package body Axe.Bots is
 
          if Status in GNAT.Sockets.Completed then
             if not GNAT.Sockets.Is_Empty (Read) then
-               Bot.IRC_Session.Check_Socket (Socket);
+               Bot.IRC_Session.Check_Socket (Socket, IRC_Closed);
             end if;
          end if;
 
@@ -132,11 +137,13 @@ package body Axe.Bots is
       Password : League.Strings.Universal_String;
       Token    : League.Strings.Universal_String) is
    begin
+      --  XMPP.Logger.Enable_Debug;
+      --  AWS.Client.Set_Debug (True);
+
       Self.IRC_Session := new IRC.Sessions.Session
         (Self.IRC_Listener'Unchecked_Access);
       Self.IRC_Listener.Password := Password;
       Self.Network_Loop.Start;
-      XMPP.Logger.Enable_Debug;
       Self.XMPP_Session.Set_JID (+"ada_ru@jabber.ru");
       Self.XMPP_Session.Set_Password (Password);
       Self.XMPP_Session.Set_Host (+"jabber.ru");
@@ -145,8 +152,6 @@ package body Axe.Bots is
         (Self.XMPP_Listener'Unchecked_Access);
 
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
-
-      AWS.Client.Set_Debug (True);
 
       AWS.Client.Create (Self.Telegram, "https://api.telegram.org");
 
