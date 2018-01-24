@@ -88,7 +88,9 @@ package body Axe.Wiki.HTML_Output is
    is
       Special : Axe.Wiki.Specials.Special_Format_Access;
    begin
-      if Self.Special.Is_Empty then
+      if Self.Preformat then
+         Self.Writer.Characters (Text);
+      elsif Self.Special.Is_Empty then
          Self.Writer.Characters (Improve_Typography (Text));
       elsif Self.Map.Contains (Self.Special) then
          Special := Self.Map.Element (Self.Special);
@@ -118,6 +120,7 @@ package body Axe.Wiki.HTML_Output is
             Self.Special.Clear;
          when Preformat =>
             Self.Writer.End_Element (XHTML, PRE, PRE);
+            Self.Preformat := False;
          when Bold_Italic =>
             Self.Writer.End_Element (XHTML, I, I);
             Self.Writer.End_Element (XHTML, STRONG, STRONG);
@@ -461,6 +464,7 @@ package body Axe.Wiki.HTML_Output is
             end if;
          when Preformat =>
             Self.Writer.Start_Element (XHTML, PRE, PRE);
+            Self.Preformat := True;
          when Bold_Italic =>
             Self.Writer.Start_Element (XHTML, STRONG, STRONG);
             Self.Writer.Start_Element (XHTML, I, I);

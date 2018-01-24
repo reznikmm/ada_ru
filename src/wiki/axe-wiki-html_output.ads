@@ -75,6 +75,7 @@ private
       Writer    : access XML.SAX.Writers.SAX_Writer'Class;
       Wiki_URI  : League.Strings.Universal_String;
       Special   : League.Strings.Universal_String;
+      Preformat : Boolean := False;
       Namespace : League.Strings.Universal_String;
       In_Mono   : Boolean;
       Img_Link  : Boolean;
