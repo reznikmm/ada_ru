@@ -220,16 +220,17 @@ package body Axe.Wiki.HTML_Output is
                Replace_N_Dash (Word);
                Replace_Hyphen (Word);
 
-               if not Prev.Is_Empty then
-                  Prev.Append (League.Characters.Latin.No_Break_Space);
-                  Prev.Append (Word);
-               end if;
-
                if Word.Length = 1 and Word.Element (1) in Hyphen | Em_Dash then
                   --  Use Em_Dash instead on Hyphen when it apears between
                   --  spaces
                   --  Keep em dash on the line
-                  if Result.Length > 1 then
+                  if not Prev.Is_Empty then
+                     Result.Append
+                       (Prev &
+                          League.Characters.Latin.No_Break_Space &
+                          Em_Dash);
+                     Prev.Clear;
+                  elsif Result.Length > 0 then
                      Result.Replace
                        (Result.Length,
                         Result (Result.Length) &
@@ -243,11 +244,17 @@ package body Axe.Wiki.HTML_Output is
                   if Prev.Is_Empty then
                      Result.Append (Word);
                   else
+                     Prev.Append (League.Characters.Latin.No_Break_Space);
+                     Prev.Append (Word);
+
                      Result.Append (Prev);
                      Prev.Clear;
                   end if;
                elsif Prev.Is_Empty then
                   Prev := Word;
+               else
+                  Prev.Append (League.Characters.Latin.No_Break_Space);
+                  Prev.Append (Word);
                end if;
             end;
          end loop;
@@ -360,7 +367,9 @@ package body Axe.Wiki.HTML_Output is
          end if;
       end Replace_Quote_Characters;
 
-      Value : League.Strings.Universal_String := Text;
+      Lines : constant League.String_Vectors.Universal_String_Vector :=
+        Text.Split (League.Characters.Latin.Line_Feed);
+      Value : League.Strings.Universal_String := Lines.Join (" ");
    begin
       Dont_Break_After_Short_Words (Value);
       return Value;
