@@ -94,7 +94,8 @@ package body Axe.Wiki.HTML_Output is
          Special := Self.Map.Element (Self.Special);
          Special.Process (Text, Self.Writer);
       else
-         Self.Writer.Characters ("Unknown format: " & Self.Special);
+         Self.Writer.Characters
+           ("#" & Self.Special & League.Characters.Latin.Line_Feed & Text);
       end if;
    end Characters;
 
@@ -110,6 +111,10 @@ package body Axe.Wiki.HTML_Output is
    begin
       case Info.Kind is
          when Special_Format =>
+            if not Self.Map.Contains (Self.Special) then
+               Self.Writer.End_Element (XHTML, PRE, PRE);
+            end if;
+
             Self.Special.Clear;
          when Preformat =>
             Self.Writer.End_Element (XHTML, PRE, PRE);
@@ -328,20 +333,30 @@ package body Axe.Wiki.HTML_Output is
       ------------------------------
 
       procedure Replace_Quote_Characters
-        (Value : in out League.Strings.Universal_String) is
+        (Value : in out League.Strings.Universal_String)
+      is
+         Last_Quote : constant Natural := Value.Last_Index ('"');
+         Ends_With_Quote : constant Boolean := Last_Quote > 0 and then
+           (Value.Ends_With ("""")
+            or else Value.Ends_With (""".")
+            or else Value.Ends_With (""","));
       begin
-         if Value.Starts_With ("""") then
-            Value.Replace (1, 1, "«");
-
-            if Value.Ends_With ("""") then
-               if Value.Length < 8 then
-                  Value := "„" & Value.Slice (2, Value.Length - 1) & "“";
+         if Last_Quote = 0 then
+            return;
+         elsif Value.Starts_With ("""") then
+            if Ends_With_Quote then
+               if Last_Quote < 8 then
+                  Value.Replace (1, 1, "„");
+                  Value.Replace (Last_Quote, Last_Quote, "“");
                else
-                  Value.Replace (Value.Length, Value.Length, "»");
+                  Value.Replace (1, 1, "«");
+                  Value.Replace (Last_Quote, Last_Quote, "»");
                end if;
+            else
+               Value.Replace (1, 1, "«");
             end if;
-         elsif Value.Ends_With ("""") then
-            Value.Replace (Value.Length, Value.Length, "»");
+         elsif Ends_With_Quote then
+            Value.Replace (Last_Quote, Last_Quote, "»");
          end if;
       end Replace_Quote_Characters;
 
@@ -431,6 +446,10 @@ package body Axe.Wiki.HTML_Output is
       case Info.Kind is
          when Special_Format =>
             Self.Special := Info.Format;
+
+            if not Self.Map.Contains (Self.Special) then
+               Self.Writer.Start_Element (XHTML, PRE, PRE);
+            end if;
          when Preformat =>
             Self.Writer.Start_Element (XHTML, PRE, PRE);
          when Bold_Italic =>

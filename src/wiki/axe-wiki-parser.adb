@@ -79,7 +79,7 @@ package body Axe.Wiki.Parser is
      array (Element_Kinds) of League.Regexps.Regexp_Pattern :=
      (Preformat       => +("\n\{\{\{\n(.*?)\n\}\}\}\n"),
       Special_Format  =>
-        +("\n\{\{\{\n\#.*?\n(.*?)\n\}\}\}\n"),
+        +("\n\{\{\{\n\#[a-zA-Z\!]*?\n(.*?)\n\}\}\}\n"),
       Bold_Italic     => +"\'\'\'\'\'(.*?)\'\'\'\'\'",
       Bold            => +"\'\'\'(.*?)\'\'\'",
       Italic          => +"\'\'(.*?)\'\'",
