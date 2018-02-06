@@ -15,6 +15,30 @@ package body Axe.Bots is
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
+   procedure Send_IRC
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String);
+
+   procedure Send_Telegram
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String);
+
+   procedure Send_Viber
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String);
+
+   procedure Send_XMPP
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String);
+
+   Send : constant array (IRC_Origin .. Viber_Origin) of access
+     procedure (Self : in out Bot'Class;
+                Text : League.Strings.Universal_String) :=
+     (IRC_Origin      => Send_IRC'Access,
+      XMPP_Origin     => Send_XMPP'Access,
+      Telegram_Origin => Send_Telegram'Access,
+      Viber_Origin    => Send_Viber'Access);
+
    -------------------------
    -- Bind_Resource_State --
    -------------------------
@@ -40,9 +64,6 @@ package body Axe.Bots is
       use type Ada.Calendar.Time;
 
       Time         : Ada.Calendar.Time;
-      Target       : constant League.Strings.Universal_String := +"#ada";
-      Jabber       : constant League.Strings.Universal_String :=
-        +"ada-ru@conference.jabber.ru";
       Next_Message : Original_Message;
       IRC_Closed   : Boolean := True;
 
@@ -94,24 +115,11 @@ package body Axe.Bots is
             Bot.Queue.Dequeue (Next_Message);
             Time := Ada.Calendar.Clock;
 
-            if Next_Message.Origin /= IRC_Origin then
-               Bot.IRC_Session.Send_Message (Target, Next_Message.Text);
-            end if;
-
-            if Next_Message.Origin /= XMPP_Origin then
-               declare
-                  Output : XMPP.Messages.XMPP_Message;
-               begin
-                  Output.Set_To (Jabber);
-                  Output.Set_Type (XMPP.Group_Chat);
-                  Output.Set_Body (Next_Message.Text);
-                  Bot.XMPP_Session.Send_Object (Output);
-               end;
-            end if;
-
-            if Next_Message.Origin /= Telegram_Origin then
-               Bot.Send_Telegram (Next_Message.Text);
-            end if;
+            for Origin in Send'Range loop
+               if Next_Message.Origin /= Origin then
+                  Send (Origin) (Bot.all, Next_Message.Text);
+               end if;
+            end loop;
 
             delay until Time + 1.0;  --  Avoid to Excess Flood errors
          else
@@ -135,7 +143,8 @@ package body Axe.Bots is
    procedure Initialize
      (Self     : in out Bot;
       Password : League.Strings.Universal_String;
-      Token    : League.Strings.Universal_String) is
+      Telegram : League.Strings.Universal_String;
+      Viber    : League.Strings.Universal_String) is
    begin
       --  XMPP.Logger.Enable_Debug;
       --  AWS.Client.Set_Debug (True);
@@ -143,7 +152,7 @@ package body Axe.Bots is
       Self.IRC_Session := new IRC.Sessions.Session
         (Self.IRC_Listener'Unchecked_Access);
       Self.IRC_Listener.Password := Password;
-      Self.Network_Loop.Start;
+--      Self.Network_Loop.Start;
       Self.XMPP_Session.Set_JID (+"ada_ru@jabber.ru");
       Self.XMPP_Session.Set_Password (Password);
       Self.XMPP_Session.Set_Host (+"jabber.ru");
@@ -153,9 +162,11 @@ package body Axe.Bots is
 
       Self.XMPP_Listener.XMPP_Session := Self.XMPP_Session'Unchecked_Access;
 
-      AWS.Client.Create (Self.Telegram, "https://api.telegram.org");
+      AWS.Client.Create (Self.Telegram.Connection, "https://api.telegram.org");
+      Self.Telegram.Token := Telegram;
 
-      Self.Token := Token;
+      AWS.Client.Create (Self.Viber.Connection, "https://chatapi.viber.com");
+      Self.Viber.Token := Viber;
    end Initialize;
 
    -------------
@@ -247,6 +258,19 @@ package body Axe.Bots is
       Session.Pong (Source);
    end On_Ping;
 
+   --------------
+   -- Send_IRC --
+   --------------
+
+   procedure Send_IRC
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String)
+   is
+      Target       : constant League.Strings.Universal_String := +"#ada";
+   begin
+      Self.IRC_Session.Send_Message (Target, Text);
+   end Send_IRC;
+
    ------------------
    -- Send_Message --
    ------------------
@@ -264,8 +288,8 @@ package body Axe.Bots is
    -- Send_Telegram --
    -------------------
 
-   not overriding procedure Send_Telegram
-     (Self   : in out Bot;
+   procedure Send_Telegram
+     (Self   : in out Bot'Class;
       Text   : League.Strings.Universal_String)
    is
       Object : League.JSON.Objects.JSON_Object;
@@ -284,18 +308,89 @@ package body Axe.Bots is
 
       for J in 1 .. 2 loop
          AWS.Client.Post
-           (Self.Telegram,
+           (Self.Telegram.Connection,
             Result,
             Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
             Content_Type => "application/json",
-            URI => "/bot" & Self.Token.To_UTF_8_String & "/sendMessage",
+            URI => "/bot" & Self.Telegram.Token.To_UTF_8_String &
+              "/sendMessage",
             Headers => Header);
 
          exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
 
-         AWS.Client.Clear_SSL_Session (Self.Telegram);
+         AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
       end loop;
    end Send_Telegram;
+
+   ----------------
+   -- Send_Viber --
+   ----------------
+
+   procedure Send_Viber
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String)
+   is
+      Avatar : constant League.Strings.Universal_String :=
+        +"https://s.gravatar.com/avatar/2e5aadcce7af2b2a724181ad22ec17d1";
+      Object : League.JSON.Objects.JSON_Object;
+      Sender : League.JSON.Objects.JSON_Object;
+      Result : AWS.Response.Data;
+      Header : AWS.Client.Header_List;
+   begin
+      Header.Add ("Connection", "Keep-Alive");
+      Header.Add ("X-Viber-Auth-Token", Self.Viber.Token.To_UTF_8_String);
+
+      Sender.Insert (+"name",
+         League.JSON.Values.To_JSON_Value (+"Sender Name"));
+
+      Sender.Insert (+"avatar", League.JSON.Values.To_JSON_Value (Avatar));
+
+      Object.Insert (+"sender", Sender.To_JSON_Value);
+
+      Object.Insert
+        (+"from",
+         League.JSON.Values.To_JSON_Value (+"gWJvcZk5JLK5WLMFY3CGUQ=="));
+
+      Object.Insert
+        (+"type",
+         League.JSON.Values.To_JSON_Value (+"text"));
+
+      Object.Insert
+        (+"text",
+         League.JSON.Values.To_JSON_Value (Text));
+
+      for J in 1 .. 2 loop
+         AWS.Client.Post
+           (Self.Viber.Connection,
+            Result,
+            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+            Content_Type => "application/json",
+            URI => "/pa/post",
+            Headers => Header);
+
+         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
+
+         AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
+      end loop;
+   end Send_Viber;
+
+   ---------------
+   -- Send_XMPP --
+   ---------------
+
+   procedure Send_XMPP
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String)
+   is
+      Output : XMPP.Messages.XMPP_Message;
+      Jabber : constant League.Strings.Universal_String :=
+        +"ada-ru@conference.jabber.ru";
+   begin
+      Output.Set_To (Jabber);
+      Output.Set_Type (XMPP.Group_Chat);
+      Output.Set_Body (Text);
+      Self.XMPP_Session.Send_Object (Output);
+   end Send_XMPP;
 
    -------------------
    -- Session_State --
@@ -360,5 +455,46 @@ package body Axe.Bots is
 
       Self.Send_Message (Text, Telegram_Origin);
    end Telegram;
+
+   -----------
+   -- Viber --
+   -----------
+
+   not overriding procedure Viber
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object)
+   is
+      use type League.Strings.Universal_String;
+
+      Object : League.JSON.Objects.JSON_Object;
+      Event  : constant League.Strings.Universal_String :=
+        Message.Value (+"event").To_String;
+      Text   : League.Strings.Universal_String;
+      Name   : League.Strings.Universal_String;
+   begin
+      if Event = +"message" then
+         Object := Message.Value (+"sender").To_Object;
+         Name := Object.Value (+"name").To_String;
+         Object := Message.Value (+"message").To_Object;
+
+         if Object.Contains (+"text") then
+            Text := Message.Value (+"text").To_String;
+            if not Text.Is_Empty then
+               Text.Prepend ("(" & Name & ") ");
+               Self.Send_Message (Text, Viber_Origin);
+            end if;
+         end if;
+      elsif Event = +"conversation_started" then
+         Text.Append ("Welcome to ada_ru bot!");
+         Result.Insert
+           (+"type",
+            League.JSON.Values.To_JSON_Value (+"text"));
+
+         Result.Insert
+           (+"text",
+            League.JSON.Values.To_JSON_Value (Text));
+      end if;
+   end Viber;
 
 end Axe.Bots;

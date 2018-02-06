@@ -9,7 +9,8 @@ package Axe.Events.Logs is
      (Self     : in out Event_Log_Writer'Class;
       File     : League.Strings.Universal_String;
       Password : League.Strings.Universal_String;
-      Token    : League.Strings.Universal_String);
+      Telegram : League.Strings.Universal_String;
+      Viber    : League.Strings.Universal_String);
 
 private
 
@@ -31,6 +32,11 @@ private
       Avatar  : League.Strings.Universal_String);
 
    overriding procedure On_Telegram
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object);
+
+   overriding procedure On_Viber
      (Self    : in out Event_Log_Writer;
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);

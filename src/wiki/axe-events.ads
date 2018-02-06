@@ -22,6 +22,11 @@ package Axe.Events is
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object) is null;
 
+   not overriding procedure On_Viber
+     (Self    : in out Listener;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object) is null;
+
    type Listener_Access is access all Listener'Class;
 
 end Axe.Events;

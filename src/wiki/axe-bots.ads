@@ -18,10 +18,11 @@ package Axe.Bots is
    procedure Initialize
      (Self     : in out Bot;
       Password : League.Strings.Universal_String;
-      Token    : League.Strings.Universal_String);
+      Telegram : League.Strings.Universal_String;
+      Viber    : League.Strings.Universal_String);
 
    type Origin_Kind is
-     (IRC_Origin, XMPP_Origin, Telegram_Origin, Other_Origin);
+     (IRC_Origin, XMPP_Origin, Telegram_Origin, Viber_Origin, Other_Origin);
 
    not overriding procedure Send_Message
      (Self   : in out Bot;
@@ -29,6 +30,11 @@ package Axe.Bots is
       Origin : Origin_Kind := Other_Origin);
 
    not overriding procedure Telegram
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object);
+
+   not overriding procedure Viber
      (Self    : in out Bot;
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);
@@ -99,6 +105,16 @@ private
 
    subtype Message_Queue is Message_Queues.Queue;
 
+   type Telegram_Information is record
+      Connection : AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+   end record;
+
+   type Viber_Information is record
+      Connection : AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+   end record;
+
    type Bot is tagged limited record
       Network_Loop  : Bot_Loop (Bot'Unchecked_Access);
       Queue         : Message_Queue;
@@ -107,12 +123,8 @@ private
       Selector      : GNAT.Sockets.Selector_Type;
       XMPP_Session  : aliased XMPP.Sessions.XMPP_Session;
       XMPP_Listener : aliased Axe.Bots.XMPP_Listener (Bot'Unchecked_Access);
-      Telegram      : AWS.Client.HTTP_Connection;
-      Token         : League.Strings.Universal_String;
+      Telegram      : Telegram_Information;
+      Viber         : Viber_Information;
    end record;
-
-   not overriding procedure Send_Telegram
-     (Self   : in out Bot;
-      Text   : League.Strings.Universal_String);
 
 end Axe.Bots;

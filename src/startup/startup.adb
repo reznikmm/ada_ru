@@ -34,6 +34,7 @@ with Servlet.OAuth;
 with Servlet.Users;
 pragma Unreferenced (Servlet.Users);
 with Servlet.Telegram;
+with Servlet.Viber;
 with Servlet.Forum;
 pragma Unreferenced (Servlet.Forum);
 
@@ -84,12 +85,18 @@ package body Startup is
         new Servlet.Telegram.Telegram_Servlet'
           (Servlet.Telegram.Instantiate (Dummy'Unchecked_Access));
 
+      Viber_Servlet : constant Servlet.Viber.Viber_Servlet_Access :=
+        new Servlet.Viber.Viber_Servlet'
+          (Servlet.Viber.Instantiate (Dummy'Unchecked_Access));
+
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
 
       Settings  : League.Settings.Settings;
-      Token     : constant League.Strings.Universal_String :=
+      Telegram  : constant League.Strings.Universal_String :=
         League.Holders.Element (Settings.Value (+"/telegram/token"));
+      Viber     : constant League.Strings.Universal_String :=
+        League.Holders.Element (Settings.Value (+"/viber/token"));
    begin
       Manager.Initialize (Log_Writer);
 
@@ -103,15 +110,23 @@ package body Startup is
       Log_Writer.Initialize
         (File     => Context.Get_Real_Path (+"/news.wiki"),
          Password => Context.Get_Real_Path (+"/password/ada_ru"),
-         Token    => Token);
+         Telegram => Telegram,
+         Viber    => Viber);
 
       Wiki_Servlet.Set_Event_Listener (Log_Writer);
-      OAuth_Servlet.Set_Handler (Manager);
-      Telegram_Servlet.Initialize (Token);
-      Telegram_Servlet.Set_Listener (Log_Writer);
       Context.Add_Servlet (+"WikiRendering", Wiki_Servlet);
+
+      OAuth_Servlet.Set_Handler (Manager);
       Context.Add_Servlet (+"OAuth", OAuth_Servlet);
+
+      Telegram_Servlet.Initialize (Telegram);
+      Telegram_Servlet.Set_Listener (Log_Writer);
       Context.Add_Servlet (+"Telegram", Telegram_Servlet);
+
+      Viber_Servlet.Initialize (Viber);
+      Viber_Servlet.Set_Listener (Log_Writer);
+      Context.Add_Servlet (+"Viber", Viber_Servlet);
+
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*
       --  TODO: set_password.html

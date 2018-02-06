@@ -20,7 +20,8 @@ package body Axe.Events.Logs is
      (Self     : in out Event_Log_Writer'Class;
       File     : League.Strings.Universal_String;
       Password : League.Strings.Universal_String;
-      Token    : League.Strings.Universal_String)
+      Telegram : League.Strings.Universal_String;
+      Viber    : League.Strings.Universal_String)
    is
       Text : League.Strings.Universal_String :=
         Axe.Read_File
@@ -29,7 +30,7 @@ package body Axe.Events.Logs is
       Text := Text.Head
         (Text.Index (Ada.Characters.Wide_Wide_Latin_1.LF) - 1);
       Self.File := File;
-      Self.Bot.Initialize (Text, Token);
+      Self.Bot.Initialize (Text, Telegram, Viber);
    end Initialize;
 
    -----------------
@@ -57,6 +58,18 @@ package body Axe.Events.Logs is
    begin
       Self.Bot.Send_Message ("New site user: " & Name & " " & Avatar);
    end On_User_Created;
+
+   --------------
+   -- On_Viber --
+   --------------
+
+   overriding procedure On_Viber
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object;
+      Result  : out League.JSON.Objects.JSON_Object) is
+   begin
+      Self.Bot.Viber (Message, Result);
+   end On_Viber;
 
    -------------------
    -- On_Wiki_Saved --
