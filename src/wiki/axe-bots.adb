@@ -5,8 +5,10 @@ with Ada.Wide_Wide_Text_IO;
 with AWS.Messages;
 with AWS.Response;
 
+with League.Characters.Latin;
 with League.JSON.Documents;
 with League.JSON.Values;
+
 with XMPP.Presences;
 
 package body Axe.Bots is
@@ -152,7 +154,7 @@ package body Axe.Bots is
       Self.IRC_Session := new IRC.Sessions.Session
         (Self.IRC_Listener'Unchecked_Access);
       Self.IRC_Listener.Password := Password;
---      Self.Network_Loop.Start;
+      Self.Network_Loop.Start;
       Self.XMPP_Session.Set_JID (+"ada_ru@jabber.ru");
       Self.XMPP_Session.Set_Password (Password);
       Self.XMPP_Session.Set_Host (+"jabber.ru");
@@ -423,37 +425,92 @@ package body Axe.Bots is
       Result  : out League.JSON.Objects.JSON_Object)
    is
       pragma Unreferenced (Result);
-
       use type League.Strings.Universal_String;
+
+      Max_Quote : constant := 20;
+
+      function Get_Nick (Object : League.JSON.Objects.JSON_Object)
+        return League.Strings.Universal_String;
+
+      --------------
+      -- Get_Nick --
+      --------------
+
+      function Get_Nick (Object : League.JSON.Objects.JSON_Object)
+        return League.Strings.Universal_String is
+      begin
+         if Object.Contains (+"username") then
+            return Object.Value (+"username").To_String;
+         else
+            return Object.Value (+"first_name").To_String;
+         end if;
+      end Get_Nick;
+
       Chat : constant League.JSON.Objects.JSON_Object :=
         Message.Value (+"chat").To_Object;
-      From : constant League.JSON.Values.JSON_Value := Message.Value (+"from");
+      From : constant League.Strings.Universal_String :=
+        Get_Nick (Message.Value (+"from").To_Object);
       Text : League.Strings.Universal_String;
+      Output : League.Strings.Universal_String;
+      Reply : constant League.JSON.Objects.JSON_Object :=
+        Message.Value (+"reply_to_message").To_Object;
+      Forward : constant League.JSON.Objects.JSON_Object :=
+        Message.Value (+"forward_from").To_Object;
    begin
-      if not Message.Contains (+"text") or not Chat.Contains (+"username") then
+      if Chat.Value (+"username").To_String /= +"adalang" then
          return;
-      elsif Chat.Value (+"username").To_String /= +"adalang" then
-         return;
+      end if;
+
+      Output.Append ("(");
+      Output.Append (From);
+      Output.Append (") ");
+
+      if not Reply.Is_Empty then
+         Text := Reply.Value (+"text").To_String;
+
+         if Text.Length > Max_Quote then
+            Text := Text.Head (Max_Quote);
+            Text.Append ("…");
+         end if;
+
+         Output.Append (" отвечает (");
+         Output.Append (Get_Nick (Reply.Value (+"from").To_Object));
+         Output.Append (") на <");
+         Output.Append (Text);
+         Output.Append (">");
+         Output.Append (League.Characters.Latin.Line_Feed);
+      elsif not Forward.Is_Empty then
+         Output.Append (" цитирует (");
+         Output.Append (Get_Nick (Forward));
+         Output.Append (")");
+         Output.Append (League.Characters.Latin.Line_Feed);
       end if;
 
       Text := Message.Value (+"text").To_String;
 
-      if From.Is_Object then
-         declare
-            Object : constant League.JSON.Objects.JSON_Object :=
-              From.To_Object;
-         begin
-            if Object.Contains (+"username") then
-               Text.Prepend
-                 ("(" & Object.Value (+"username").To_String & ") ");
-            else
-               Text.Prepend
-                 ("(" & Object.Value (+"first_name").To_String & ") ");
-            end if;
-         end;
+      if not Text.Is_Empty then
+         Output.Append (Text);
+      elsif Message.Contains (+"photo") then
+         Output.Append ("<прислал фото>");
+      elsif Message.Contains (+"audio") then
+         Output.Append ("<прислал аудио файл>");
+      elsif Message.Contains (+"document") then
+         Output.Append ("<прислал документ>");
+      elsif Message.Contains (+"sticker") then
+         Output.Append ("<прислал наклейку>");
+      elsif Message.Contains (+"video") then
+         Output.Append ("<прислал видео>");
+      elsif Message.Contains (+"voice") then
+         Output.Append ("<прислал запись>");
+      elsif Message.Contains (+"contact") then
+         Output.Append ("<прислал контакт>");
+      elsif Message.Contains (+"location") then
+         Output.Append ("<прислал location>");
+      elsif Message.Contains (+"venue") then
+         Output.Append ("<прислал venue>");
       end if;
 
-      Self.Send_Message (Text, Telegram_Origin);
+      Self.Send_Message (Output, Telegram_Origin);
    end Telegram;
 
    -----------
@@ -479,7 +536,7 @@ package body Axe.Bots is
          Object := Message.Value (+"message").To_Object;
 
          if Object.Contains (+"text") then
-            Text := Message.Value (+"text").To_String;
+            Text := Object.Value (+"text").To_String;
             if not Text.Is_Empty then
                Text.Prepend ("(" & Name & ") ");
                Self.Send_Message (Text, Viber_Origin);
