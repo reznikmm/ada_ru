@@ -33,6 +33,10 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Text   : League.Strings.Universal_String);
 
+   procedure Read_Subscribed
+     (Vector : in out League.String_Vectors.Universal_String_Vector);
+   procedure Write_Subscriber (Value : League.Strings.Universal_String);
+
    Send : constant array (IRC_Origin .. Viber_Origin) of access
      procedure (Self : in out Bot'Class;
                 Text : League.Strings.Universal_String) :=
@@ -146,7 +150,8 @@ package body Axe.Bots is
      (Self     : in out Bot;
       Password : League.Strings.Universal_String;
       Telegram : League.Strings.Universal_String;
-      Viber    : League.Strings.Universal_String) is
+      Viber    : League.Strings.Universal_String)
+   is
    begin
       --  XMPP.Logger.Enable_Debug;
       --  AWS.Client.Set_Debug (True);
@@ -169,6 +174,7 @@ package body Axe.Bots is
 
       AWS.Client.Create (Self.Viber.Connection, "https://chatapi.viber.com");
       Self.Viber.Token := Viber;
+      Read_Subscribed (Self.Viber.Subscribed);
    end Initialize;
 
    -------------
@@ -260,6 +266,33 @@ package body Axe.Bots is
       Session.Pong (Source);
    end On_Ping;
 
+   ---------------------
+   -- Read_Subscribed --
+   ---------------------
+
+   procedure Read_Subscribed
+     (Vector : in out League.String_Vectors.Universal_String_Vector)
+   is
+      File : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      Ada.Wide_Wide_Text_IO.Open
+        (File,
+         Ada.Wide_Wide_Text_IO.In_File,
+         "password/viber_subscribers");
+
+      while not Ada.Wide_Wide_Text_IO.End_Of_File (File) loop
+         declare
+            Line : constant Wide_Wide_String :=
+              Ada.Wide_Wide_Text_IO.Get_Line (File);
+         begin
+            if Line'Length > 0 then
+               Vector.Append (+Line);
+            end if;
+         end;
+      end loop;
+
+      Ada.Wide_Wide_Text_IO.Close (File);
+   end Read_Subscribed;
    --------------
    -- Send_IRC --
    --------------
@@ -332,47 +365,51 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Text   : League.Strings.Universal_String)
    is
-      Avatar : constant League.Strings.Universal_String :=
-        +"https://s.gravatar.com/avatar/2e5aadcce7af2b2a724181ad22ec17d1";
       Object : League.JSON.Objects.JSON_Object;
       Sender : League.JSON.Objects.JSON_Object;
       Result : AWS.Response.Data;
       Header : AWS.Client.Header_List;
+      Value  : League.Strings.Universal_String := Text;
+      Nick   : League.Strings.Universal_String;
    begin
       Header.Add ("Connection", "Keep-Alive");
       Header.Add ("X-Viber-Auth-Token", Self.Viber.Token.To_UTF_8_String);
 
-      Sender.Insert (+"name",
-         League.JSON.Values.To_JSON_Value (+"Sender Name"));
+      if Value.Starts_With ("(") then
+         Nick := Value.Slice (2, Value.Index (")") - 1);
+         Value := Value.Tail_From (Nick.Length + 2);
+      else
+         Nick := +"AdaRu";
+      end if;
 
-      Sender.Insert (+"avatar", League.JSON.Values.To_JSON_Value (Avatar));
+      Sender.Insert (+"name", League.JSON.Values.To_JSON_Value (Nick));
+
+--    Sender.Insert (+"avatar", League.JSON.Values.To_JSON_Value (Avatar));
 
       Object.Insert (+"sender", Sender.To_JSON_Value);
 
-      Object.Insert
-        (+"from",
-         League.JSON.Values.To_JSON_Value (+"gWJvcZk5JLK5WLMFY3CGUQ=="));
+      Object.Insert (+"type", League.JSON.Values.To_JSON_Value (+"text"));
+      Object.Insert (+"text", League.JSON.Values.To_JSON_Value (Value));
 
-      Object.Insert
-        (+"type",
-         League.JSON.Values.To_JSON_Value (+"text"));
+      for K in 1 .. Self.Viber.Subscribed.Length loop
+         Object.Insert
+           (+"receiver",
+            League.JSON.Values.To_JSON_Value (Self.Viber.Subscribed (K)));
 
-      Object.Insert
-        (+"text",
-         League.JSON.Values.To_JSON_Value (Text));
+         for J in 1 .. 2 loop
+            AWS.Client.Post
+              (Self.Viber.Connection,
+               Result,
+               Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+               Content_Type => "application/json",
+               URI => "/pa/send_message",
+               Headers => Header);
 
-      for J in 1 .. 2 loop
-         AWS.Client.Post
-           (Self.Viber.Connection,
-            Result,
-            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
-            Content_Type => "application/json",
-            URI => "/pa/post",
-            Headers => Header);
+            exit when
+              AWS.Response.Status_Code (Result) in AWS.Messages.Success;
 
-         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
-
-         AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
+            AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
+         end loop;
       end loop;
    end Send_Viber;
 
@@ -529,10 +566,12 @@ package body Axe.Bots is
         Message.Value (+"event").To_String;
       Text   : League.Strings.Universal_String;
       Name   : League.Strings.Universal_String;
+      Sender : League.Strings.Universal_String;
    begin
       if Event = +"message" then
          Object := Message.Value (+"sender").To_Object;
          Name := Object.Value (+"name").To_String;
+         Sender := Object.Value (+"id").To_String;
          Object := Message.Value (+"message").To_Object;
 
          if Object.Contains (+"text") then
@@ -542,8 +581,19 @@ package body Axe.Bots is
                Self.Send_Message (Text, Viber_Origin);
             end if;
          end if;
+
+         if Self.Viber.Subscribed.Index (Sender) = 0 then
+            Self.Viber.Subscribed.Append (Sender);
+            Write_Subscriber (Sender);
+         end if;
       elsif Event = +"conversation_started" then
          Text.Append ("Welcome to ada_ru bot!");
+         Text.Append (League.Characters.Latin.Line_Feed);
+         Text.Append ("You can use this to chat about Ada Programming. ");
+         Text.Append ("This chat is mostly in Russian however.");
+         Text.Append (League.Characters.Latin.Line_Feed);
+         Text.Append ("Приветствуем Вас в чате о языке Ада!");
+
          Result.Insert
            (+"type",
             League.JSON.Values.To_JSON_Value (+"text"));
@@ -551,7 +601,28 @@ package body Axe.Bots is
          Result.Insert
            (+"text",
             League.JSON.Values.To_JSON_Value (Text));
+      elsif Event = +"failed" then
+         Ada.Wide_Wide_Text_IO.Put_Line
+           ("Viber failed: " &
+              Message.Value (+"desc").To_String.To_Wide_Wide_String);
       end if;
    end Viber;
+
+   ----------------------
+   -- Write_Subscriber --
+   ----------------------
+
+   procedure Write_Subscriber (Value : League.Strings.Universal_String) is
+      File : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      Ada.Wide_Wide_Text_IO.Open
+        (File,
+         Ada.Wide_Wide_Text_IO.Append_File,
+         "password/viber_subscribers");
+
+      Ada.Wide_Wide_Text_IO.Put_Line (File, Value.To_Wide_Wide_String);
+
+      Ada.Wide_Wide_Text_IO.Close (File);
+   end Write_Subscriber;
 
 end Axe.Bots;

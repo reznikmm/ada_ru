@@ -1,12 +1,13 @@
 with League.JSON.Objects;
 with League.Strings;
 
-private with AWS.Client;
-private with IRC.Listeners;
-private with IRC.Sessions;
 private with Ada.Containers.Bounded_Synchronized_Queues;
 private with Ada.Containers.Synchronized_Queue_Interfaces;
+private with AWS.Client;
 private with GNAT.Sockets;
+private with IRC.Listeners;
+private with IRC.Sessions;
+private with League.String_Vectors;
 private with XMPP.Messages;
 private with XMPP.Sessions;
 private with XMPP.Stream_Handlers;
@@ -113,6 +114,7 @@ private
    type Viber_Information is record
       Connection : AWS.Client.HTTP_Connection;
       Token      : League.Strings.Universal_String;
+      Subscribed : League.String_Vectors.Universal_String_Vector;
    end record;
 
    type Bot is tagged limited record
