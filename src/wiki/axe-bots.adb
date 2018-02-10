@@ -413,7 +413,7 @@ package body Axe.Bots is
                exit when
                  AWS.Response.Status_Code (Result) in AWS.Messages.Success;
 
-               AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
+               AWS.Client.Clear_SSL_Session (Self.Viber.Connection);
             end loop;
          end if;
       end loop;

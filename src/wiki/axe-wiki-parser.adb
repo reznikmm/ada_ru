@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2016-2018, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -94,6 +94,7 @@ package body Axe.Wiki.Parser is
       Heading_3       => +("\n\=\=\= (.*?) \=\=\=\n"),
       Paragraph       => +("\n\n"),
       Break           => +"\[\[BR\]\]",
+      Font_Awesome    => +"\[\[fa\-([^\]]+)\]\]",
       Ordered_List    => +("\n(\ +)\*\ "),
       Numbered_List   => +("\n(\ +)1\. "),
       List_Item       => +"\#",  --  Dummy element, just for reporting
@@ -244,7 +245,7 @@ package body Axe.Wiki.Parser is
             if Process then
                Expand (Text_From, Text_To);
             elsif Text_From > 0 then
-               Data.Characters (U.Slice (Text, Text_From, Text_To));
+               Data.Characters (Text.Slice (Text_From, Text_To));
             end if;
 
             Data.End_Element (Info);
@@ -268,6 +269,11 @@ package body Axe.Wiki.Parser is
                Close_Para;
                Current.Need_Para := Para;
             when Break =>
+               Data.Start_Element (Info);
+               Data.End_Element (Info);
+            when Font_Awesome =>
+               Info.Icon := Text.Slice (From + 2, Text_To);
+               Open_Para;
                Data.Start_Element (Info);
                Data.End_Element (Info);
             when Preformat =>

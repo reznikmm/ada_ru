@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2016-2018, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without

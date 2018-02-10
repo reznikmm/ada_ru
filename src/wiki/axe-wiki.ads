@@ -36,7 +36,7 @@ package Axe.Wiki is
       Heading_3, Heading_2, Heading_1,
       Paragraph, Break, Ordered_List, Numbered_List, List_Item,
       Table_Row, Table_Cell, HTTP_Link, Boxed_Wiki_Link, Boxed_Link,
-      Horizontal_Line, Anchor);
+      Horizontal_Line, Anchor, Font_Awesome);
 
    subtype Heading is Element_Kinds range Heading_3 .. Heading_1;
 
@@ -56,6 +56,8 @@ package Axe.Wiki is
          when Special_Format =>
             Format   : League.Strings.Universal_String;
             Argument : League.Strings.Universal_String;
+         when Font_Awesome =>
+            Icon : League.Strings.Universal_String;
          when others =>
             null;
       end case;

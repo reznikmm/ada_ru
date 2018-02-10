@@ -148,7 +148,9 @@ package body Axe.Wiki.HTML_Output is
          when Paragraph =>
             Self.Writer.End_Element (XHTML, P, P);
          when Break =>
-            null;
+            Self.Writer.End_Element (XHTML, BR, BR);
+         when Font_Awesome =>
+            Self.Writer.End_Element (XHTML, I, I);
          when Ordered_List =>
             Self.Writer.End_Element (XHTML, UL, UL);
          when Numbered_List =>
@@ -494,7 +496,9 @@ package body Axe.Wiki.HTML_Output is
             Self.Writer.Start_Element (XHTML, P, P);
          when Break =>
             Self.Writer.Start_Element (XHTML, BR, BR);
-            Self.Writer.End_Element (XHTML, BR, BR);
+         when Font_Awesome =>
+            Attributes.Set_Value (CLASS, Info.Icon);
+            Self.Writer.Start_Element (XHTML, I, I, Attributes);
          when Ordered_List =>
             Self.Writer.Start_Element (XHTML, UL, UL);
          when Numbered_List =>
