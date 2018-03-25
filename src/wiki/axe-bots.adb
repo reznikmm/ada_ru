@@ -566,7 +566,17 @@ package body Axe.Bots is
       elsif Message.Contains (+"document") then
          Output.Append ("<прислал документ>");
       elsif Message.Contains (+"sticker") then
-         Output.Append ("<прислал наклейку>");
+         declare
+            Sticker : constant League.JSON.Objects.JSON_Object :=
+              Message.Value (+"sticker").To_Object;
+         begin
+            Output.Append ("<прислал наклейку>");
+
+            if Sticker.Contains (+"emoji") then
+               Output.Append (" ");
+               Output.Append (Sticker.Value (+"emoji").To_String);
+            end if;
+         end;
       elsif Message.Contains (+"video") then
          Output.Append ("<прислал видео>");
       elsif Message.Contains (+"voice") then
