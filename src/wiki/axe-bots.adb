@@ -13,25 +13,27 @@ with XMPP.Presences;
 
 package body Axe.Bots is
 
+   use type League.Strings.Universal_String;
+
    function "+" (Text : Wide_Wide_String)
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
    procedure Send_IRC
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String);
+      Value  : Original_Message);
 
    procedure Send_Telegram
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String);
+      Value  : Original_Message);
 
    procedure Send_Viber
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String);
+      Value  : Original_Message);
 
    procedure Send_XMPP
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String);
+      Value  : Original_Message);
 
    procedure Read_Subscribers
      (Vector : in out League.String_Vectors.Universal_String_Vector);
@@ -40,8 +42,8 @@ package body Axe.Bots is
      (Value : League.String_Vectors.Universal_String_Vector);
 
    Send : constant array (IRC_Origin .. Viber_Origin) of access
-     procedure (Self : in out Bot'Class;
-                Text : League.Strings.Universal_String) :=
+     procedure (Self  : in out Bot'Class;
+                Value : Original_Message) :=
      (IRC_Origin      => Send_IRC'Access,
       XMPP_Origin     => Send_XMPP'Access,
       Telegram_Origin => Send_Telegram'Access,
@@ -124,8 +126,10 @@ package body Axe.Bots is
             Time := Ada.Calendar.Clock;
 
             for Origin in Send'Range loop
-               if Next_Message.Origin /= Origin then
-                  Send (Origin) (Bot.all, Next_Message.Text);
+               if Next_Message.Origin /= Origin
+                 or else Next_Message.Origin = Viber_Origin
+               then
+                  Send (Origin) (Bot.all, Next_Message);
                end if;
             end loop;
 
@@ -187,7 +191,6 @@ package body Axe.Bots is
      (Self : in out XMPP_Listener;
       Msg  : XMPP.Messages.XMPP_Message'Class)
    is
-      use type League.Strings.Universal_String;
       From : League.Strings.Universal_String := Msg.Get_From;
       Text : constant League.Strings.Universal_String := Msg.Get_Body;
    begin
@@ -197,7 +200,10 @@ package body Axe.Bots is
 
       if not From.Ends_With ("/ada_ru") and not Text.Is_Empty then
          From := From.Tail_From (From.Last_Index ('/') + 1);
-         Self.Bot.Send_Message ("(" & From & ")" & Text, XMPP_Origin);
+         Self.Bot.Send_Message
+           ((Name => From, others => <>),
+            Text,
+            XMPP_Origin);
       end if;
    end Message;
 
@@ -212,7 +218,6 @@ package body Axe.Bots is
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String)
    is
-      use type League.Strings.Universal_String;
       From : constant League.Strings.Universal_String :=
         Source.Head_To (Source.Index ("!") - 1);
    begin
@@ -222,7 +227,10 @@ package body Axe.Bots is
 
       if Target.Starts_With ("#") then
          if From /= +"ada_ru" then
-            Self.Bot.Send_Message ("(" & From & "): " & Text, IRC_Origin);
+            Self.Bot.Send_Message
+              ((Name => From, others => <>),
+               Text,
+               IRC_Origin);
          end if;
       else
          Session.Send_Message (Source, Text);
@@ -240,7 +248,6 @@ package body Axe.Bots is
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String)
    is
-      use type League.Strings.Universal_String;
       pragma Unreferenced (Target);
    begin
       if Source.Starts_With ("NickServ") and not Self.Identified then
@@ -301,9 +308,11 @@ package body Axe.Bots is
 
    procedure Send_IRC
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String)
+      Value  : Original_Message)
    is
-      Target       : constant League.Strings.Universal_String := +"#ada";
+      Target : constant League.Strings.Universal_String := +"#ada";
+      Text   : constant League.Strings.Universal_String :=
+        "(" & Value.Sender.Name & ") " & Value.Text;
    begin
       Self.IRC_Session.Send_Message (Target, Text);
    end Send_IRC;
@@ -314,10 +323,21 @@ package body Axe.Bots is
 
    not overriding procedure Send_Message
      (Self   : in out Bot;
-      Text   : League.Strings.Universal_String;
-      Origin : Origin_Kind := Other_Origin) is
+      Text   : League.Strings.Universal_String) is
    begin
-      Self.Queue.Enqueue ((Text, Origin));
+      Self.Send_Message
+        (Sender => (others => <>),
+         Text   => Text,
+         Origin => Other_Origin);
+   end Send_Message;
+
+   not overriding procedure Send_Message
+     (Self   : in out Bot;
+      Sender : User;
+      Text   : League.Strings.Universal_String;
+      Origin : Origin_Kind) is
+   begin
+      Self.Queue.Enqueue ((Sender, Text, Origin));
       GNAT.Sockets.Abort_Selector (Self.Selector);
    end Send_Message;
 
@@ -327,11 +347,13 @@ package body Axe.Bots is
 
    procedure Send_Telegram
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String)
+      Value  : Original_Message)
    is
       Object : League.JSON.Objects.JSON_Object;
       Result : AWS.Response.Data;
       Header : AWS.Client.Header_List;
+      Text   : constant League.Strings.Universal_String :=
+        "(" & Value.Sender.Name & ") " & Value.Text;
    begin
       Header.Add ("Connection", "Keep-Alive");
 
@@ -365,38 +387,41 @@ package body Axe.Bots is
 
    procedure Send_Viber
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String)
+      Value  : Original_Message)
    is
       Object : League.JSON.Objects.JSON_Object;
       Sender : League.JSON.Objects.JSON_Object;
       Result : AWS.Response.Data;
       Header : AWS.Client.Header_List;
-      Value  : League.Strings.Universal_String := Text;
       Nick   : League.Strings.Universal_String;
    begin
       Header.Add ("Connection", "Keep-Alive");
       Header.Add ("X-Viber-Auth-Token", Self.Viber.Token.To_UTF_8_String);
 
-      if Value.Starts_With ("(") then
-         Nick := Value.Slice (2, Value.Index (")") - 1);
-         Value := Value.Tail_From (Nick.Length + 3);
-      else
+      if Value.Sender.Name.Is_Empty then
          Nick := +"AdaRu";
+      else
+         Nick := Value.Sender.Name;
+      end if;
+
+      if not Value.Sender.Avatar.Is_Empty then
+         Sender.Insert
+           (+"avatar", League.JSON.Values.To_JSON_Value (Value.Sender.Avatar));
       end if;
 
       Sender.Insert (+"name", League.JSON.Values.To_JSON_Value (Nick));
-
---    Sender.Insert (+"avatar", League.JSON.Values.To_JSON_Value (Avatar));
-
       Object.Insert (+"sender", Sender.To_JSON_Value);
 
       Object.Insert (+"type", League.JSON.Values.To_JSON_Value (+"text"));
-      Object.Insert (+"text", League.JSON.Values.To_JSON_Value (Value));
+      Object.Insert (+"text", League.JSON.Values.To_JSON_Value (Value.Text));
 
       for K in 1 .. Self.Viber.Subscribed.Length loop
          Nick := Self.Viber.Subscribed (K);
 
-         if not Nick.Is_Empty then
+         if Value.Origin = Viber_Origin and then Value.Sender.Id = Nick then
+            --  Skip echoing to the sender itself
+            null;
+         elsif not Nick.Is_Empty then
             Object.Insert
               (+"receiver",
                League.JSON.Values.To_JSON_Value (Nick));
@@ -425,11 +450,13 @@ package body Axe.Bots is
 
    procedure Send_XMPP
      (Self   : in out Bot'Class;
-      Text   : League.Strings.Universal_String)
+      Value  : Original_Message)
    is
       Output : XMPP.Messages.XMPP_Message;
       Jabber : constant League.Strings.Universal_String :=
         +"ada-ru@conference.jabber.ru";
+      Text   : constant League.Strings.Universal_String :=
+        "(" & Value.Sender.Name & ") " & Value.Text;
    begin
       Output.Set_To (Jabber);
       Output.Set_Type (XMPP.Group_Chat);
@@ -468,7 +495,6 @@ package body Axe.Bots is
       Result  : out League.JSON.Objects.JSON_Object)
    is
       pragma Unreferenced (Result);
-      use type League.Strings.Universal_String;
 
       Max_Quote : constant := 20;
 
@@ -491,8 +517,9 @@ package body Axe.Bots is
 
       Chat : constant League.JSON.Objects.JSON_Object :=
         Message.Value (+"chat").To_Object;
-      From : constant League.Strings.Universal_String :=
-        Get_Nick (Message.Value (+"from").To_Object);
+      From : constant  League.JSON.Objects.JSON_Object :=
+        Message.Value (+"from").To_Object;
+      Sender : User;
       Text : League.Strings.Universal_String;
       Output : League.Strings.Universal_String;
       Reply : constant League.JSON.Objects.JSON_Object :=
@@ -504,9 +531,8 @@ package body Axe.Bots is
          return;
       end if;
 
-      Output.Append ("(");
-      Output.Append (From);
-      Output.Append (") ");
+      Sender :=
+        (Name => Get_Nick (From), others => <>);
 
       if not Reply.Is_Empty then
          Text := Reply.Value (+"text").To_String;
@@ -553,7 +579,7 @@ package body Axe.Bots is
          Output.Append ("<прислал venue>");
       end if;
 
-      Self.Send_Message (Output, Telegram_Origin);
+      Self.Send_Message (Sender, Output, Telegram_Origin);
    end Telegram;
 
    -----------
@@ -565,31 +591,30 @@ package body Axe.Bots is
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object)
    is
-      use type League.Strings.Universal_String;
-
       Object : League.JSON.Objects.JSON_Object;
       Event  : constant League.Strings.Universal_String :=
         Message.Value (+"event").To_String;
       Text   : League.Strings.Universal_String;
-      Name   : League.Strings.Universal_String;
-      Sender : League.Strings.Universal_String;
+      Sender : User;
    begin
       if Event = +"message" then
          Object := Message.Value (+"sender").To_Object;
-         Name := Object.Value (+"name").To_String;
-         Sender := Object.Value (+"id").To_String;
+         Sender :=
+           (Name   => Object.Value (+"name").To_String,
+            Id     => Object.Value (+"id").To_String,
+            Avatar => Object.Value (+"avatar").To_String);
+
          Object := Message.Value (+"message").To_Object;
 
          if Object.Contains (+"text") then
             Text := Object.Value (+"text").To_String;
             if not Text.Is_Empty then
-               Text.Prepend ("(" & Name & ") ");
-               Self.Send_Message (Text, Viber_Origin);
+               Self.Send_Message (Sender, Text, Viber_Origin);
             end if;
          end if;
 
-         if Self.Viber.Subscribed.Index (Sender) = 0 then
-            Self.Viber.Subscribed.Append (Sender);
+         if Self.Viber.Subscribed.Index (Sender.Id) = 0 then
+            Self.Viber.Subscribed.Append (Sender.Id);
             Write_Subscribers (Self.Viber.Subscribed);
          end if;
       elsif Event = +"conversation_started" then
@@ -614,12 +639,18 @@ package body Axe.Bots is
               (Message.Value (+"user_id").To_String),
             League.Strings.Empty_Universal_String);
 
+         Write_Subscribers (Self.Viber.Subscribed);
+
       elsif Event = +"failed" then
          Ada.Wide_Wide_Text_IO.Put_Line
            ("Viber failed: " &
               Message.Value (+"desc").To_String.To_Wide_Wide_String);
       end if;
    end Viber;
+
+   -----------------------
+   -- Write_Subscribers --
+   -----------------------
 
    procedure Write_Subscribers
      (Value : League.String_Vectors.Universal_String_Vector)

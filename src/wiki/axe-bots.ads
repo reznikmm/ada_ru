@@ -22,13 +22,9 @@ package Axe.Bots is
       Telegram : League.Strings.Universal_String;
       Viber    : League.Strings.Universal_String);
 
-   type Origin_Kind is
-     (IRC_Origin, XMPP_Origin, Telegram_Origin, Viber_Origin, Other_Origin);
-
    not overriding procedure Send_Message
      (Self   : in out Bot;
-      Text   : League.Strings.Universal_String;
-      Origin : Origin_Kind := Other_Origin);
+      Text   : League.Strings.Universal_String);
 
    not overriding procedure Telegram
      (Self    : in out Bot;
@@ -91,7 +87,17 @@ private
      (Self : in out XMPP_Listener;
       Msg  : XMPP.Messages.XMPP_Message'Class);
 
+   type User is record
+      Id     : League.Strings.Universal_String;
+      Name   : League.Strings.Universal_String;
+      Avatar : League.Strings.Universal_String;
+   end record;
+
+   type Origin_Kind is
+     (IRC_Origin, XMPP_Origin, Telegram_Origin, Viber_Origin, Other_Origin);
+
    type Original_Message is record
+      Sender : User;
       Text   : League.Strings.Universal_String;
       Origin : Origin_Kind;
    end record;
@@ -128,5 +134,11 @@ private
       Telegram      : Telegram_Information;
       Viber         : Viber_Information;
    end record;
+
+   not overriding procedure Send_Message
+     (Self   : in out Bot;
+      Sender : User;
+      Text   : League.Strings.Universal_String;
+      Origin : Origin_Kind);
 
 end Axe.Bots;
