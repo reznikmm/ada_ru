@@ -81,8 +81,9 @@ procedure Import_Mail is
 
    function Decode_Quoted_Printable
      (Encoding : League.Strings.Universal_String;
-      Piece    : League.Strings.Universal_String)
-            return League.Strings.Universal_String;
+      Piece    : League.Strings.Universal_String;
+      Header   : Boolean)
+      return League.Strings.Universal_String;
 
    function Format_HTML
      (Text : League.Strings.Universal_String)
@@ -122,8 +123,8 @@ procedure Import_Mail is
 
    function Decode_Quoted_Printable
      (Encoding : League.Strings.Universal_String;
-      Piece    : League.Strings.Universal_String)
-            return League.Strings.Universal_String
+      Piece    : League.Strings.Universal_String;
+      Header   : Boolean) return League.Strings.Universal_String
    is
       use type League.Characters.Universal_Character;
 
@@ -153,7 +154,11 @@ procedure Import_Mail is
                   Index := Index + 3;
                end if;
             when '_' =>
-               Item := 16#20#;
+               if Header then
+                  Item := Character'Pos (' ');
+               else
+                  Item := Character'Pos ('_');
+               end if;
                Bytes.Append (Item);
                Index := Index + 1;
 
@@ -652,7 +657,10 @@ procedure Import_Mail is
                end;
             elsif CTE ** Quoted_Printable then
                Result.Text :=
-                 Decode_Quoted_Printable (Charset, Root.Get_Body_As_Text);
+                 Decode_Quoted_Printable
+                   (Charset,
+                    Root.Get_Body_As_Text,
+                    Header => False);
 
             elsif CTE = Seven_Bit then
                Result.Text := Root.Get_Body_As_Text;
@@ -716,7 +724,9 @@ procedure Import_Mail is
                            Result.Text.Append
                              (Strinp_Carriage_Return
                                 (Decode_Quoted_Printable
-                                     (Charset, Parts (J).Get_Body_As_Text)));
+                                     (Charset,
+                                      Parts (J).Get_Body_As_Text,
+                                      Header => False)));
 
                         else
                            raise Constraint_Error with
@@ -942,7 +952,9 @@ procedure Import_Mail is
             elsif Text (Next + 1).To_Wide_Wide_Character in 'q' | 'Q' then
                Result.Append
                  (Decode_Quoted_Printable
-                    (Encoding, Text.Slice (Next + 3, Pos - 1)));
+                    (Encoding,
+                     Text.Slice (Next + 3, Pos - 1),
+                     Header => True));
             else
                raise Constraint_Error with "Unknown header encoding";
             end if;
