@@ -115,8 +115,13 @@ package body IRC.Sessions is
       Last    : Ada.Streams.Stream_Element_Offset;
    begin
       loop
-         GNAT.Sockets.Receive_Socket (Socket, Data, Last);
-         Closed := Last = Data'First - 1;
+         begin
+            GNAT.Sockets.Receive_Socket (Socket, Data, Last);
+            Closed := Last = Data'First - 1;
+         exception
+            when GNAT.Sockets.Socket_Error =>
+               Closed := True;
+         end;
 
          if Closed then
             GNAT.Sockets.Close_Socket (Socket);

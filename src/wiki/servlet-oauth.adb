@@ -444,7 +444,7 @@ package body Servlet.OAuth is
       end if;
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
-      Response.Set_Header (+"Cache-Control", +"must-revalidate");
+      Response.Set_Header (+"Cache-Control", +"no-cache");
       Response.Set_Content_Type (+"text/html");
       Response.Set_Character_Encoding (+"utf-8");
 

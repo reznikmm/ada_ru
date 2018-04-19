@@ -49,6 +49,11 @@
     <url-pattern>/telegram</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>Viber</servlet-name>
+    <url-pattern>/viber</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>User</servlet-name>
     <servlet-tag>SERVLET.USERS.USER_SERVLET</servlet-tag>
