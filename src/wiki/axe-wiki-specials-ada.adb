@@ -237,23 +237,50 @@ package body Axe.Wiki.Specials.Ada is
    is
       use type League.Strings.Universal_String;
 
+      function "+" (Value : Wide_Wide_String)
+        return League.Strings.Universal_String
+          renames League.Strings.To_Universal_String;
+
       Scanner : aliased Axe.Ada_Scanners.Scanner;
       Token   : Axe.Ada_Scanners_Tokens.Token;
       Attr    : XML.SAX.Attributes.SAX_Attributes;
       Last    : Axe.Ada_Scanners_Tokens.Token;
-      Class   : constant League.Strings.Universal_String :=
-        League.Strings.To_Universal_String ("class");
-      Span    : constant League.Strings.Universal_String :=
-        League.Strings.To_Universal_String ("span");
+      Class   : constant League.Strings.Universal_String := +"class";
+      Span    : constant League.Strings.Universal_String := +"span";
    begin
       Last.Class := Self.Handler.New_Line;
       Scanner.Set_Source (Text);
       Scanner.Set_Handler (Self.Handler'Unchecked_Access);
 
+      Attr.Set_Value (+"itemscope", +"itemscope");
+      Attr.Set_Value (+"itemtype", +"http://schema.org/SoftwareSourceCode");
       Writer.Start_Element
         (Namespace_URI => Self.Namespace,
-         Local_Name    => League.Strings.To_Universal_String ("pre"),
+         Local_Name    => +"pre",
          Attributes    => Attr);
+      Attr.Clear;
+
+      Attr.Set_Value (+"itemprop", +"programmingLanguage");
+      Attr.Set_Value (+"content", +"Ada");
+      Writer.Start_Element
+        (Namespace_URI => Self.Namespace,
+         Local_Name    => +"meta",
+         Attributes    => Attr);
+      Writer.End_Element
+        (Namespace_URI => Self.Namespace,
+         Local_Name    => +"meta");
+      Attr.Clear;
+
+      Attr.Set_Value (+"itemprop", +"codeSampleType");
+      Attr.Set_Value (+"content", +"code snippet");
+      Writer.Start_Element
+        (Namespace_URI => Self.Namespace,
+         Local_Name    => +"meta",
+         Attributes    => Attr);
+      Writer.End_Element
+        (Namespace_URI => Self.Namespace,
+         Local_Name    => +"meta");
+      Attr.Clear;
 
       loop
          Scanner.Get_Token (Token);
@@ -301,7 +328,7 @@ package body Axe.Wiki.Specials.Ada is
 
       Writer.End_Element
         (Namespace_URI => Self.Namespace,
-         Local_Name    => League.Strings.To_Universal_String ("pre"));
+         Local_Name    => +"pre");
    end Process;
 
    -----------
