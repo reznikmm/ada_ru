@@ -3,10 +3,19 @@
 <html lang="ru"
       xmlns='http://www.w3.org/1999/xhtml'
       xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
   <title>Форум по Аде - ${topic.subject}/${page.index}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta charset="utf-8"/>
+  <meta property="og:url"          content="https://www.ada-ru.org/forum/p${topic.id}_1.html"/>
+  <meta property="og:title"        content="${topic.subject}"/>
+  <meta property="og:image"        content="http://www.ada-ru.org/graphics/ada_ru.png"/>
+  <meta property="og:image:secure_url" content="https://www.ada-ru.org/graphics/ada_ru.png"/>
+  <meta property="og:type"         content="article"/>
+  <meta property="og:locale"       content="ru_RU"/>
+  <meta property="fb:app_id"       content="994592483896446"/>
+  <meta property="og:site_name"    content="Форум по языку Ада"/>
+  <meta property="article:published_time" content="${topic.starter.date}"/>
   <link rel="stylesheet" type="text/css" href="forum.css"/>
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous"/>
   <script src="/js/require.js"/>
