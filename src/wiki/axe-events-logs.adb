@@ -33,6 +33,30 @@ package body Axe.Events.Logs is
       Self.Bot.Initialize (Text, Telegram, Viber);
    end Initialize;
 
+   ----------------
+   -- On_Hipchat --
+   ----------------
+
+   overriding procedure On_Hipchat
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object) is
+   begin
+      Self.Bot.Hipchat (Message);
+   end On_Hipchat;
+
+   ----------------------
+   -- On_Hipchat_Token --
+   ----------------------
+
+   overriding procedure On_Hipchat_Token
+     (Self    : in out Event_Log_Writer;
+      Id      : League.Strings.Universal_String;
+      URL     : League.Strings.Universal_String;
+      Token   : League.Strings.Universal_String) is
+   begin
+      Self.Bot.Hipchat_Token (Id, URL, Token);
+   end On_Hipchat_Token;
+
    -----------------
    -- On_Telegram --
    -----------------

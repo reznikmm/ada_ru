@@ -1,10 +1,8 @@
 with Ada.Streams;
-with Ada.Wide_Wide_Text_IO;
 
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.Stream_Element_Vectors;
-with League.Text_Codecs;
 
 package body Servlet.Viber is
 
@@ -118,10 +116,6 @@ package body Servlet.Viber is
          exit when Last = 0;
          Vector.Append (Buffer (1 .. Last));
       end loop;
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (League.Text_Codecs.Codec_For_Application_Locale.
-           Decode (Vector).To_Wide_Wide_String);
 
       Document := League.JSON.Documents.From_JSON (Vector);
    end To_JSON;

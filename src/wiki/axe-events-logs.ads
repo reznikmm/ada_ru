@@ -41,4 +41,14 @@ private
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);
 
+   overriding procedure On_Hipchat
+     (Self    : in out Event_Log_Writer;
+      Message : League.JSON.Objects.JSON_Object);
+
+   overriding procedure On_Hipchat_Token
+     (Self    : in out Event_Log_Writer;
+      Id      : League.Strings.Universal_String;
+      URL     : League.Strings.Universal_String;
+      Token   : League.Strings.Universal_String);
+
 end Axe.Events.Logs;

@@ -36,6 +36,16 @@ package Axe.Bots is
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);
 
+   not overriding procedure Hipchat
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object);
+
+   not overriding procedure Hipchat_Token
+     (Self    : in out Bot;
+      Id      : League.Strings.Universal_String;
+      URL     : League.Strings.Universal_String;
+      Token   : League.Strings.Universal_String);
+
 private
 
    task type Bot_Loop (Bot : access Axe.Bots.Bot) is
@@ -94,12 +104,24 @@ private
    end record;
 
    type Origin_Kind is
-     (IRC_Origin, XMPP_Origin, Telegram_Origin, Viber_Origin, Other_Origin);
+     (Other_Origin,
+      IRC_Origin,
+      XMPP_Origin,
+      Telegram_Origin,
+      Viber_Origin,
+      Hipchat_Origin,
+      Hipchat_Token);
 
-   type Original_Message is record
-      Sender : User;
-      Text   : League.Strings.Universal_String;
-      Origin : Origin_Kind;
+   type Original_Message (Origin : Origin_Kind := Other_Origin) is record
+      case Origin is
+         when Hipchat_Token =>
+            Id    : League.Strings.Universal_String;
+            URL   : League.Strings.Universal_String;
+            Token : League.Strings.Universal_String;
+         when others =>
+            Sender : User;
+            Text   : League.Strings.Universal_String;
+      end case;
    end record;
 
    package Message_Queue_Interfaces is
@@ -123,6 +145,12 @@ private
       Subscribed : League.String_Vectors.Universal_String_Vector;
    end record;
 
+   type Hipchat_Information is record
+      Connection : AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      URL        : League.Strings.Universal_String;
+   end record;
+
    type Bot is tagged limited record
       Network_Loop  : Bot_Loop (Bot'Unchecked_Access);
       Queue         : Message_Queue;
@@ -133,12 +161,11 @@ private
       XMPP_Listener : aliased Axe.Bots.XMPP_Listener (Bot'Unchecked_Access);
       Telegram      : Telegram_Information;
       Viber         : Viber_Information;
+      Hipchat       : Hipchat_Information;
    end record;
 
    not overriding procedure Send_Message
      (Self   : in out Bot;
-      Sender : User;
-      Text   : League.Strings.Universal_String;
-      Origin : Origin_Kind);
+      Value  : Original_Message);
 
 end Axe.Bots;

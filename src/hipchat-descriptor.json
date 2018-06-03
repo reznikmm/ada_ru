@@ -1,0 +1,36 @@
+{
+    "name": "Ada_Ru Add-on",
+    "description": "A bridge to www.ada-ru.org chat",
+    "key": "www-ada_ru-org-addon",
+    "links": {
+        "homepage": "https://www.ada-ru.org/",
+        "self": "https://www.ada-ru.org/hipchat-descriptor.json"
+    },
+    "vendor": {
+        "name": "Maxim Reznik",
+        "url": "https://www.ada-ru.org/"
+    },
+    "capabilities": {
+        "hipchatApiConsumer": {
+            "fromName": "ada_ru",
+            "scopes": [
+                "send_notification"
+            ]
+        },
+        "webhook": [
+            {
+                "url": "https://www.ada-ru.org/hipchat/webhook",
+                "event": "room_message",
+                "pattern": ".*",
+                "name": "Echo",
+                "authentication": "jwt"
+            }
+        ],
+        "installable": {
+            "allowGlobal": false,
+            "allowRoom": true,
+            "callbackUrl": "https://www.ada-ru.org/hipchat/installed",
+            "uninstalledUrl": "https://www.ada-ru.org/hipchat/uninstalled"
+        }
+    }
+}

@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright © 2016-2017, Maxim Reznik <reznikmm@gmail.com>
+--  Copyright © 2016-2018, Maxim Reznik <reznikmm@gmail.com>
 --  All rights reserved.
 --
 --  Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ with Servlet.Users;
 pragma Unreferenced (Servlet.Users);
 with Servlet.Telegram;
 with Servlet.Viber;
+with Servlet.Hipchat;
 with Servlet.Forum;
 pragma Unreferenced (Servlet.Forum);
 
@@ -89,6 +90,10 @@ package body Startup is
         new Servlet.Viber.Viber_Servlet'
           (Servlet.Viber.Instantiate (Dummy'Unchecked_Access));
 
+      Hipchat_Servlet : constant Servlet.Hipchat.Hipchat_Servlet_Access :=
+        new Servlet.Hipchat.Hipchat_Servlet'
+          (Servlet.Hipchat.Instantiate (Dummy'Unchecked_Access));
+
       Wiki_Servlet : constant Axe.Wiki_View_Servlets.Wiki_View_Servlet_Access
         := new Axe.Wiki_View_Servlets.Wiki_View_Servlet;
 
@@ -126,6 +131,10 @@ package body Startup is
       Viber_Servlet.Initialize (Viber);
       Viber_Servlet.Set_Listener (Log_Writer);
       Context.Add_Servlet (+"Viber", Viber_Servlet);
+
+      Hipchat_Servlet.Set_Listener (Log_Writer);
+      Hipchat_Servlet.Initialize;
+      Context.Add_Servlet (+"Hipchat", Hipchat_Servlet);
 
       Ada.Text_IO.Put_Line ("I'm here!");
       --  TODO: /arm/*

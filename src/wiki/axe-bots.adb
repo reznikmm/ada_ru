@@ -35,19 +35,24 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Value  : Original_Message);
 
+   procedure Send_Hipchat
+     (Self   : in out Bot'Class;
+      Value  : Original_Message);
+
    procedure Read_Subscribers
      (Vector : in out League.String_Vectors.Universal_String_Vector);
 
    procedure Write_Subscribers
      (Value : League.String_Vectors.Universal_String_Vector);
 
-   Send : constant array (IRC_Origin .. Viber_Origin) of access
+   Send : constant array (IRC_Origin .. Hipchat_Origin) of access
      procedure (Self  : in out Bot'Class;
                 Value : Original_Message) :=
      (IRC_Origin      => Send_IRC'Access,
       XMPP_Origin     => Send_XMPP'Access,
       Telegram_Origin => Send_Telegram'Access,
-      Viber_Origin    => Send_Viber'Access);
+      Viber_Origin    => Send_Viber'Access,
+      Hipchat_Origin  => Send_Hipchat'Access);
 
    -------------------------
    -- Bind_Resource_State --
@@ -123,17 +128,31 @@ package body Axe.Bots is
 
          select
             Bot.Queue.Dequeue (Next_Message);
-            Time := Ada.Calendar.Clock;
+            case Next_Message.Origin is
+               when Hipchat_Token =>
+                  Bot.Hipchat.Token := Next_Message.Token;
 
-            for Origin in Send'Range loop
-               if Next_Message.Origin /= Origin
-                 or else Next_Message.Origin = Viber_Origin
-               then
-                  Send (Origin) (Bot.all, Next_Message);
-               end if;
-            end loop;
+                  if Bot.Hipchat.URL /= Next_Message.URL then
+                     Bot.Hipchat.URL := Next_Message.URL;
 
-            delay until Time + 1.0;  --  Avoid to Excess Flood errors
+                     AWS.Client.Create
+                       (Bot.Hipchat.Connection,
+                        Bot.Hipchat.URL.To_UTF_8_String);
+                  end if;
+
+               when others =>
+                  Time := Ada.Calendar.Clock;
+
+                  for Origin in Send'Range loop
+                     if Next_Message.Origin /= Origin
+                       or else Next_Message.Origin = Viber_Origin
+                     then
+                        Send (Origin) (Bot.all, Next_Message);
+                     end if;
+                  end loop;
+
+                  delay until Time + 1.0;  --  Avoid to Excess Flood errors
+            end case;
          else
             null;
          end select;
@@ -145,8 +164,53 @@ package body Axe.Bots is
               Ada.Exceptions.Wide_Wide_Exception_Name (E));
          Ada.Wide_Wide_Text_IO.Put_Line
            (League.Strings.From_UTF_8_String
-              (Ada.Exceptions.Exception_Message (E)).To_Wide_Wide_String);
+              (Ada.Exceptions.Exception_Information (E)).To_Wide_Wide_String);
    end Bot_Loop;
+
+   -------------
+   -- Hipchat --
+   -------------
+
+   not overriding procedure Hipchat
+     (Self    : in out Bot;
+      Message : League.JSON.Objects.JSON_Object)
+   is
+      Item  : constant League.JSON.Objects.JSON_Object :=
+        Message.Value (+"item").To_Object;
+      Msg   : constant League.JSON.Objects.JSON_Object :=
+        Item.Value (+"message").To_Object;
+      From  : constant League.JSON.Values.JSON_Value := Msg.Value (+"from");
+      Value : Original_Message (Hipchat_Origin);
+   begin
+      if not Msg.Value (+"type").To_String.Starts_With ("message") then
+         return;
+      end if;
+
+      if From.Is_Object then
+         Value.Sender.Id := From.To_Object.Value (+"mention_name").To_String;
+         Value.Sender.Name := From.To_Object.Value (+"name").To_String;
+      elsif From.Is_String then
+         Value.Sender.Id := From.To_String;
+         Value.Sender.Name := From.To_String;
+      end if;
+
+      Value.Text := Msg.Value (+"message").To_String;
+
+      Self.Send_Message (Value);
+   end Hipchat;
+
+   -------------------
+   -- Hipchat_Token --
+   -------------------
+
+   not overriding procedure Hipchat_Token
+     (Self    : in out Bot;
+      Id      : League.Strings.Universal_String;
+      URL     : League.Strings.Universal_String;
+      Token   : League.Strings.Universal_String) is
+   begin
+      Self.Send_Message ((Hipchat_Token, Id, URL, Token));
+   end Hipchat_Token;
 
    ----------------
    -- Initialize --
@@ -201,9 +265,9 @@ package body Axe.Bots is
       if not From.Ends_With ("/ada_ru") and not Text.Is_Empty then
          From := From.Tail_From (From.Last_Index ('/') + 1);
          Self.Bot.Send_Message
-           ((Name => From, others => <>),
-            Text,
-            XMPP_Origin);
+           ((XMPP_Origin,
+            (Name => From, others => <>),
+            Text));
       end if;
    end Message;
 
@@ -228,9 +292,9 @@ package body Axe.Bots is
       if Target.Starts_With ("#") then
          if From /= +"ada_ru" then
             Self.Bot.Send_Message
-              ((Name => From, others => <>),
-               Text,
-               IRC_Origin);
+              ((IRC_Origin,
+               (Name => From, others => <>),
+               Text));
          end if;
       else
          Session.Send_Message (Source, Text);
@@ -302,6 +366,48 @@ package body Axe.Bots is
 
       Ada.Wide_Wide_Text_IO.Close (File);
    end Read_Subscribers;
+
+   ------------------
+   -- Send_Hipchat --
+   ------------------
+
+   procedure Send_Hipchat
+     (Self   : in out Bot'Class;
+      Value  : Original_Message)
+   is
+      Object : League.JSON.Objects.JSON_Object;
+      Result : AWS.Response.Data;
+      Header : AWS.Client.Header_List;
+   begin
+      Header.Add ("Connection", "Keep-Alive");
+      Header.Add
+        ("Authorization", "Bearer " & Self.Hipchat.Token.To_UTF_8_String);
+
+      Object.Insert
+        (+"message_format", League.JSON.Values.To_JSON_Value (+"text"));
+      Object.Insert
+        (+"color", League.JSON.Values.To_JSON_Value (+"gray"));
+      Object.Insert
+        (+"message", League.JSON.Values.To_JSON_Value (Value.Text));
+      Object.Insert
+        (+"from", League.JSON.Values.To_JSON_Value (Value.Sender.Name));
+      Object.Insert
+        (+"notify", League.JSON.Values.To_JSON_Value (True));
+
+      for J in 1 .. 2 loop
+         AWS.Client.Post
+           (Self.Hipchat.Connection,
+            Result,
+            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+            Content_Type => "application/json",
+            Headers      => Header);
+
+         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
+
+         AWS.Client.Clear_SSL_Session (Self.Hipchat.Connection);
+      end loop;
+   end Send_Hipchat;
+
    --------------
    -- Send_IRC --
    --------------
@@ -326,18 +432,16 @@ package body Axe.Bots is
       Text   : League.Strings.Universal_String) is
    begin
       Self.Send_Message
-        (Sender => (others => <>),
-         Text   => Text,
-         Origin => Other_Origin);
+        ((Sender => (others => <>),
+          Text   => Text,
+          Origin => Other_Origin));
    end Send_Message;
 
    not overriding procedure Send_Message
      (Self   : in out Bot;
-      Sender : User;
-      Text   : League.Strings.Universal_String;
-      Origin : Origin_Kind) is
+      Value  : Original_Message) is
    begin
-      Self.Queue.Enqueue ((Sender, Text, Origin));
+      Self.Queue.Enqueue (Value);
       GNAT.Sockets.Abort_Selector (Self.Selector);
    end Send_Message;
 
@@ -589,7 +693,7 @@ package body Axe.Bots is
          Output.Append ("<прислал venue>");
       end if;
 
-      Self.Send_Message (Sender, Output, Telegram_Origin);
+      Self.Send_Message ((Telegram_Origin, Sender, Output));
    end Telegram;
 
    -----------
@@ -619,7 +723,7 @@ package body Axe.Bots is
          if Object.Contains (+"text") then
             Text := Object.Value (+"text").To_String;
             if not Text.Is_Empty then
-               Self.Send_Message (Sender, Text, Viber_Origin);
+               Self.Send_Message ((Viber_Origin, Sender, Text));
             end if;
          end if;
 
