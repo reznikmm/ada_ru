@@ -157,28 +157,9 @@ package body Servlet.Hipchat is
    -- Initialize --
    ----------------
 
-   procedure Initialize
-     (Self  : in out Hipchat_Servlet'Class)
-   is
-      Input : Ada.Streams.Stream_IO.File_Type;
+   procedure Initialize (Self  : in out Hipchat_Servlet'Class) is
    begin
-      AWS.Client.Set_Debug (True);
-      Ada.Streams.Stream_IO.Open
-        (Input,
-         Ada.Streams.Stream_IO.In_File,
-         File_Name,
-         "SHARED=NO");
-
-      if not Ada.Streams.Stream_IO.End_Of_File (Input) then
-         Installation_Maps.Map'Read
-           (Ada.Streams.Stream_IO.Stream (Input), Self.Installations);
-
-         for Value of Self.Installations loop
-            On_Install (Self, Value.OAuth_Id);
-         end loop;
-      end if;
-
-      Ada.Streams.Stream_IO.Close (Input);
+      null;
    end Initialize;
 
    -----------------
@@ -309,9 +290,28 @@ package body Servlet.Hipchat is
 
    not overriding procedure Set_Listener
      (Self  : in out Hipchat_Servlet;
-      Value : access Axe.Events.Listener'Class) is
+      Value : access Axe.Events.Listener'Class)
+   is
+      Input : Ada.Streams.Stream_IO.File_Type;
    begin
       Self.Listener := Value;
+
+      Ada.Streams.Stream_IO.Open
+        (Input,
+         Ada.Streams.Stream_IO.In_File,
+         File_Name,
+         "SHARED=NO");
+
+      if not Ada.Streams.Stream_IO.End_Of_File (Input) then
+         Installation_Maps.Map'Read
+           (Ada.Streams.Stream_IO.Stream (Input), Self.Installations);
+
+         for Value of Self.Installations loop
+            On_Install (Self, Value.OAuth_Id);
+         end loop;
+      end if;
+
+      Ada.Streams.Stream_IO.Close (Input);
    end Set_Listener;
 
    -------------
