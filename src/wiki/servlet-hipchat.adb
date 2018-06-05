@@ -1,5 +1,6 @@
 with Ada.Streams.Stream_IO;
 with Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
 
 with AWS.Client;
 with AWS.Messages;
@@ -32,6 +33,8 @@ package body Servlet.Hipchat is
      (Self     : in out Hipchat_Servlet'Class;
       OAuth_Id : League.Strings.Universal_String);
 
+   procedure Write_Installation_Map (Self  : Hipchat_Servlet'Class);
+
    procedure Refresh_Access_Token
      (Self     : in out Hipchat_Servlet'Class;
       OAuth_Id : League.Strings.Universal_String);
@@ -52,6 +55,7 @@ package body Servlet.Hipchat is
            AWS.Client.Get (URL.To_UTF_8_String);
       begin
          if AWS.Response.Status_Code (Data) in AWS.Messages.Success then
+            Ada.Text_IO.Put_Line ("GET:" & AWS.Response.Message_Body (Data));
             declare
                Document : constant League.JSON.Documents.JSON_Document :=
                  League.JSON.Documents.From_JSON
@@ -63,6 +67,7 @@ package body Servlet.Hipchat is
             begin
                Self.Installations.Delete (OAuth_Id);
                Self.Capabilities.Delete (OAuth_Id);
+               Write_Installation_Map (Self);
             end;
          end if;
       end Uninstall;
@@ -79,6 +84,9 @@ package body Servlet.Hipchat is
 
             Location : League.IRIs.IRI;
          begin
+            Ada.Wide_Wide_Text_IO.Put_Line
+              ("/uninstalled: " & Redirect.To_Wide_Wide_String
+                 & ", " & Installable.To_Wide_Wide_String);
             Uninstall (Installable);
             Location.Set_IRI (Redirect);
             Response.Send_Redirect (Location);
@@ -116,6 +124,7 @@ package body Servlet.Hipchat is
             Value.Group_Id := Natural (Object.Value (+"groupId").To_Integer);
             Self.Installations.Include (Value.OAuth_Id, Value);
             On_Install (Self, Value.OAuth_Id);
+            Write_Installation_Map (Self);
             Response.Set_Status (Servlet.HTTP_Responses.No_Content);
          end;
       elsif Path = +"/webhook" then
@@ -129,10 +138,6 @@ package body Servlet.Hipchat is
             Response.Set_Status (Servlet.HTTP_Responses.No_Content);
          end;
       end if;
-
---        Response.Set_Content_Type (+"application/json");
---        Response.Set_Character_Encoding (+"utf-8");
---        Response.Get_Output_Stream.Write (+"{}");
    end Do_Post;
 
    ----------------------
@@ -157,10 +162,12 @@ package body Servlet.Hipchat is
    is
       Input : Ada.Streams.Stream_IO.File_Type;
    begin
+      AWS.Client.Set_Debug (True);
       Ada.Streams.Stream_IO.Open
         (Input,
          Ada.Streams.Stream_IO.In_File,
-         File_Name);
+         File_Name,
+         "SHARED=NO");
 
       if not Ada.Streams.Stream_IO.End_Of_File (Input) then
          Installation_Maps.Map'Read
@@ -170,6 +177,8 @@ package body Servlet.Hipchat is
             On_Install (Self, Value.OAuth_Id);
          end loop;
       end if;
+
+      Ada.Streams.Stream_IO.Close (Input);
    end Initialize;
 
    -----------------
@@ -273,7 +282,7 @@ package body Servlet.Hipchat is
                Object : constant League.JSON.Objects.JSON_Object :=
                  Document.To_JSON_Object;
                Token : constant League.Strings.Universal_String :=
-                 Object.Value (+"token").To_String;
+                 Object.Value (+"access_token").To_String;
                Expires : constant Positive :=
                  Positive (Object.Value (+"expires_in").To_Integer) - 60;
                Value    : Access_Token;
@@ -282,7 +291,6 @@ package body Servlet.Hipchat is
                Value.Expires := League.Calendars.Clock +
                  League.Calendars.From_Seconds (Expires);
                Self.Access_Tokens.Include (OAuth_Id, Value);
-
                Self.Listener.On_Hipchat_Token
                  (Id    => OAuth_Id,
                   URL   => Self.Capabilities (OAuth_Id).API_URL
@@ -333,5 +341,24 @@ package body Servlet.Hipchat is
 
       Document := League.JSON.Documents.From_JSON (Vector);
    end To_JSON;
+
+   ---------------
+   -- Write_Map --
+   ---------------
+
+   procedure Write_Installation_Map (Self  : Hipchat_Servlet'Class) is
+      Output : Ada.Streams.Stream_IO.File_Type;
+   begin
+      Ada.Streams.Stream_IO.Open
+        (Output,
+         Ada.Streams.Stream_IO.Out_File,
+         File_Name,
+         "SHARED=NO");
+
+      Installation_Maps.Map'Write
+        (Ada.Streams.Stream_IO.Stream (Output), Self.Installations);
+
+      Ada.Streams.Stream_IO.Close (Output);
+   end Write_Installation_Map;
 
 end Servlet.Hipchat;

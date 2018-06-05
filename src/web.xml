@@ -56,8 +56,8 @@
   </servlet-mapping>
 
    <servlet-mapping>
-    <servlet-name>Hipchar</servlet-name>
-    <url-pattern>/hipchat</url-pattern>
+    <servlet-name>Hipchat</servlet-name>
+    <url-pattern>/hipchat/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
