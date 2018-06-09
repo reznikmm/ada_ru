@@ -1,7 +1,9 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
 
+with AWS.Headers;
 with AWS.Messages;
 with AWS.Response;
 
@@ -395,12 +397,25 @@ package body Axe.Bots is
         (+"notify", League.JSON.Values.To_JSON_Value (True));
 
       for J in 1 .. 2 loop
+         Ada.Text_IO.Put_Line ("message " & Value.Text.To_UTF_8_String);
+         Ada.Text_IO.Put_Line ("POST " & Self.Hipchat.URL.To_UTF_8_String);
+
          AWS.Client.Post
            (Self.Hipchat.Connection,
             Result,
             Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
             Content_Type => "application/json",
             Headers      => Header);
+
+         Ada.Text_IO.Put_Line (AWS.Response.Status_Code (Result)'Img);
+
+         declare
+            List : constant AWS.Headers.List := AWS.Response.Header (Result);
+         begin
+            for J in 1 .. List.Length loop
+               Ada.Text_IO.Put_Line (List.Get_Line (J));
+            end loop;
+         end;
 
          exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
 
@@ -625,6 +640,7 @@ package body Axe.Bots is
         Message.Value (+"from").To_Object;
       Sender : User;
       Text : League.Strings.Universal_String;
+      Nick : League.Strings.Universal_String;
       Output : League.Strings.Universal_String;
       Reply : constant League.JSON.Objects.JSON_Object :=
         Message.Value (+"reply_to_message").To_Object;
@@ -639,6 +655,7 @@ package body Axe.Bots is
         (Name => Get_Nick (From), others => <>);
 
       if not Reply.Is_Empty then
+         Nick := Get_Nick (Reply.Value (+"from").To_Object);
          Text := Reply.Value (+"text").To_String;
 
          if Text.Length > Max_Quote then
@@ -646,9 +663,13 @@ package body Axe.Bots is
             Text.Append ("…");
          end if;
 
-         Output.Append (" отвечает (");
-         Output.Append (Get_Nick (Reply.Value (+"from").To_Object));
-         Output.Append (") на <");
+         if Nick = +"ada_ru_bot" then
+            Output.Append (" отвечает на <");
+         else
+            Output.Append (" отвечает (");
+            Output.Append (Nick);
+            Output.Append (") на <");
+         end if;
          Output.Append (Text);
          Output.Append (">");
          Output.Append (League.Characters.Latin.Line_Feed);
