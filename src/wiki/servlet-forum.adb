@@ -109,7 +109,7 @@ package body Servlet.Forum is
          Response.Set_Character_Encoding (+"utf-8");
          Response.Get_Output_Stream.Write (+"Message was sent");
       else
-         Response.Set_Status (Servlet.HTTP_Responses.Bad_Gateway);
+         Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
          Response.Set_Content_Type (+"text/plain");
          Response.Set_Character_Encoding (+"utf-8");
 

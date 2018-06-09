@@ -125,7 +125,9 @@ package body Servlet.Hipchat is
             Self.Installations.Include (Value.OAuth_Id, Value);
             On_Install (Self, Value.OAuth_Id);
             Write_Installation_Map (Self);
-            Response.Set_Status (Servlet.HTTP_Responses.No_Content);
+            Response.Set_Content_Type (+"text/plain");
+            Response.Set_Character_Encoding (+"utf-8");
+            Response.Set_Status (Servlet.HTTP_Responses.OK);
          end;
       elsif Path = +"/webhook" then
          declare
@@ -135,7 +137,9 @@ package body Servlet.Hipchat is
             To_JSON (Request, Document);
             Object := Document.To_JSON_Object;
             Self.Listener.On_Hipchat (Object);
-            Response.Set_Status (Servlet.HTTP_Responses.No_Content);
+            Response.Set_Content_Type (+"text/plain");
+            Response.Set_Character_Encoding (+"utf-8");
+            Response.Set_Status (Servlet.HTTP_Responses.OK);
          end;
       end if;
    end Do_Post;
