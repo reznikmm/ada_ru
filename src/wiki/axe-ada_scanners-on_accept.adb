@@ -9,37 +9,37 @@ begin
    case Rule is
       when 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
          | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
-         | 21 | 22 | 23 | 24 | 25 | 26 | 27 =>
+         | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 =>
          Self.Delimiter (Scanner, Rule, Token, Skip);
 
-      when 28 =>
+      when 29 =>
          Self.Identifier (Scanner, Rule, Token, Skip);
 
-      when 29 =>
+      when 30 =>
          Self.Numeric_Literal (Scanner, Rule, Token, Skip);
 
-      when 30 =>
+      when 31 =>
          Self.Obsolescent_Numeric_Literal (Scanner, Rule, Token, Skip);
 
-      when 31 =>
+      when 32 =>
          Self.Character_Literal (Scanner, Rule, Token, Skip);
 
-      when 32 =>
+      when 33 =>
          Self.String_Literal (Scanner, Rule, Token, Skip);
 
-      when 33 =>
+      when 34 =>
          Self.Obsolescent_String_Literal (Scanner, Rule, Token, Skip);
 
-      when 34 =>
+      when 35 =>
          Self.Comment (Scanner, Rule, Token, Skip);
 
-      when 35 =>
+      when 36 =>
          Self.Space (Scanner, Rule, Token, Skip);
 
-      when 36 =>
+      when 37 =>
          Self.New_Line (Scanner, Rule, Token, Skip);
 
-      when 37 | 38 =>
+      when 38 | 39 =>
          Self.Error (Scanner, Rule, Token, Skip);
 
       when others =>

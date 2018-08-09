@@ -102,11 +102,15 @@ package body Axe.Ada_Scanners is
             if Char /= Error_Character then
                Current_State := Switch (Current_State, Char);
 
-               exit when Current_State = Error_State;
+               if Current_State not in Looping_State then
+                  if Current_State in Final_State then
+                     Self.Rule := Rule (Current_State);
+                     Self.To := Self.Next;
+                  end if;
 
-               Next_Rule := Tables.Rule (Current_State);
-
-               if Next_Rule /= 0 then
+                  exit;
+               elsif Current_State in Final_State then
+                  Next_Rule := Rule (Current_State);
                   Self.Rule := Next_Rule;
                   Self.To := Self.Next;
                end if;

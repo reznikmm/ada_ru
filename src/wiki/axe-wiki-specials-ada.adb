@@ -159,7 +159,7 @@ package body Axe.Wiki.Specials.Ada is
       Add ("separate"); Add ("some"); Add ("subtype"); Add ("synchronized");
       Add ("tagged"); Add ("task"); Add ("terminate"); Add ("then");
       Add ("type"); Add ("until"); Add ("use"); Add ("when");
-      Add ("while"); Add ("with"); Add ("xor");
+      Add ("while"); Add ("with"); Add ("xor"); Add ("parallel");
    end Initialize;
 
    --------------

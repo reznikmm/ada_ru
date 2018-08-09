@@ -23,7 +23,8 @@ delete from posts where id in ('<00003f5ecb78$22f05824$ab51f9db$@...>',
 '<1322035140.92855.YahooMailClassic@...>',
 '<4ECCA8EE.5000303@...>',
 '<4ECCB6B4.3070502@...>',
-'<E1QwoDq-00048S-00.vadim_tukaev-bk-ru@...>'
+'<E1QwoDq-00048S-00.vadim_tukaev-bk-ru@...>',
+'<p97s6r+evergj@YahooGroups.com>'
 );
 
 update posts set parent='<51B5C6EA.50900@...>'
