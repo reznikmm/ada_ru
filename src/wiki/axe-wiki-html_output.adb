@@ -64,6 +64,9 @@ package body Axe.Wiki.HTML_Output is
    TR     : constant U.Universal_String := +"tr";
    TD     : constant U.Universal_String := +"td";
    TABLE  : constant U.Universal_String := +"table";
+   IFRAME : constant U.Universal_String := +"iframe";
+   WIDTH  : constant U.Universal_String := +"width";
+   HEIGHT : constant U.Universal_String := +"height";
    IMG    : constant U.Universal_String := +"img";
    A      : constant U.Universal_String := +"a";
    BR     : constant U.Universal_String := +"br";
@@ -166,11 +169,14 @@ package body Axe.Wiki.HTML_Output is
          when Table_Cell =>
             Self.Writer.End_Element (XHTML, TD, TD);
          when HTTP_Link | Boxed_Link | Boxed_Wiki_Link =>
-            if Self.Img_Link then
-               Self.Writer.End_Element (XHTML, IMG, IMG);
-            else
-               Self.Writer.End_Element (XHTML, A, A);
-            end if;
+            case Self.Link_Kind is
+               when Image =>
+                  Self.Writer.End_Element (XHTML, IMG, IMG);
+               when URL =>
+                  Self.Writer.End_Element (XHTML, A, A);
+               when Video =>
+                  Self.Writer.End_Element (XHTML, IFRAME, IFRAME);
+            end case;
          when Horizontal_Line =>
             null;
          when Anchor =>
@@ -423,12 +429,19 @@ package body Axe.Wiki.HTML_Output is
          Attributes.Set_Value (SRC, URL);
          Attributes.Set_Value (ALT, Info.Title);
          Self.Writer.Start_Element (XHTML, IMG, IMG, Attributes);
-         Self.Img_Link := True;
+         Self.Link_Kind := Image;
+      elsif URL.Starts_With ("https://youtu.be/") then
+         Attributes.Set_Value (WIDTH, +"560");
+         Attributes.Set_Value (HEIGHT, +"315");
+         Attributes.Set_Value
+           (SRC, "https://www.youtube.com/embed/" & URL.Tail_From (18));
+         Self.Writer.Start_Element (XHTML, IFRAME, IFRAME, Attributes);
+         Self.Link_Kind := Video;
       else
          Attributes.Set_Value (HREF, URL);
          Self.Writer.Start_Element (XHTML, A, A, Attributes);
          Self.Characters (Info.Title);
-         Self.Img_Link := False;
+         Self.Link_Kind := HTML_Output.URL;
       end if;
    end Link;
 

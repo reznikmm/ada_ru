@@ -70,6 +70,8 @@ private
       Equivalent_Keys => League.Strings."=",
       "="             => Axe.Wiki.Specials."=");
 
+   type Link_Kinds is (URL, Image, Video);
+
    type Handler is new Axe.Wiki.Parser.Wiki_Handler with record
       Map       : Maps.Map;
       Writer    : access XML.SAX.Writers.SAX_Writer'Class;
@@ -78,7 +80,7 @@ private
       Preformat : Boolean := False;
       Namespace : League.Strings.Universal_String;
       In_Mono   : Boolean;
-      Img_Link  : Boolean;
+      Link_Kind : Link_Kinds;
    end record;
 
    procedure Link
