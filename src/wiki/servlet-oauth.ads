@@ -19,6 +19,7 @@ package Servlet.OAuth is
    not overriding procedure Do_Login
     (Self     : in out Login_Handler;
      Info     : Sessions.User_Info;
+     Path     : League.Strings.Universal_String;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
        is abstract;
@@ -51,11 +52,17 @@ private
    package String_Lists is new Ada.Containers.Doubly_Linked_Lists
      (League.Strings.Universal_String, League.Strings."=");
 
-   package String_Maps is new Ada.Containers.Hashed_Maps
+   type State_Data is record
+      State : League.Strings.Universal_String;
+      --  State for given session
+      Path  : League.Strings.Universal_String;
+      --  Corresponding URI path to return after login
+   end record;
+
+   package State_Maps is new Ada.Containers.Hashed_Maps
      (League.Strings.Universal_String,
-      League.Strings.Universal_String,
+      State_Data,
       League.Strings.Hash,
-      League.Strings."=",
       League.Strings."=");
 
    package Stream_Element_Random is new Ada.Numerics.Discrete_Random
@@ -65,14 +72,15 @@ private
       Random : Stream_Element_Random.Generator;
       Queue  : String_Lists.List;
       --  List of session in authorization progress
-      Map    : String_Maps.Map;
+      Map    : State_Maps.Map;
       --  Map from session to corresponding 'state' to protect against
-      --  cross-site request forgery attacks.
+      --  cross-site request forgery attacks. Also it keeps return path.
    end record;
 
    not overriding function Create_Key
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String)
+     (Self        : in out State_Cache;
+      Session_Id  : League.Strings.Universal_String;
+      Return_Path : League.Strings.Universal_String)
       return League.Strings.Universal_String;
 
    not overriding function Check_Key
@@ -80,6 +88,11 @@ private
       Session_Id : League.Strings.Universal_String;
       Key        : League.Strings.Universal_String)
       return Boolean;
+
+   not overriding function Get_Return_Path
+     (Self       : in out State_Cache;
+      Session_Id : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
 
    type OAuth_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
       Handler         : access Login_Handler'Class;

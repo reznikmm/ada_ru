@@ -21,6 +21,7 @@ package body Sessions.Managers is
    overriding procedure Do_Login
     (Self     : in out HTTP_Session_Manager;
      Info     : Sessions.User_Info;
+     Path     : League.Strings.Universal_String;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
@@ -152,7 +153,7 @@ package body Sessions.Managers is
       end loop;
 
       Response.Set_Status (Servlet.HTTP_Responses.See_Other);
-      Response.Set_Header (+"Location", +"/");
+      Response.Set_Header (+"Location", Path);
       Response.Set_Header (+"Cache-Control", +"must-revalidate");
    end Do_Login;
 

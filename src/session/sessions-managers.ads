@@ -61,6 +61,7 @@ private
    overriding procedure Do_Login
     (Self     : in out HTTP_Session_Manager;
      Info     : Sessions.User_Info;
+     Path     : League.Strings.Universal_String;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
 

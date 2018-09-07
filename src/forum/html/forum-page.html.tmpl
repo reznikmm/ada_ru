@@ -7,6 +7,15 @@
   <title>Форум по Аде - ${forum.subject}</title>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta property="og:url"          content="https://www.ada-ru.org/forum/${forum.id}_${page.index}.html"/>
+  <meta property="og:title"        content="Форум по Аде - ${forum.subject}"/>
+  <meta property="og:image"        content="http://www.ada-ru.org/graphics/ada_ru.png"/>
+  <meta property="og:image:secure_url" content="https://www.ada-ru.org/graphics/ada_ru.png"/>
+  <meta property="og:type"         content="website"/>
+  <meta property="og:locale"       content="ru_RU"/>
+  <meta property="fb:app_id"       content="994592483896446"/>
+
+
   <link rel="stylesheet" type="text/css" href="forum.css"/>
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous"/>
   <script src="/js/require.js"/>
@@ -76,8 +85,8 @@
     <div class="pure-u-1 unknown_user">
     <p>
       Чтобы создать новую тему на форуме необходимо
-      <a class="pure-button pure-button-primary" href="/oauth2">Зарегистрироваться</a>
-      и <a class="pure-button pure-button-primary" href="/oauth2">Войти</a>
+      <a class="pure-button pure-button-primary" href="/oauth2?path=/forum/${forum.id}_${page.index}.html">Зарегистрироваться</a>
+      и <a class="pure-button pure-button-primary" href="/oauth2?path=/forum/${forum.id}_${page.index}.html">Войти</a>
     </p>
       <p/>
     </div>

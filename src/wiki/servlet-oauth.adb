@@ -24,6 +24,8 @@ with XML.SAX.Pretty_Writers;
 with XML.SAX.Simple_Readers;
 with XML.Templates.Processors;
 
+with Ada.Text_IO;
+
 package body Servlet.OAuth is
 
    function "+" (Text : Wide_Wide_String)
@@ -58,6 +60,10 @@ package body Servlet.OAuth is
       Secure_Key : League.Strings.Universal_String;
       Info       : out Sessions.User_Info);
 
+   procedure Trace (Text : String);
+
+   Use_Trace : constant Boolean := True;
+
    ---------------
    -- Check_Key --
    ---------------
@@ -71,7 +77,7 @@ package body Servlet.OAuth is
       use type League.Strings.Universal_String;
    begin
       return Self.Map.Contains (Session_Id) and then
-        Self.Map (Session_Id) = Key;
+        Self.Map (Session_Id).State = Key;
    end Check_Key;
 
    ----------------
@@ -79,8 +85,9 @@ package body Servlet.OAuth is
    ----------------
 
    not overriding function Create_Key
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String)
+     (Self        : in out State_Cache;
+      Session_Id  : League.Strings.Universal_String;
+      Return_Path : League.Strings.Universal_String)
       return League.Strings.Universal_String
    is
       use type Ada.Containers.Count_Type;
@@ -93,7 +100,10 @@ package body Servlet.OAuth is
          Cursor := Self.Queue.Find (Session_Id);
          Self.Queue.Delete (Cursor);
          Self.Queue.Append (Session_Id);
-         return Self.Map (Session_Id);
+         Result := Self.Map (Session_Id).State;
+         --  Well, GNAT complains if we just update Path component
+         Self.Map (Session_Id) := (Result, Return_Path);
+         return Result;
       end if;
 
       for J in 1 .. 12 loop
@@ -102,7 +112,7 @@ package body Servlet.OAuth is
 
       Result := League.Base_Codecs.To_Base_64_URL (Data);
 
-      Self.Map.Insert (Session_Id, Result);
+      Self.Map.Insert (Session_Id, (Result, Return_Path));
       Self.Queue.Append (Session_Id);
 
       if Self.Map.Length > Max_States then
@@ -136,6 +146,10 @@ package body Servlet.OAuth is
            (URL          => "https://graph.facebook.com/v2.11/me",
             Data         => Full (Full'First + 1 .. Full'Last),
             Content_Type => "application/x-www-form-urlencoded");
+
+         Trace ("Decode_Facebook_Token: " & AWS.Messages.Status_Code'Image
+                (AWS.Response.Status_Code (Data)));
+         Trace (AWS.Response.Message_Body (Data));
 
          if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
             Document := League.JSON.Documents.From_JSON
@@ -172,6 +186,10 @@ package body Servlet.OAuth is
       Data := AWS.Client.Get
         (URL     => "https://api.github.com/user",
          Headers => Headers);
+
+      Trace ("Decode_Github_Token: " & AWS.Messages.Status_Code'Image
+             (AWS.Response.Status_Code (Data)));
+      Trace (AWS.Response.Message_Body (Data));
 
       if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
          Document := League.JSON.Documents.From_JSON
@@ -220,6 +238,7 @@ package body Servlet.OAuth is
    is
       Parts      : League.String_Vectors.Universal_String_Vector;
       Encoded    : League.Strings.Universal_String;
+      Decoded    : League.Stream_Element_Vectors.Stream_Element_Vector;
       Claim_Set  : League.JSON.Documents.JSON_Document;
       Object     : League.JSON.Objects.JSON_Object;
    begin
@@ -230,8 +249,20 @@ package body Servlet.OAuth is
          Encoded.Append ('=');
       end loop;
 
-      Claim_Set := League.JSON.Documents.From_JSON
-        (League.Base_Codecs.From_Base_64_URL (Encoded));
+      Decoded := League.Base_Codecs.From_Base_64_URL (Encoded);
+
+      declare
+         Raw : Ada.Streams.Stream_Element_Array :=
+           Decoded.To_Stream_Element_Array;
+         Text : String (1 .. Raw'Length);
+         pragma Import (Ada, Text);
+         for Text'Address use Raw'Address;
+      begin
+         Trace ("Decode_Google_Token:");
+         Trace (Text);
+      end;
+
+      Claim_Set := League.JSON.Documents.From_JSON (Decoded);
       Object := Claim_Set.To_JSON_Object;
       Info.User := Object.Value (+"sub").To_String;
       Info.Mails.Append (Object.Value (+"email").To_String);
@@ -282,6 +313,10 @@ package body Servlet.OAuth is
             Data         => Full (Full'First + 1 .. Full'Last),
             Content_Type => "application/x-www-form-urlencoded");
 
+         Trace ("Decode_Mail_Ru_Token: " & AWS.Messages.Status_Code'Image
+                (AWS.Response.Status_Code (Data)));
+         Trace (AWS.Response.Message_Body (Data));
+
          if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
             Document := League.JSON.Documents.From_JSON
               (AWS.Response.Message_Body (Data));
@@ -323,6 +358,10 @@ package body Servlet.OAuth is
    begin
       Data := AWS.Client.Get (URL);
 
+      Trace ("Decode_VK_Token: " & AWS.Messages.Status_Code'Image
+             (AWS.Response.Status_Code (Data)));
+      Trace (AWS.Response.Message_Body (Data));
+
       if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
          Document := League.JSON.Documents.From_JSON
            (AWS.Response.Message_Body (Data));
@@ -357,8 +396,10 @@ package body Servlet.OAuth is
         Request.Get_Path_Info;
 
       function Login_Page return League.Strings.Universal_String is
+         Path      : constant League.Strings.Universal_String :=
+           Request.Get_Parameter (+"path");
          Key       : constant League.Strings.Universal_String :=
-           Self.Cache.Create_Key (Session);
+           Self.Cache.Create_Key (Session, Path);
          XHTML     : constant League.Strings.Universal_String :=
            +"/login.xhtml.tmpl";
          Input     : aliased XML.SAX.Input_Sources.Streams.Files
@@ -381,7 +422,7 @@ package body Servlet.OAuth is
          Filter.Set_Content_Handler (Writer'Unchecked_Access);
          Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
 
-         --  Bind wiki page content
+         --  Bind wiki page content and path (origin URI)
          Filter.Set_Parameter (+"state", League.Holders.To_Holder (Key));
 
          for P in Self.OAuth_Providers.Iterate loop
@@ -434,7 +475,20 @@ package body Servlet.OAuth is
                Info.Mails.Append (EMail);
             end if;
 
-            Self.Handler.Do_Login (Info, Request, Response);
+            if Info.Mails.Length > 0 then
+               EMail := Info.Mails (1);
+
+               if Info.User.Is_Empty then
+                  Info.User := EMail;
+               end if;
+
+               if Info.Name.Is_Empty then
+                  Info.Name := Info.User;
+               end if;
+            end if;
+
+            Self.Handler.Do_Login
+              (Info, Self.Cache.Get_Return_Path (Session), Request, Response);
 
             return;
          else
@@ -450,6 +504,18 @@ package body Servlet.OAuth is
 
       Response.Get_Output_Stream.Write (Login_Page);
    end Do_Get;
+
+   ---------------------
+   -- Get_Return_Path --
+   ---------------------
+
+   not overriding function Get_Return_Path
+     (Self       : in out State_Cache;
+      Session_Id : League.Strings.Universal_String)
+      return League.Strings.Universal_String is
+   begin
+      return Self.Map (Session_Id).Path;
+   end Get_Return_Path;
 
    ----------------------
    -- Get_Servlet_Info --
@@ -495,6 +561,10 @@ package body Servlet.OAuth is
             Data         => Full (Full'First + 1 .. Full'Last),
             Content_Type => "application/x-www-form-urlencoded",
             Headers      => Headers);
+
+         Trace ("Get_Token: " & AWS.Messages.Status_Code'Image
+                (AWS.Response.Status_Code (Data)));
+         Trace (AWS.Response.Message_Body (Data));
 
          if AWS.Response.Status_Code (Data) in AWS.Messages.S200 then
             Document := League.JSON.Documents.From_JSON
@@ -586,5 +656,16 @@ package body Servlet.OAuth is
    begin
       Self.Handler := Value;
    end Set_Handler;
+
+   -----------
+   -- Trace --
+   -----------
+
+   procedure Trace (Text : String) is
+   begin
+      if Use_Trace then
+         Ada.Text_IO.Put_Line (Text);
+      end if;
+   end Trace;
 
 end Servlet.OAuth;
