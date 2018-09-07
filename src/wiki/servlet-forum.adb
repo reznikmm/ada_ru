@@ -104,10 +104,9 @@ package body Servlet.Forum is
          Status  => Status);
 
       if AWS.SMTP.Is_Ok (Status) then
-         Response.Set_Status (Servlet.HTTP_Responses.OK);
-         Response.Set_Content_Type (+"text/plain");
-         Response.Set_Character_Encoding (+"utf-8");
-         Response.Get_Output_Stream.Write (+"Message was sent");
+         Response.Set_Status (Servlet.HTTP_Responses.See_Other);
+         Response.Set_Header (+"Location", +"/forum/ok.html");
+         Response.Set_Header (+"Cache-Control", +"must-revalidate");
       else
          Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
          Response.Set_Content_Type (+"text/plain");
