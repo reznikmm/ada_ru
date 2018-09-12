@@ -31,7 +31,6 @@
     <url-pattern>*.txt</url-pattern>
     <url-pattern>*.js</url-pattern>
     <url-pattern>*.atom</url-pattern>
-    <url-pattern>/hipchat-descriptor.json</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
@@ -53,11 +52,6 @@
   <servlet-mapping>
     <servlet-name>Viber</servlet-name>
     <url-pattern>/viber</url-pattern>
-  </servlet-mapping>
-
-   <servlet-mapping>
-    <servlet-name>Hipchat</servlet-name>
-    <url-pattern>/hipchat/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

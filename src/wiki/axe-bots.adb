@@ -1,7 +1,6 @@
 with Ada.Calendar;
 with Ada.Exceptions;
 with Ada.Wide_Wide_Text_IO;
-with Ada.Text_IO;
 
 with AWS.Headers;
 with AWS.Messages;
@@ -37,24 +36,19 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Value  : Original_Message);
 
-   procedure Send_Hipchat
-     (Self   : in out Bot'Class;
-      Value  : Original_Message);
-
    procedure Read_Subscribers
      (Vector : in out League.String_Vectors.Universal_String_Vector);
 
    procedure Write_Subscribers
      (Value : League.String_Vectors.Universal_String_Vector);
 
-   Send : constant array (IRC_Origin .. Hipchat_Origin) of access
+   Send : constant array (IRC_Origin .. Viber_Origin) of access
      procedure (Self  : in out Bot'Class;
                 Value : Original_Message) :=
      (IRC_Origin      => Send_IRC'Access,
       XMPP_Origin     => Send_XMPP'Access,
       Telegram_Origin => Send_Telegram'Access,
-      Viber_Origin    => Send_Viber'Access,
-      Hipchat_Origin  => Send_Hipchat'Access);
+      Viber_Origin    => Send_Viber'Access);
 
    -------------------------
    -- Bind_Resource_State --
@@ -131,17 +125,6 @@ package body Axe.Bots is
          select
             Bot.Queue.Dequeue (Next_Message);
             case Next_Message.Origin is
-               when Hipchat_Token =>
-                  Bot.Hipchat.Token := Next_Message.Token;
-
-                  if Bot.Hipchat.URL /= Next_Message.URL then
-                     Bot.Hipchat.URL := Next_Message.URL;
-
-                     AWS.Client.Create
-                       (Bot.Hipchat.Connection,
-                        Bot.Hipchat.URL.To_UTF_8_String);
-                  end if;
-
                when others =>
                   Time := Ada.Calendar.Clock;
 
@@ -168,51 +151,6 @@ package body Axe.Bots is
            (League.Strings.From_UTF_8_String
               (Ada.Exceptions.Exception_Information (E)).To_Wide_Wide_String);
    end Bot_Loop;
-
-   -------------
-   -- Hipchat --
-   -------------
-
-   not overriding procedure Hipchat
-     (Self    : in out Bot;
-      Message : League.JSON.Objects.JSON_Object)
-   is
-      Item  : constant League.JSON.Objects.JSON_Object :=
-        Message.Value (+"item").To_Object;
-      Msg   : constant League.JSON.Objects.JSON_Object :=
-        Item.Value (+"message").To_Object;
-      From  : constant League.JSON.Values.JSON_Value := Msg.Value (+"from");
-      Value : Original_Message (Hipchat_Origin);
-   begin
-      if not Msg.Value (+"type").To_String.Starts_With ("message") then
-         return;
-      end if;
-
-      if From.Is_Object then
-         Value.Sender.Id := From.To_Object.Value (+"mention_name").To_String;
-         Value.Sender.Name := From.To_Object.Value (+"name").To_String;
-      elsif From.Is_String then
-         Value.Sender.Id := From.To_String;
-         Value.Sender.Name := From.To_String;
-      end if;
-
-      Value.Text := Msg.Value (+"message").To_String;
-
-      Self.Send_Message (Value);
-   end Hipchat;
-
-   -------------------
-   -- Hipchat_Token --
-   -------------------
-
-   not overriding procedure Hipchat_Token
-     (Self    : in out Bot;
-      Id      : League.Strings.Universal_String;
-      URL     : League.Strings.Universal_String;
-      Token   : League.Strings.Universal_String) is
-   begin
-      Self.Send_Message ((Hipchat_Token, Id, URL, Token));
-   end Hipchat_Token;
 
    ----------------
    -- Initialize --
@@ -368,60 +306,6 @@ package body Axe.Bots is
 
       Ada.Wide_Wide_Text_IO.Close (File);
    end Read_Subscribers;
-
-   ------------------
-   -- Send_Hipchat --
-   ------------------
-
-   procedure Send_Hipchat
-     (Self   : in out Bot'Class;
-      Value  : Original_Message)
-   is
-      Object : League.JSON.Objects.JSON_Object;
-      Result : AWS.Response.Data;
-      Header : AWS.Client.Header_List;
-   begin
-      Header.Add ("Connection", "Keep-Alive");
-      Header.Add
-        ("Authorization", "Bearer " & Self.Hipchat.Token.To_UTF_8_String);
-
-      Object.Insert
-        (+"message_format", League.JSON.Values.To_JSON_Value (+"text"));
-      Object.Insert
-        (+"color", League.JSON.Values.To_JSON_Value (+"gray"));
-      Object.Insert
-        (+"message", League.JSON.Values.To_JSON_Value (Value.Text));
-      Object.Insert
-        (+"from", League.JSON.Values.To_JSON_Value (Value.Sender.Name));
-      Object.Insert
-        (+"notify", League.JSON.Values.To_JSON_Value (True));
-
-      for J in 1 .. 2 loop
-         Ada.Text_IO.Put_Line ("message " & Value.Text.To_UTF_8_String);
-         Ada.Text_IO.Put_Line ("POST " & Self.Hipchat.URL.To_UTF_8_String);
-
-         AWS.Client.Post
-           (Self.Hipchat.Connection,
-            Result,
-            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
-            Content_Type => "application/json",
-            Headers      => Header);
-
-         Ada.Text_IO.Put_Line (AWS.Response.Status_Code (Result)'Img);
-
-         declare
-            List : constant AWS.Headers.List := AWS.Response.Header (Result);
-         begin
-            for J in 1 .. List.Length loop
-               Ada.Text_IO.Put_Line (List.Get_Line (J));
-            end loop;
-         end;
-
-         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
-
-         AWS.Client.Clear_SSL_Session (Self.Hipchat.Connection);
-      end loop;
-   end Send_Hipchat;
 
    --------------
    -- Send_IRC --
