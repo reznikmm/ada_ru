@@ -19,8 +19,9 @@ package IRC.Sessions is
       Password  : League.Strings.Universal_String;
       User      : League.Strings.Universal_String;
       Real_Name : League.Strings.Universal_String);
-   --  Initialize new session with given IRC server:port. Return Socket
-   --  to monitor input/output data.
+   --  Initialize new session with given IRC server:port.
+   --  If success then return Socket to monitor input/output data,
+   --  return No_Socket otherwise.
 
    not overriding procedure Raw_Command
      (Self    : in out Session;
@@ -45,7 +46,6 @@ package IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Socket : GNAT.Sockets.Socket_Type;
       Closed : out Boolean);
    --  This procedure called by driver when socket changes its state
 

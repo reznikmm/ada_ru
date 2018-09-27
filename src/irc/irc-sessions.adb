@@ -16,7 +16,6 @@ package body IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Socket : GNAT.Sockets.Socket_Type;
       Closed : out Boolean)
    is
       use type Ada.Streams.Stream_Element;
@@ -116,17 +115,14 @@ package body IRC.Sessions is
    begin
       loop
          begin
-            GNAT.Sockets.Receive_Socket (Socket, Data, Last);
+            GNAT.Sockets.Receive_Socket (Self.Socket, Data, Last);
             Closed := Last = Data'First - 1;
          exception
             when GNAT.Sockets.Socket_Error =>
                Closed := True;
+               GNAT.Sockets.Close_Socket (Self.Socket);
+               return;
          end;
-
-         if Closed then
-            GNAT.Sockets.Close_Socket (Socket);
-            return;
-         end if;
 
          First := Data'First;
 
@@ -140,7 +136,7 @@ package body IRC.Sessions is
 
          Self.Vector.Append (Data (First .. Last));
 
-         GNAT.Sockets.Control_Socket (Socket, Request);
+         GNAT.Sockets.Control_Socket (Self.Socket, Request);
 
          exit when Request.Size = 0;
       end loop;
@@ -160,19 +156,27 @@ package body IRC.Sessions is
       User      : League.Strings.Universal_String;
       Real_Name : League.Strings.Universal_String)
    is
-      Last    : Ada.Streams.Stream_Element_Offset;
-      pragma Unreferenced (Last);
-      Address : GNAT.Sockets.Sock_Addr_Type;
+      Address : constant GNAT.Sockets.Sock_Addr_Type :=
+        (Family => GNAT.Sockets.Family_Inet,
+         Addr   => GNAT.Sockets.Addresses
+           (GNAT.Sockets.Get_Host_By_Name (Host.To_UTF_8_String), 1),
+         Port   => Port);
       Vector  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Value   : League.Strings.Universal_String;
       Request : GNAT.Sockets.Request_Type :=
         (GNAT.Sockets.Non_Blocking_IO, True);
    begin
       GNAT.Sockets.Create_Socket (Socket);
-      Address.Addr := GNAT.Sockets.Addresses
-        (GNAT.Sockets.Get_Host_By_Name (Host.To_UTF_8_String), 1);
-      Address.Port := Port;
-      GNAT.Sockets.Connect_Socket (Socket, Address);
+
+      begin
+         GNAT.Sockets.Connect_Socket (Socket, Address);
+      exception
+         when GNAT.Sockets.Socket_Error =>
+            GNAT.Sockets.Close_Socket (Socket);
+            Socket := GNAT.Sockets.No_Socket;
+            return;
+      end;
+
       GNAT.Sockets.Control_Socket (Socket, Request);
       Self.Socket := Socket;
 
@@ -194,7 +198,13 @@ package body IRC.Sessions is
 
       Vector := Self.Codec.Encode (Value);
 
-      GNAT.Sockets.Send_Socket (Socket, Vector.To_Stream_Element_Array, Last);
+      declare
+         Last    : Ada.Streams.Stream_Element_Offset;
+         pragma Unreferenced (Last);
+      begin
+         GNAT.Sockets.Send_Socket
+           (Socket, Vector.To_Stream_Element_Array, Last);
+      end;
    end Connect;
 
    ----------

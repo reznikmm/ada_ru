@@ -74,14 +74,17 @@ package body Axe.Bots is
    task body Bot_Loop is
       use type Ada.Calendar.Time;
 
-      Time         : Ada.Calendar.Time;
-      Next_Message : Original_Message;
-      IRC_Closed   : Boolean := True;
+      Time          : Ada.Calendar.Time;  --  Start of cycle
+      Next_Message  : Original_Message;
+      IRC_Reconnect : Ada.Calendar.Time := Ada.Calendar.Clock;
+      --  Scheduled time to reconnect IRC. If IRC connected then Never
+      Never         : constant Ada.Calendar.Time :=
+        Ada.Calendar.Time_Of
+          (Ada.Calendar.Year_Number'Last,
+           Ada.Calendar.Month_Number'Last,
+           Ada.Calendar.Day_Number'Last);
 
-      Socket   : GNAT.Sockets.Socket_Type;
-      Read     : GNAT.Sockets.Socket_Set_Type;
-      Write    : GNAT.Sockets.Socket_Set_Type;
-      Error    : GNAT.Sockets.Socket_Set_Type;
+      Socket   : GNAT.Sockets.Socket_Type;  --  IRC socket
       Status   : GNAT.Sockets.Selector_Status;
    begin
       accept Start;
@@ -91,7 +94,9 @@ package body Axe.Bots is
       GNAT.Sockets.Create_Selector (Bot.Selector);
 
       loop
-         if IRC_Closed then
+         Time := Ada.Calendar.Clock;
+
+         if IRC_Reconnect <= Time then  --  Try to connect IRC
             Bot.IRC_Session.Connect
               (Socket    => Socket,
                Host      => +"irc.odessa.ua",
@@ -101,46 +106,66 @@ package body Axe.Bots is
                User      => +"ada_ru",
                Real_Name => +"Ada Ru Bot");
 
-            IRC_Closed := False;
-            Ada.Wide_Wide_Text_IO.Put_Line ("Connected to IRC");
-         end if;
-
-         GNAT.Sockets.Set (Read, Socket);
-         GNAT.Sockets.Set (Error, Socket);
-
-         GNAT.Sockets.Check_Selector
-           (Selector     => Bot.Selector,
-            R_Socket_Set => Read,
-            W_Socket_Set => Write,
-            E_Socket_Set => Error,
-            Status       => Status,
-            Timeout      => 60.0);
-
-         if Status in GNAT.Sockets.Completed then
-            if not GNAT.Sockets.Is_Empty (Read) then
-               Bot.IRC_Session.Check_Socket (Socket, IRC_Closed);
+            if Socket in GNAT.Sockets.No_Socket then
+               IRC_Reconnect := Time + 60.0;
+            else
+               IRC_Reconnect := Never;
+               Ada.Wide_Wide_Text_IO.Put_Line ("Connected to IRC");
             end if;
          end if;
 
-         select
-            Bot.Queue.Dequeue (Next_Message);
-            case Next_Message.Origin is
-               when others =>
-                  Time := Ada.Calendar.Clock;
+         declare  --  Read IRC if connected
+            Read     : GNAT.Sockets.Socket_Set_Type;
+            Write    : GNAT.Sockets.Socket_Set_Type;
+            Error    : GNAT.Sockets.Socket_Set_Type;
+         begin
+            if IRC_Reconnect = Never then
+               GNAT.Sockets.Set (Read, Socket);
+               GNAT.Sockets.Set (Error, Socket);
+            end if;
 
-                  for Origin in Send'Range loop
-                     if Next_Message.Origin /= Origin
-                       or else Next_Message.Origin = Viber_Origin
-                     then
-                        Send (Origin) (Bot.all, Next_Message);
+            GNAT.Sockets.Check_Selector
+              (Selector     => Bot.Selector,
+               R_Socket_Set => Read,
+               W_Socket_Set => Write,
+               E_Socket_Set => Error,
+               Status       => Status,
+               Timeout      => 60.0);
+
+            if Status in GNAT.Sockets.Completed then
+               if not GNAT.Sockets.Is_Empty (Read) then
+                  declare
+                     IRC_Closed : Boolean;
+                  begin
+                     Bot.IRC_Session.Check_Socket (IRC_Closed);
+
+                     if IRC_Closed then
+                        Ada.Wide_Wide_Text_IO.Put_Line
+                          ("Disconnected from IRC");
+                        IRC_Reconnect := Time + 1.0;
                      end if;
-                  end loop;
+                  end;
+               end if;
+            end if;
+         end;
 
-                  delay until Time + 1.0;  --  Avoid to Excess Flood errors
-            end case;
-         else
-            null;
-         end select;
+         loop
+            select
+               Bot.Queue.Dequeue (Next_Message);
+
+               for Origin in Send'Range loop
+                  if Next_Message.Origin /= Origin
+                    or else Next_Message.Origin = Viber_Origin
+                  then
+                     Send (Origin) (Bot.all, Next_Message);
+                  end if;
+               end loop;
+
+               delay until Time + 1.0;  --  Avoid to Excess Flood errors
+            else
+               exit;
+            end select;
+         end loop;
       end loop;
    exception
       when E : others =>
