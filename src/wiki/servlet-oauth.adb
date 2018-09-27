@@ -349,7 +349,8 @@ package body Servlet.OAuth is
    is
       use type League.Strings.Universal_String;
       URL      : constant String :=
-        "https://api.vk.com/method/users.get?fields=screen_name,photo_50&" &
+        "https://api.vk.com/method/users.get?v=5.85&" &
+        "fields=screen_name,photo_50&" &
         "access_token=" & Token.To_UTF_8_String;
       Document : League.JSON.Documents.JSON_Document;
       Vector   : League.JSON.Arrays.JSON_Array;
