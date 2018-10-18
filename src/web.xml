@@ -30,6 +30,8 @@
     <url-pattern>*.jpg</url-pattern>
     <url-pattern>*.txt</url-pattern>
     <url-pattern>*.js</url-pattern>
+    <url-pattern>*.map</url-pattern>
+    <url-pattern>*.html</url-pattern>
     <url-pattern>*.atom</url-pattern>
   </servlet-mapping>
 
@@ -70,5 +72,14 @@
   <servlet-mapping>
     <servlet-name>Forum</servlet-name>
     <url-pattern>/post-to-forum</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>Pastebin</servlet-name>
+    <servlet-tag>SERVLET.PASTEBIN.PASTEBIN_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Pastebin</servlet-name>
+    <url-pattern>/pastebin</url-pattern>
   </servlet-mapping>
 </web-app>

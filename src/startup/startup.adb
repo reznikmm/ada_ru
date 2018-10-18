@@ -37,6 +37,8 @@ with Servlet.Telegram;
 with Servlet.Viber;
 with Servlet.Forum;
 pragma Unreferenced (Servlet.Forum);
+with Servlet.Pastebin;
+pragma Unreferenced (Servlet.Pastebin);
 
 with Axe.Wiki_View_Servlets;
 
