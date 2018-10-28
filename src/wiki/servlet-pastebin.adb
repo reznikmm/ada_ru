@@ -6,12 +6,12 @@ with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.JSON.Values;
-with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
 
 with Servlet.Contexts;
 
+with Axe.Common;
 with Axe.Read_File;
 
 package body Servlet.Pastebin is
@@ -48,20 +48,11 @@ package body Servlet.Pastebin is
          declare
             Stream : constant access Ada.Streams.Root_Stream_Type'Class :=
               Request.Get_Input_Stream;
-            Data   : Ada.Streams.Stream_Element_Array (1 .. 1024);
-            Last   : Ada.Streams.Stream_Element_Offset := 0;
-            Vector : League.Stream_Element_Vectors.Stream_Element_Vector;
             JSON   : League.JSON.Documents.JSON_Document;
             Object : League.JSON.Objects.JSON_Object;
             List   : League.JSON.Arrays.JSON_Array;
          begin
-            loop
-               Stream.Read (Data, Last);
-               exit when Last in 0;
-               Vector.Append (Data (1 .. Last));
-            end loop;
-
-            JSON := League.JSON.Documents.From_JSON (Vector);
+            Axe.Common.Read_JSON (Stream.all, JSON);
 
             if JSON.Is_Object then
                Is_JSON := True;
@@ -162,11 +153,8 @@ package body Servlet.Pastebin is
          Value : constant League.Strings.Universal_String :=
            Text.Join (Ada.Characters.Wide_Wide_Latin_1.LF);
 
-         Image : constant Wide_Wide_String :=
-           League.Hash_Type'Wide_Wide_Image (Value.Hash);
-
          Hash : constant League.Strings.Universal_String :=
-           +Image (2 .. Image'Last);
+           Axe.Common.MD5_Base_64 (Value);
 
          Real_Name : constant League.Strings.Universal_String :=
            Context.Get_Real_Path (Prefix & Hash);

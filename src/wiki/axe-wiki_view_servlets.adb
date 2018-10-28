@@ -32,7 +32,6 @@ with League.Base_Codecs;
 with League.Calendars.Ada_Conversions;
 with League.Holders;
 with League.Holders.JSON_Objects;
-with League.IRIs;
 with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
@@ -48,8 +47,6 @@ with XML.SAX.Output_Destinations.Strings;
 with XML.SAX.Simple_Readers;
 with XML.Templates.Processors;
 with XML.Templates.Streams.Holders;
-
-with Matreshka.Internals.SAX_Locators;
 
 with Servlet.Contexts;
 

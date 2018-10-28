@@ -75,7 +75,7 @@
     <servlet-name>Forum</servlet-name>
     <url-pattern>/post-to-forum</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>Pastebin</servlet-name>
     <servlet-tag>SERVLET.PASTEBIN.PASTEBIN_SERVLET</servlet-tag>
@@ -83,5 +83,14 @@
   <servlet-mapping>
     <servlet-name>Pastebin</servlet-name>
     <url-pattern>/pastebin</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Compile</servlet-name>
+    <servlet-tag>SERVLET.COMPILE.COMPILE_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Compile</servlet-name>
+    <url-pattern>/compile</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -39,6 +39,8 @@ with Servlet.Forum;
 pragma Unreferenced (Servlet.Forum);
 with Servlet.Pastebin;
 pragma Unreferenced (Servlet.Pastebin);
+with Servlet.Compile;
+pragma Unreferenced (Servlet.Compile);
 
 with Axe.Wiki_View_Servlets;
 
