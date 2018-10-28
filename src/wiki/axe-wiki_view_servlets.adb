@@ -53,6 +53,7 @@ with Matreshka.Internals.SAX_Locators;
 
 with Servlet.Contexts;
 
+with Axe.Dummy_Locators;
 with Axe.Read_File;
 with Axe.Sidebars;
 with Axe.Wiki.HTML_Output;
@@ -66,49 +67,6 @@ with Ada.Characters.Wide_Wide_Latin_1;
 package body Axe.Wiki_View_Servlets is
 
    use type League.Strings.Universal_String;
-
-   package Dummy_Locators is
-
-      type Dummy_Shared_Locator is
-        new Matreshka.Internals.SAX_Locators.Shared_Abstract_Locator with
-      record
-         null;  --  System_Id : League.Strings.Universal_String;
-      end record;
-
-      overriding function Line
-        (Self : not null access constant Dummy_Shared_Locator)
-         return Natural is (0);
-
-      overriding function Column
-        (Self : not null access constant Dummy_Shared_Locator)
-         return Natural is (0);
-
-      overriding function Encoding
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String;
-
-      overriding function Version
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String is
-           (League.Strings.Empty_Universal_String);
-
-      overriding function Public_Id
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String is
-           (League.Strings.Empty_Universal_String);
-
-      overriding function System_Id
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String is
-           (League.Strings.Empty_Universal_String);
-
-      overriding function Base_URI
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.IRIs.IRI;
-
-      Locator : aliased Dummy_Shared_Locator;
-
-   end Dummy_Locators;
 
    function "+"
      (Text : Wide_Wide_String) return League.Strings.Universal_String
@@ -176,40 +134,6 @@ package body Axe.Wiki_View_Servlets is
     (URI : League.Strings.Universal_String)
       return League.Strings.Universal_String;
    --  Return corresponding .wiki virtual file name in context space
-
-   --------------------
-   -- Dummy_Locators --
-   --------------------
-
-   package body Dummy_Locators is
-
-      --------------
-      -- Base_URI --
-      --------------
-
-      overriding function Base_URI
-        (Self : not null access constant Dummy_Shared_Locator)
-         return League.IRIs.IRI
-      is
-         pragma Unreferenced (Self);
-      begin
-         return Result : League.IRIs.IRI;
-      end Base_URI;
-
-      --------------
-      -- Encoding --
-      --------------
-
-      overriding function Encoding
-       (Self : not null access constant Dummy_Shared_Locator)
-         return League.Strings.Universal_String
-      is
-         pragma Unreferenced (Self);
-      begin
-         return UTF_8;
-      end Encoding;
-
-   end Dummy_Locators;
 
    -------------------------
    -- Chech_Authorization --

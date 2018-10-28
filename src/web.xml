@@ -22,6 +22,7 @@
     <url-pattern>/forum/*</url-pattern>
     <url-pattern>/V-0.4w/*</url-pattern>
     <url-pattern>/.well-known/acme-challenge/*</url-pattern>
+    <url-pattern>/editor.html</url-pattern>
     <url-pattern>*.exe</url-pattern>
     <url-pattern>*.wiki</url-pattern>
     <url-pattern>*.css</url-pattern>
@@ -30,9 +31,10 @@
     <url-pattern>*.jpg</url-pattern>
     <url-pattern>*.txt</url-pattern>
     <url-pattern>*.js</url-pattern>
+    <url-pattern>*.json</url-pattern>
     <url-pattern>*.map</url-pattern>
-    <url-pattern>*.html</url-pattern>
     <url-pattern>*.atom</url-pattern>
+    <url-pattern>*.ico</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
