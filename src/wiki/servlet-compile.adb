@@ -42,66 +42,75 @@ package body Servlet.Compile is
         Request.Get_Parameter (+"id");
 
       Store : constant League.Strings.Universal_String :=
-        League.Strings.From_UTF_8_String (Prefix & "store/");
+        League.Strings.From_UTF_8_String (Prefix & "store/") & Id;
 
       File_Name : constant League.Strings.Universal_String :=
-        Store & Id & "/gcc-error.txt";
+        Store & "/gcc-error.txt";
 
-      Text  : constant League.Strings.Universal_String := Axe.Read_File
-        (File_Name, League.Text_Codecs.Codec_For_Application_Locale);
-
-      List  : constant League.String_Vectors.Universal_String_Vector :=
-        Text.Split (Ada.Characters.Wide_Wide_Latin_1.LF);
    begin
-      if Ada.Directories.Exists (File_Name.To_UTF_8_String) then
-         for J in 1 .. List.Length loop
-            declare
-               Parts : constant League.String_Vectors.Universal_String_Vector
-                 := List (J).Split (':');
-            begin
-               if Parts.Length >= 4 then
-                  declare
-                     Message : League.JSON.Objects.JSON_Object;
-                  begin
-                     Message.Insert
-                       (+"file",
-                        League.JSON.Values.To_JSON_Value (Parts (1)));
+      if not Ada.Directories.Exists (Store.To_UTF_8_String) then
+         Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
 
-                     Message.Insert
-                       (+"line",
-                        League.JSON.Values.To_JSON_Value
-                          (League.Holders.Universal_Integer'Wide_Wide_Value
-                               (Parts (2).To_Wide_Wide_String)));
+      elsif Ada.Directories.Exists (File_Name.To_UTF_8_String) then
+         declare
+            Text  : constant League.Strings.Universal_String := Axe.Read_File
+              (File_Name, League.Text_Codecs.Codec_For_Application_Locale);
 
-                     Message.Insert
-                       (+"column",
-                        League.JSON.Values.To_JSON_Value
-                          (League.Holders.Universal_Integer'Wide_Wide_Value
-                               (Parts (3).To_Wide_Wide_String)));
+            List  : constant League.String_Vectors.Universal_String_Vector :=
+              Text.Split (Ada.Characters.Wide_Wide_Latin_1.LF);
+         begin
+            for J in 1 .. List.Length loop
+               declare
+                  Parts : constant
+                    League.String_Vectors.Universal_String_Vector :=
+                      List (J).Split (':');
+               begin
+                  if Parts.Length >= 4 then
+                     declare
+                        Message : League.JSON.Objects.JSON_Object;
+                     begin
+                        Message.Insert
+                          (+"file",
+                           League.JSON.Values.To_JSON_Value (Parts (1)));
 
-                     Message.Insert
-                       (+"text",
-                        League.JSON.Values.To_JSON_Value
-                          (Parts.Slice (4, Parts.Length).Join (':')));
+                        Message.Insert
+                          (+"line",
+                           League.JSON.Values.To_JSON_Value
+                             (League.Holders.Universal_Integer'Wide_Wide_Value
+                                  (Parts (2).To_Wide_Wide_String)));
 
-                     Messages.Append (Message.To_JSON_Value);
-                  end;
-               end if;
-            end;
-         end loop;
+                        Message.Insert
+                          (+"column",
+                           League.JSON.Values.To_JSON_Value
+                             (League.Holders.Universal_Integer'Wide_Wide_Value
+                                  (Parts (3).To_Wide_Wide_String)));
 
-         Object.Insert (+"messages", Messages.To_JSON_Value);
-         Object.Insert (+"completed", League.JSON.Values.To_JSON_Value (True));
+                        Message.Insert
+                          (+"text",
+                           League.JSON.Values.To_JSON_Value
+                             (Parts.Slice (4, Parts.Length).Join (':')));
+
+                        Messages.Append (Message.To_JSON_Value);
+                     end;
+                  end if;
+               end;
+            end loop;
+
+            Object.Insert (+"messages", Messages.To_JSON_Value);
+            Object.Insert
+              (+"completed", League.JSON.Values.To_JSON_Value (True));
+
+            JSON.Set_Object (Object);
+            Response.Set_Status (Servlet.HTTP_Responses.OK);
+            Response.Set_Content_Type (+"application/json");
+            Response.Set_Character_Encoding (+"utf-8");
+            Response.Get_Output_Stream.Write (JSON.To_JSON);
+         end;
       else
-         Object.Insert
-           (+"completed", League.JSON.Values.To_JSON_Value (False));
+         Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
+         Response.Set_Header (+"Retry-After", +"2");
+         Response.Set_Header (+"Cache-Control", +"no-cache");
       end if;
-
-      JSON.Set_Object (Object);
-      Response.Set_Status (Servlet.HTTP_Responses.OK);
-      Response.Set_Content_Type (+"application/json");
-      Response.Set_Character_Encoding (+"utf-8");
-      Response.Get_Output_Stream.Write (JSON.To_JSON);
    end Do_Get;
 
    -------------
