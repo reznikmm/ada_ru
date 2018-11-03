@@ -1,3 +1,8 @@
+with Ada.Containers.Hashed_Sets;
+with Interfaces;
+
+with League.Holders;
+with League.JSON.Objects;
 with League.Strings;
 with Axe.Events;
 
@@ -24,10 +29,28 @@ package Servlet.Telegram is
 
 private
 
+   subtype User_Identifier is League.Holders.Universal_Integer;
+
+   function Hash (Value : User_Identifier) return Ada.Containers.Hash_Type;
+
+   package User_Sets is new Ada.Containers.Hashed_Sets
+     (Element_Type        => User_Identifier,
+      Hash                => Hash,
+      Equivalent_Elements => Interfaces."=",
+      "="                 => Interfaces."=");
+
    type Telegram_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
-      Token    : League.Strings.Universal_String;
-      Listener : access Axe.Events.Listener'Class;
+      Token     : League.Strings.Universal_String;
+      Listener  : access Axe.Events.Listener'Class;
+      New_Users : User_Sets.Set;
    end record;
+
+   type Message_Action is (Pass, Skip, Delete);
+
+   not overriding procedure Analyze_Message
+    (Self     : in out Telegram_Servlet;
+     Message  : League.JSON.Objects.JSON_Object;
+     Result   : out Message_Action);
 
    overriding procedure Do_Post
     (Self     : in out Telegram_Servlet;
