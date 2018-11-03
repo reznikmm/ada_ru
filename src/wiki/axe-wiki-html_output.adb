@@ -48,7 +48,7 @@ package body Axe.Wiki.HTML_Output is
 
    PRE    : constant U.Universal_String := +"pre";
    I      : constant U.Universal_String := +"i";
-   STRONG : constant U.Universal_String := +"strong";
+   STRONG : constant U.Universal_String := +"b";
    SPAN   : constant U.Universal_String := +"span";
    TT     : constant U.Universal_String := +"tt";
    DEL    : constant U.Universal_String := +"del";
@@ -99,8 +99,7 @@ package body Axe.Wiki.HTML_Output is
          Special := Self.Map.Element (Self.Special);
          Special.Process (Text, Self.Writer);
       else
-         Self.Writer.Characters
-           ("#" & Self.Special & League.Characters.Latin.Line_Feed & Text);
+         Self.Writer.Characters (Text);
       end if;
    end Characters;
 
@@ -251,7 +250,7 @@ package body Axe.Wiki.HTML_Output is
                      Result.Append
                        (League.Strings.Empty_Universal_String & Em_Dash);
                   end if;
-               elsif J = 1 or Word.Length > 3 then
+               elsif J = 1 or Word.Length > 2 then
                   if Prev.Is_Empty then
                      Result.Append (Word);
                   else
