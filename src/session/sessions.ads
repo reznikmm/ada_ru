@@ -3,6 +3,7 @@ with League.Strings;
 with League.String_Vectors;
 
 with Servlet.HTTP_Sessions;
+with League.Calendars;
 
 package Sessions is
 
@@ -23,9 +24,19 @@ package Sessions is
 private
 
    type HTTP_Session is new Servlet.HTTP_Sessions.HTTP_Session with record
-      Id   : League.Strings.Universal_String;
-      Info : User_Info;
+      Id       : League.Strings.Universal_String;
+      Info     : User_Info;
+      Created  : League.Calendars.Date_Time;
+      Accessed : League.Calendars.Date_Time;
    end record;
+
+   overriding function Get_Creation_Time
+    (Self : HTTP_Session) return League.Calendars.Date_Time;
+
+   overriding function Get_Last_Accessed_Time
+    (Self : HTTP_Session) return League.Calendars.Date_Time;
+
+   overriding function Is_New (Self : HTTP_Session) return Boolean;
 
    overriding function Get_Id
     (Self : HTTP_Session) return League.Strings.Universal_String;
