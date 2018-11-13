@@ -68,31 +68,32 @@ private
    package Stream_Element_Random is new Ada.Numerics.Discrete_Random
      (Ada.Streams.Stream_Element);
 
-   type State_Cache is tagged limited record
+   protected type State_Cache is
+
+      procedure Initialize;
+
+      procedure Create_Key
+        (Session_Id  : League.Strings.Universal_String;
+         Return_Path : League.Strings.Universal_String;
+         Result      : out League.Strings.Universal_String);
+
+      function Check_Key
+        (Session_Id : League.Strings.Universal_String;
+         Key        : League.Strings.Universal_String)
+         return Boolean;
+
+      function Get_Return_Path
+        (Session_Id : League.Strings.Universal_String)
+         return League.Strings.Universal_String;
+
+   private
       Random : Stream_Element_Random.Generator;
       Queue  : String_Lists.List;
       --  List of session in authorization progress
       Map    : State_Maps.Map;
       --  Map from session to corresponding 'state' to protect against
       --  cross-site request forgery attacks. Also it keeps return path.
-   end record;
-
-   not overriding function Create_Key
-     (Self        : in out State_Cache;
-      Session_Id  : League.Strings.Universal_String;
-      Return_Path : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
-
-   not overriding function Check_Key
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String;
-      Key        : League.Strings.Universal_String)
-      return Boolean;
-
-   not overriding function Get_Return_Path
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
+   end State_Cache;
 
    type OAuth_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
       Handler         : access Login_Handler'Class;

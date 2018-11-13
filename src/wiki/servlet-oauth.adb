@@ -64,64 +64,83 @@ package body Servlet.OAuth is
 
    Use_Trace : constant Boolean := True;
 
-   ---------------
-   -- Check_Key --
-   ---------------
+   protected body State_Cache is
 
-   not overriding function Check_Key
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String;
-      Key        : League.Strings.Universal_String)
-      return Boolean
-   is
-      use type League.Strings.Universal_String;
-   begin
-      return Self.Map.Contains (Session_Id) and then
-        Self.Map (Session_Id).State = Key;
-   end Check_Key;
+      ---------------
+      -- Check_Key --
+      ---------------
 
-   ----------------
-   -- Create_Key --
-   ----------------
+      function Check_Key
+        (Session_Id : League.Strings.Universal_String;
+         Key        : League.Strings.Universal_String)
+         return Boolean
+      is
+         use type League.Strings.Universal_String;
+      begin
+         return Map.Contains (Session_Id) and then
+           Map (Session_Id).State = Key;
+      end Check_Key;
 
-   not overriding function Create_Key
-     (Self        : in out State_Cache;
-      Session_Id  : League.Strings.Universal_String;
-      Return_Path : League.Strings.Universal_String)
-      return League.Strings.Universal_String
-   is
-      use type Ada.Containers.Count_Type;
-      Max_States : constant := 100;
-      Result : League.Strings.Universal_String;
-      Cursor : String_Lists.Cursor;
-      Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
-   begin
-      if Self.Map.Contains (Session_Id) then
-         Cursor := Self.Queue.Find (Session_Id);
-         Self.Queue.Delete (Cursor);
-         Self.Queue.Append (Session_Id);
-         Result := Self.Map (Session_Id).State;
-         --  Well, GNAT complains if we just update Path component
-         Self.Map (Session_Id) := (Result, Return_Path);
-         return Result;
-      end if;
+      ----------------
+      -- Create_Key --
+      ----------------
 
-      for J in 1 .. 12 loop
-         Data.Append (Stream_Element_Random.Random (Self.Random));
-      end loop;
+      procedure Create_Key
+        (Session_Id  : League.Strings.Universal_String;
+         Return_Path : League.Strings.Universal_String;
+         Result      : out League.Strings.Universal_String)
+      is
+         use type Ada.Containers.Count_Type;
+         Max_States : constant := 100;
+         Cursor : String_Lists.Cursor;
+         Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
+      begin
+         if Map.Contains (Session_Id) then
+            Cursor := Queue.Find (Session_Id);
+            Queue.Delete (Cursor);
+            Queue.Append (Session_Id);
+            Result := Map (Session_Id).State;
+            --  Well, GNAT complains if we just update Path component
+            Map (Session_Id) := (Result, Return_Path);
+            return;
+         end if;
 
-      Result := League.Base_Codecs.To_Base_64_URL (Data);
+         for J in 1 .. 12 loop
+            Data.Append (Stream_Element_Random.Random (Random));
+         end loop;
 
-      Self.Map.Insert (Session_Id, (Result, Return_Path));
-      Self.Queue.Append (Session_Id);
+         Result := League.Base_Codecs.To_Base_64_URL (Data);
 
-      if Self.Map.Length > Max_States then
-         Self.Map.Delete (Self.Queue.First_Element);
-         Self.Queue.Delete_First;
-      end if;
+         Map.Insert (Session_Id, (Result, Return_Path));
+         Queue.Append (Session_Id);
 
-      return Result;
-   end Create_Key;
+         if Map.Length > Max_States then
+            Map.Delete (Queue.First_Element);
+            Queue.Delete_First;
+         end if;
+      end Create_Key;
+
+   ---------------------
+   -- Get_Return_Path --
+   ---------------------
+
+      function Get_Return_Path
+        (Session_Id : League.Strings.Universal_String)
+         return League.Strings.Universal_String is
+      begin
+         return Map (Session_Id).Path;
+      end Get_Return_Path;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize is
+      begin
+         Stream_Element_Random.Reset (Random);
+      end Initialize;
+
+   end State_Cache;
 
    ---------------------------
    -- Decode_Facebook_Token --
@@ -397,10 +416,9 @@ package body Servlet.OAuth is
         Request.Get_Path_Info;
 
       function Login_Page return League.Strings.Universal_String is
+         Key       : League.Strings.Universal_String;
          Path      : constant League.Strings.Universal_String :=
            Request.Get_Parameter (+"path");
-         Key       : constant League.Strings.Universal_String :=
-           Self.Cache.Create_Key (Session, Path);
          XHTML     : constant League.Strings.Universal_String :=
            +"/login.xhtml.tmpl";
          Input     : aliased XML.SAX.Input_Sources.Streams.Files
@@ -411,6 +429,7 @@ package body Servlet.OAuth is
          Output    : aliased XML.SAX.Output_Destinations.Strings
            .String_Output_Destination;
       begin
+         Self.Cache.Create_Key (Session, Path, Key);
          --  Set template input
          Input.Open_By_File_Name (Context.Get_Real_Path (XHTML));
 
@@ -505,18 +524,6 @@ package body Servlet.OAuth is
 
       Response.Get_Output_Stream.Write (Login_Page);
    end Do_Get;
-
-   ---------------------
-   -- Get_Return_Path --
-   ---------------------
-
-   not overriding function Get_Return_Path
-     (Self       : in out State_Cache;
-      Session_Id : League.Strings.Universal_String)
-      return League.Strings.Universal_String is
-   begin
-      return Self.Map (Session_Id).Path;
-   end Get_Return_Path;
 
    ----------------------
    -- Get_Servlet_Info --
@@ -638,7 +645,7 @@ package body Servlet.OAuth is
       Settings  : League.Settings.Settings;
    begin
       return Result : OAuth_Servlet do
-         Stream_Element_Random.Reset (Result.Cache.Random);
+         Result.Cache.Initialize;
          Add_OAuth_Provider (Result.OAuth_Providers, +"facebook", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"github", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
