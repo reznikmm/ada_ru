@@ -75,7 +75,7 @@ package body Sessions.Managers is
             end loop;
          end;
 
-         Self.Events.On_User_Created (Info.Name, Info.Avatar);
+         --  Self.Events.On_User_Created (Info.Name, Info.Avatar);
       end Create_User;
 
       ---------------

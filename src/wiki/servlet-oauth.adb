@@ -489,6 +489,9 @@ package body Servlet.OAuth is
                   Self.OAuth_Providers (Path.Tail_From (2)).Client_Id,
                   Self.OAuth_Providers (Path.Tail_From (2)).Secure_Key,
                   Info);
+            elsif Path = +"/dropbox" then
+               Info.User := +"dropbox";
+               Info.Name := Token;
             end if;
 
             if not EMail.Is_Empty then
@@ -651,6 +654,7 @@ package body Servlet.OAuth is
          Add_OAuth_Provider (Result.OAuth_Providers, +"google", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"vk", Settings);
          Add_OAuth_Provider (Result.OAuth_Providers, +"mailru", Settings);
+         Add_OAuth_Provider (Result.OAuth_Providers, +"dropbox", Settings);
       end return;
    end Instantiate;
 

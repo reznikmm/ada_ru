@@ -90,4 +90,10 @@ library project Server is
 
    end Compiler;
 
+   package Binder is
+
+      for Default_Switches ("ada") use ("-E", "-W8");
+
+   end Binder;
+
 end Server;
