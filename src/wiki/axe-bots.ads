@@ -100,9 +100,22 @@ private
       Telegram_Origin,
       Viber_Origin);
 
-   type Original_Message (Origin : Origin_Kind := Other_Origin) is record
+   type Message_Kind is (Text, Photo);
+
+   type Original_Message
+     (Kind   : Message_Kind := Text;
+      Origin : Origin_Kind := Other_Origin) is
+   record
       Sender : User;
       Text   : League.Strings.Universal_String;
+
+      case Kind is
+         when Photo =>
+            URL     : League.Strings.Universal_String;
+            Caption : League.Strings.Universal_String;
+         when Axe.Bots.Text =>
+            null;
+      end case;
    end record;
 
    package Message_Queue_Interfaces is
@@ -136,6 +149,7 @@ private
       XMPP_Listener : aliased Axe.Bots.XMPP_Listener (Bot'Unchecked_Access);
       Telegram      : Telegram_Information;
       Viber         : Viber_Information;
+      File_Number   : Positive := 1;
    end record;
 
    not overriding procedure Send_Message

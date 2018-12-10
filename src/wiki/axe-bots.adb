@@ -1,5 +1,6 @@
 with Ada.Calendar;
 with Ada.Exceptions;
+with Ada.Streams.Stream_IO;
 with Ada.Wide_Wide_Text_IO;
 
 with AWS.Headers;
@@ -7,8 +8,13 @@ with AWS.Messages;
 with AWS.Response;
 
 with League.Characters.Latin;
+with League.Holders;
+with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Values;
+
+with XML.SAX.Attributes;
+with XML.SAX.Pretty_Writers;
 
 with XMPP.Presences;
 
@@ -42,6 +48,23 @@ package body Axe.Bots is
    procedure Write_Subscribers
      (Value : League.String_Vectors.Universal_String_Vector);
 
+   procedure Telegram_Request
+     (Self     : in out Bot'Class;
+      Method   : String;
+      Object   : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object);
+
+   package XMPP_Photos is
+      type XMPP_Photo is new XMPP.Messages.XMPP_Message with record
+         URL     : League.Strings.Universal_String;
+         Caption : League.Strings.Universal_String;
+      end record;
+
+      overriding procedure Custom_Content
+        (Self   : XMPP_Photo;
+         Writer : in out XML.SAX.Pretty_Writers.XML_Pretty_Writer'Class);
+   end XMPP_Photos;
+
    Send : constant array (IRC_Origin .. Viber_Origin) of access
      procedure (Self  : in out Bot'Class;
                 Value : Original_Message) :=
@@ -49,6 +72,52 @@ package body Axe.Bots is
       XMPP_Origin     => Send_XMPP'Access,
       Telegram_Origin => Send_Telegram'Access,
       Viber_Origin    => Send_Viber'Access);
+
+   package body XMPP_Photos is
+
+      xhtml_im : constant League.Strings.Universal_String :=
+        +"http://jabber.org/protocol/xhtml-im";
+
+      xhtml : constant League.Strings.Universal_String :=
+        +"http://www.w3.org/1999/xhtml";
+
+      --------------------
+      -- Custom_Content --
+      --------------------
+
+      overriding procedure Custom_Content
+        (Self   : XMPP_Photo;
+         Writer : in out XML.SAX.Pretty_Writers.XML_Pretty_Writer'Class)
+      is
+         Attrs : XML.SAX.Attributes.SAX_Attributes;
+      begin
+         Writer.Start_Prefix_Mapping (Namespace_URI => xhtml_im);
+
+         Writer.Start_Element
+           (Namespace_URI => xhtml_im,
+            Local_Name    => +"html");
+
+         Writer.Start_Prefix_Mapping (Namespace_URI => xhtml);
+
+         Writer.Start_Element
+           (Namespace_URI => xhtml,
+            Local_Name    => +"body");
+
+         Writer.Start_Element (Qualified_Name => +"p");
+
+         Attrs.Set_Value (+"src", Self.URL);
+         Attrs.Set_Value (+"alt", Self.Caption);
+         Writer.Start_Element (Qualified_Name => +"img", Attributes => Attrs);
+
+         Writer.End_Element (Qualified_Name => +"img");
+         Writer.End_Element (Qualified_Name => +"p");
+         Writer.End_Element (Namespace_URI => xhtml,
+                             Local_Name => +"body");
+         Writer.End_Element (Namespace_URI => xhtml_im,
+                             Local_Name => +"html");
+      end Custom_Content;
+
+   end XMPP_Photos;
 
    -------------------------
    -- Bind_Resource_State --
@@ -230,7 +299,7 @@ package body Axe.Bots is
       if not From.Ends_With ("/ada_ru") and not Text.Is_Empty then
          From := From.Tail_From (From.Last_Index ('/') + 1);
          Self.Bot.Send_Message
-           ((XMPP_Origin,
+           ((Axe.Bots.Text, XMPP_Origin,
             (Name => From, others => <>),
             Text));
       end if;
@@ -257,7 +326,7 @@ package body Axe.Bots is
       if Target.Starts_With ("#") then
          if From /= +"ada_ru" then
             Self.Bot.Send_Message
-              ((IRC_Origin,
+              ((Axe.Bots.Text, IRC_Origin,
                (Name => From, others => <>),
                Text));
          end if;
@@ -358,7 +427,8 @@ package body Axe.Bots is
       Self.Send_Message
         ((Sender => (others => <>),
           Text   => Text,
-          Origin => Other_Origin));
+          Origin => Other_Origin,
+          Kind   => Axe.Bots.Text));
    end Send_Message;
 
    not overriding procedure Send_Message
@@ -378,13 +448,10 @@ package body Axe.Bots is
       Value  : Original_Message)
    is
       Object : League.JSON.Objects.JSON_Object;
-      Result : AWS.Response.Data;
-      Header : AWS.Client.Header_List;
+      Ignore : League.JSON.Objects.JSON_Object;
       Text   : constant League.Strings.Universal_String :=
         "(" & Value.Sender.Name & ") " & Value.Text;
    begin
-      Header.Add ("Connection", "Keep-Alive");
-
       Object.Insert
         (+"chat_id",
          League.JSON.Values.To_JSON_Value (+"@adalang"));
@@ -393,20 +460,7 @@ package body Axe.Bots is
         (+"text",
          League.JSON.Values.To_JSON_Value (Text));
 
-      for J in 1 .. 2 loop
-         AWS.Client.Post
-           (Self.Telegram.Connection,
-            Result,
-            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
-            Content_Type => "application/json",
-            URI => "/bot" & Self.Telegram.Token.To_UTF_8_String &
-              "/sendMessage",
-            Headers => Header);
-
-         exit when AWS.Response.Status_Code (Result) in AWS.Messages.Success;
-
-         AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
-      end loop;
+      Telegram_Request (Self, "sendMessage", Object, Ignore);
    end Send_Telegram;
 
    ----------------
@@ -440,7 +494,17 @@ package body Axe.Bots is
       Sender.Insert (+"name", League.JSON.Values.To_JSON_Value (Nick));
       Object.Insert (+"sender", Sender.To_JSON_Value);
 
-      Object.Insert (+"type", League.JSON.Values.To_JSON_Value (+"text"));
+      case Value.Kind is
+         when Axe.Bots.Text =>
+            Object.Insert
+              (+"type", League.JSON.Values.To_JSON_Value (+"text"));
+         when Axe.Bots.Photo =>
+            Object.Insert
+              (+"type", League.JSON.Values.To_JSON_Value (+"picture"));
+            Object.Insert
+              (+"media", League.JSON.Values.To_JSON_Value (Value.URL));
+      end case;
+
       Object.Insert (+"text", League.JSON.Values.To_JSON_Value (Value.Text));
 
       for K in 1 .. Self.Viber.Subscribed.Length loop
@@ -480,16 +544,38 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Value  : Original_Message)
    is
-      Output : XMPP.Messages.XMPP_Message;
-      Jabber : constant League.Strings.Universal_String :=
-        +"ada-ru@conference.jabber.ru";
-      Text   : constant League.Strings.Universal_String :=
-        "(" & Value.Sender.Name & ") " & Value.Text;
+      procedure Send (Output : in out XMPP.Messages.XMPP_Message'Class);
+
+      procedure Send (Output : in out XMPP.Messages.XMPP_Message'Class) is
+         Jabber : constant League.Strings.Universal_String :=
+           +"ada-ru@conference.jabber.ru";
+         Text   : constant League.Strings.Universal_String :=
+           "(" & Value.Sender.Name & ") " & Value.Text;
+      begin
+         Output.Set_To (Jabber);
+         Output.Set_Type (XMPP.Group_Chat);
+         Output.Set_Body (Text);
+         Self.XMPP_Session.Send_Object (Output);
+      end Send;
    begin
-      Output.Set_To (Jabber);
-      Output.Set_Type (XMPP.Group_Chat);
-      Output.Set_Body (Text);
-      Self.XMPP_Session.Send_Object (Output);
+      case Value.Kind is
+         when Axe.Bots.Text =>
+            declare
+               Text_Output : XMPP.Messages.XMPP_Message;
+            begin
+               Send (Text_Output);
+            end;
+
+         when Axe.Bots.Photo =>
+            declare
+               Photo : XMPP_Photos.XMPP_Photo :=
+                 (XMPP.Messages.XMPP_Message with
+                  URL     => Value.URL,
+                  Caption => Value.Caption);
+            begin
+               Send (Photo);
+            end;
+      end case;
    end Send_XMPP;
 
    -------------------
@@ -526,8 +612,79 @@ package body Axe.Bots is
 
       Max_Quote : constant := 20;
 
+      procedure Fetch_Photo
+        (List : League.JSON.Arrays.JSON_Array;
+         URL  : out League.Strings.Universal_String);
+
       function Get_Nick (Object : League.JSON.Objects.JSON_Object)
         return League.Strings.Universal_String;
+
+      -----------------
+      -- Fetch_Photo --
+      -----------------
+
+      procedure Fetch_Photo
+        (List : League.JSON.Arrays.JSON_Array;
+         URL  : out League.Strings.Universal_String)
+      is
+         use type League.Holders.Universal_Integer;
+
+         Result    : AWS.Response.Data;
+         Object    : League.JSON.Objects.JSON_Object;
+         Response  : League.JSON.Objects.JSON_Object;
+         File_Path : League.Strings.Universal_String;
+         Max_Width : League.Holders.Universal_Integer := 0;
+      begin
+         for J in 1 .. List.Length loop
+            declare
+               Item  : constant League.JSON.Objects.JSON_Object :=
+                 List.Element (J).To_Object;
+               Width : constant League.Holders.Universal_Integer :=
+                 Item.Value (+"width").To_Integer;
+            begin
+               if Max_Width < Width then
+                  Max_Width := Width;
+                  Object.Insert (+"file_id", Item.Value (+"file_id"));
+               end if;
+            end;
+         end loop;
+
+         Telegram_Request (Self, "getFile", Object, Response);
+
+         if Response.Contains (+"file_path") then
+            File_Path := Response.Value (+"file_path").To_String;
+
+            AWS.Client.Get
+              (Self.Telegram.Connection,
+               Result,
+               URI => "/file/bot" & Self.Telegram.Token.To_UTF_8_String &
+                 "/" & File_Path.To_UTF_8_String);
+
+            if AWS.Response.Status_Code (Result) in AWS.Messages.Success then
+               declare
+                  Image  : Wide_Wide_String :=
+                    Positive'Wide_Wide_Image (Self.File_Number);
+                  Output : Ada.Streams.Stream_IO.File_Type;
+               begin
+                  Self.File_Number := Self.File_Number + 1;
+                  Image (1) := 'x';
+                  URL.Append ("/files/bot/");
+                  URL.Append (Image);
+                  URL.Append (".jpg");
+
+                  Ada.Streams.Stream_IO.Create
+                    (Output, Name => "install" & URL.To_UTF_8_String);
+
+                  Ada.Streams.Stream_IO.Write
+                    (Output,
+                     AWS.Response.Message_Body (Result));
+
+                  Ada.Streams.Stream_IO.Close (Output);
+                  URL.Prepend ("https://www.ada-ru.org");
+               end;
+            end if;
+         end if;
+      end Fetch_Photo;
 
       --------------
       -- Get_Nick --
@@ -594,7 +751,31 @@ package body Axe.Bots is
       if not Text.Is_Empty then
          Output.Append (Text);
       elsif Message.Contains (+"photo") then
-         Output.Append ("<прислал фото>");
+         declare
+            URL     : League.Strings.Universal_String;
+            Caption : League.Strings.Universal_String;
+         begin
+            if Message.Contains (+"caption") then
+               Caption := Message.Value (+"caption").To_String;
+               Output.Append (Caption);
+               Output.Append (" ");
+            else
+               Output.Append ("картинка ");
+            end if;
+
+            Fetch_Photo (Message.Value (+"photo").To_Array, URL);
+            Output.Append (URL);
+
+            Self.Send_Message
+              ((Axe.Bots.Photo,
+               Telegram_Origin,
+               Sender,
+               Output,
+               URL,
+               Caption));
+
+            return;
+         end;
       elsif Message.Contains (+"audio") then
          Output.Append ("<прислал аудио файл>");
       elsif Message.Contains (+"document") then
@@ -623,8 +804,50 @@ package body Axe.Bots is
          Output.Append ("<прислал venue>");
       end if;
 
-      Self.Send_Message ((Telegram_Origin, Sender, Output));
+      Self.Send_Message ((Axe.Bots.Text, Telegram_Origin, Sender, Output));
    end Telegram;
+
+   ----------------------
+   -- Telegram_Request --
+   ----------------------
+
+   procedure Telegram_Request
+     (Self     : in out Bot'Class;
+      Method   : String;
+      Object   : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object)
+   is
+      Result : AWS.Response.Data;
+      Header : AWS.Client.Header_List;
+   begin
+      Response := League.JSON.Objects.Empty_JSON_Object;
+      Header.Add ("Connection", "Keep-Alive");
+
+      for J in 1 .. 2 loop
+         AWS.Client.Post
+           (Self.Telegram.Connection,
+            Result,
+            Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+            Content_Type => "application/json",
+            URI => "/bot" & Self.Telegram.Token.To_UTF_8_String &
+              "/" & Method,
+            Headers => Header);
+
+         if AWS.Response.Status_Code (Result) in AWS.Messages.Success then
+            declare
+               Document : League.JSON.Documents.JSON_Document;
+            begin
+               Document := League.JSON.Documents.From_JSON
+                 (AWS.Response.Message_Body (Result));
+
+               Response := Document.To_JSON_Object;
+               exit;
+            end;
+         end if;
+
+         AWS.Client.Clear_SSL_Session (Self.Telegram.Connection);
+      end loop;
+   end Telegram_Request;
 
    -----------
    -- Viber --
@@ -653,7 +876,7 @@ package body Axe.Bots is
          if Object.Contains (+"text") then
             Text := Object.Value (+"text").To_String;
             if not Text.Is_Empty then
-               Self.Send_Message ((Viber_Origin, Sender, Text));
+               Self.Send_Message ((Axe.Bots.Text, Viber_Origin, Sender, Text));
             end if;
          end if;
 
