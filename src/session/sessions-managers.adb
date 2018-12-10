@@ -14,6 +14,31 @@ package body Sessions.Managers is
      return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
 
+   -----------------------
+   -- Change_Session_Id --
+   -----------------------
+
+   overriding procedure Change_Session_Id
+    (Self    : in out HTTP_Session_Manager;
+     Session : not null access Servlet.HTTP_Sessions.HTTP_Session'Class)
+   is
+      Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
+      New_Id : League.Strings.Universal_String;
+   begin
+      if Self.Map.Contains (Session.Get_Id) then
+         Self.Map.Delete (Session.Get_Id);
+      end if;
+
+      for J  in 1 .. 12 loop
+         Data.Append (Stream_Element_Random.Random (Self.Random));
+      end loop;
+
+      New_Id := League.Base_Codecs.To_Base_64 (Data);
+      Sessions.HTTP_Session (Session.all).Id := New_Id;
+
+      Self.Map.Insert (New_Id, Session);
+   end Change_Session_Id;
+
    --------------
    -- Do_Login --
    --------------
@@ -218,20 +243,10 @@ package body Sessions.Managers is
      (Self : in out HTTP_Session_Manager)
       return access Servlet.HTTP_Sessions.HTTP_Session'Class
    is
-      Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
-      New_Id : League.Strings.Universal_String;
       Result : Session_Access;
    begin
-      for J  in 1 .. 12 loop
-         Data.Append (Stream_Element_Random.Random (Self.Random));
-      end loop;
-
-      New_Id := League.Base_Codecs.To_Base_64 (Data);
-
-      Result := new Sessions.HTTP_Session'
-        (Servlet.HTTP_Sessions.HTTP_Session with Id => New_Id, others => <>);
-
-      Self.Map.Insert (New_Id, Result);
+      Result := new Sessions.HTTP_Session;
+      Self.Change_Session_Id (Result);
 
       return Result;
    end New_Session;

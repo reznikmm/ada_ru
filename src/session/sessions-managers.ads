@@ -58,6 +58,10 @@ private
     (Self : in out HTTP_Session_Manager)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class;
 
+   overriding procedure Change_Session_Id
+    (Self    : in out HTTP_Session_Manager;
+     Session : not null access Servlet.HTTP_Sessions.HTTP_Session'Class);
+
    overriding procedure Do_Login
     (Self     : in out HTTP_Session_Manager;
      Info     : Sessions.User_Info;
