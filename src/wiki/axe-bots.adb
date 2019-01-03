@@ -840,7 +840,7 @@ package body Axe.Bots is
                Document := League.JSON.Documents.From_JSON
                  (AWS.Response.Message_Body (Result));
 
-               Response := Document.To_JSON_Object;
+               Response := Document.To_JSON_Object.Value (+"result").To_Object;
                exit;
             end;
          end if;
