@@ -3,8 +3,14 @@ create table posts (
   author  varchar not null,
   sent    varchar not null,
   parent  varchar,
-  subject varchar not null,
-  text    varchar);
+  subject varchar not null);
+
+create table post_lines (
+  post    varchar not null references posts,
+  pos     integer not null,
+  quote   integer not null default 0,
+  text    varchar,
+  primary key (post, pos));
 
 create table forums (
   id       integer primary key,

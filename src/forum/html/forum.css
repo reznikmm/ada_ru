@@ -17,24 +17,59 @@
 .forum-list {
 }
 .forum-list-title {
-    background-color: grey;
+    background-color: #333;
     color: white;
-    border: grey solid 1px;
+    border: #333 solid 1px;
     padding: 0em 0.5em;
 }
 .forum-list-item {
-    background-color: white;
-    color: grey;
-    border: grey solid 1px;
+    background-color: #999;
+    color: #333;
+    border: #333 solid 1px;
     padding: 0em 0.5em;
 }
 .forum-list-post {
-    border: grey solid 1px;
+    border: #333 solid 1px;
     padding: 0em 0.5em;
 }
+.forum-list-post {
+    font-family: monospace;
+    padding: 0em 0.5em;
+    border: black solid 1px;
+}
+.forum-list-post p{
+    padding-top: 4px;
+    margin: 0px;
+}
+
+.para-q0 {
+    padding-left: 10px;
+    background-color: #FFF;
+}
+.para-q1 {
+    border-left: black solid 2px;
+    padding-left: 8px;
+    background-color: #EEE;
+}
+.para-q2 {
+    border-left: black solid 4px;
+    padding-left: 6px;
+    background-color: #DDD;
+}
+.para-q3 {
+    border-left: black solid 6px;
+    padding-left: 4px;
+    background-color: #CCC;
+}
+.para-q4 {
+    border-left: black solid 7px;
+    padding-left: 3px;
+    background-color: #BBB;
+}
+
 a {
     text-decoration: none;
-    color: grey;
+    color: #333;
 }
 
 /*

@@ -11,6 +11,7 @@
 
 with Ada.Command_Line;
 with Ada.Containers.Hashed_Maps;
+with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Streams.Stream_IO;
 with Ada.Wide_Wide_Text_IO;
 
@@ -21,6 +22,7 @@ with League.Base_Codecs;
 with League.Calendars.ISO_8601;
 with League.Characters.Latin;
 with League.Holders;
+with League.Holders.Integers;
 with League.JSON.Documents;
 with League.JSON.Objects;
 with League.JSON.Values;
@@ -526,6 +528,7 @@ procedure Import_Mail is
    end Messages;
 
    package Mails is
+
       type Mail is tagged record
          From        : League.Strings.Universal_String;
          Date        : League.Calendars.Date_Time;
@@ -533,6 +536,7 @@ procedure Import_Mail is
          Message_Id  : League.Strings.Universal_String;
          Subject     : League.Strings.Universal_String;
          Text        : League.Strings.Universal_String;
+         Is_Flowed   : Boolean := False;
       end record;
 
       function Read_Mail (Text : League.Strings.Universal_String) return Mail;
@@ -576,6 +580,17 @@ procedure Import_Mail is
       is
          use type League.Strings.Universal_String;
 
+         procedure Read_Plain_Text
+           (Part   : Messages.Message;
+            Result : in out Mail);
+         --  Read given message when it has Content-Type = text/plain
+
+         procedure Find_Plain_Text
+           (Part   : Messages.Message;
+            Result : in out Mail;
+            Found  : in out Boolean);
+         --  Find in given multipart message a plain text part and read it
+
          Text_HTML : constant League.Strings.Universal_String :=
            +"text/html";
          Text_Plain : constant League.Strings.Universal_String :=
@@ -595,10 +610,101 @@ procedure Import_Mail is
          Eight_Bit : constant League.Strings.Universal_String := +"8bit";
          Quoted_Printable : constant League.Strings.Universal_String :=
            +"quoted-printable";
+         Flowed : constant League.Strings.Universal_String := +"flowed";
          X_Original_From  : constant League.Strings.Universal_String :=
            +"X-Original-From";
          X_Forum_User  : constant League.Strings.Universal_String :=
            +"X-Forum-User";
+
+         function Is_Multipart (CT : League.Strings.Universal_String)
+           return Boolean is
+             (CT ** Multipart_Mixed
+              or else CT in Multipart_Alternative
+                            | Multipart_Related
+                            | Multipart_Signed);
+         --  Check if given Content-Type is kind of multipart
+
+         ---------------------
+         -- Find_Plain_Text --
+         ---------------------
+
+         procedure Find_Plain_Text
+           (Part   : Messages.Message;
+            Result : in out Mail;
+            Found  : in out Boolean)
+         is
+            Boundary : constant League.Strings.Universal_String :=
+              Part.Header (Content_Type, +"boundary");
+            Parts : constant Messages.Message_Array
+              := Part.Nested_Parts (Boundary);
+            CT : League.Strings.Universal_String;
+         begin
+            for J in Parts'Range loop
+               CT := Parts (J).Header (Content_Type, +"");
+
+               if CT = Text_Plain then
+                  Read_Plain_Text (Parts (J), Result);
+                  Found := True;
+                  exit;
+               elsif Is_Multipart (CT) then
+                  Find_Plain_Text (Parts (J), Result, Found);
+                  exit when Found;
+               end if;
+            end loop;
+         end Find_Plain_Text;
+
+         ---------------------
+         -- Read_Plain_Text --
+         ---------------------
+
+         procedure Read_Plain_Text
+           (Part   : Messages.Message;
+            Result : in out Mail)
+         is
+            CTE      : constant League.Strings.Universal_String :=
+              Part.Header (Content_Transfer_Encoding, +"");
+            Charset : constant League.Strings.Universal_String :=
+              Part.Header (Content_Type, +"charset");
+            Format : constant League.Strings.Universal_String :=
+              Part.Header (Content_Type, +"format");
+         begin
+            Result.Is_Flowed := Format ** Flowed;
+
+            if CTE ** Base_64 then
+               declare
+                  Codec : constant League.Text_Codecs.Text_Codec :=
+                    League.Text_Codecs.Codec (Charset);
+                  Bytes : constant League.Stream_Element_Vectors
+                    .Stream_Element_Vector
+                      := Part.Decode_Base64_Body;
+               begin
+                  Result.Text := Codec.Decode (Bytes);
+               end;
+            elsif CTE ** Quoted_Printable then
+               Result.Text :=
+                 Decode_Quoted_Printable
+                   (Charset,
+                    Part.Get_Body_As_Text,
+                    Header => False);
+
+            elsif CTE = Seven_Bit then
+               Result.Text := Part.Get_Body_As_Text;
+
+            elsif Data'Length = 0 then
+               if CTE.Is_Empty or else CTE ** Eight_Bit then
+                  Result.Text := Part.Get_Body_As_Text;
+                  --  Bogus encoding in yahoo
+                  Result.Text := Replace_Placeholders (Result.Text);
+               else
+                  raise Constraint_Error
+                    with "Unknown CTE " & CTE.To_UTF_8_String;
+               end if;
+            elsif not Charset.Is_Empty then
+               Result.Text := Part.Get_Body_As_Text (Charset);
+            else
+               raise Constraint_Error with "Empty CTE!";
+            end if;
+         end Read_Plain_Text;
 
          Root    : constant Messages.Message :=
            Messages.Read_Message (Text, Data);
@@ -645,96 +751,15 @@ procedure Import_Mail is
          end if;
 
          if CT ** Text_Plain or CT.Is_Empty then
-            if CTE ** Base_64 then
-               declare
-                  Codec : constant League.Text_Codecs.Text_Codec :=
-                    League.Text_Codecs.Codec (Charset);
-                  Bytes : constant League.Stream_Element_Vectors
-                    .Stream_Element_Vector
-                      := Root.Decode_Base64_Body;
-               begin
-                  Result.Text := Codec.Decode (Bytes);
-               end;
-            elsif CTE ** Quoted_Printable then
-               Result.Text :=
-                 Decode_Quoted_Printable
-                   (Charset,
-                    Root.Get_Body_As_Text,
-                    Header => False);
 
-            elsif CTE = Seven_Bit then
-               Result.Text := Root.Get_Body_As_Text;
+            Read_Plain_Text (Root, Result);
 
-            elsif Data'Length = 0 then
-               if CTE.Is_Empty or else CTE ** Eight_Bit then
-                  Result.Text := Root.Get_Body_As_Text;
-                  --  Bogus encoding in yahoo
-                  Result.Text := Replace_Placeholders (Result.Text);
-               else
-                  raise Constraint_Error
-                    with "Unknown CTE " & CTE.To_UTF_8_String;
-               end if;
-            elsif not Charset.Is_Empty then
-               Result.Text := Root.Get_Body_As_Text (Charset);
-            else
-               raise Constraint_Error with "Empty CTE!";
-            end if;
-         elsif CT ** Multipart_Mixed
-           or else CT in Multipart_Alternative | Multipart_Related
-             | Multipart_Signed
-         then
+         elsif Is_Multipart (CT) then
             declare
-               Boundary : constant League.Strings.Universal_String :=
-                 Root.Header (Content_Type, +"boundary");
-               Parts : constant Messages.Message_Array
-                 := Root.Nested_Parts (Boundary);
+               Found : Boolean := False;
             begin
-               for J in Parts'Range loop
-                  if Parts (J).Header (Content_Type, +"") = Text_Plain then
-                     declare
-                        CTE : constant League.Strings.Universal_String :=
-                          Parts (J).Header (Content_Transfer_Encoding);
-                        Charset : League.Strings.Universal_String :=
-                          Parts (J).Header (Content_Type, +"charset");
-                     begin
-                        if Charset.Is_Empty then
-                           Charset.Append ("utf-8");
-                        end if;
-
-                        if CTE = Eight_Bit
-                          or else CTE = Seven_Bit
-                          or else CTE.Is_Empty
-                        then
-                           --  Bogus encoding in yahoo
-                           Result.Text.Append (Parts (J).Get_Body_As_Text);
-
-                        elsif CTE = Base_64 then
-                           declare
-                              Codec : constant League.Text_Codecs.Text_Codec :=
-                                League.Text_Codecs.Codec (Charset);
-                              Bytes : constant League.Stream_Element_Vectors
-                                .Stream_Element_Vector
-                                  := Parts (J).Decode_Base64_Body;
-                           begin
-                              Result.Text.Append
-                                (Strinp_Carriage_Return
-                                   (Codec.Decode (Bytes)));
-                           end;
-                        elsif CTE = Quoted_Printable then
-                           Result.Text.Append
-                             (Strinp_Carriage_Return
-                                (Decode_Quoted_Printable
-                                     (Charset,
-                                      Parts (J).Get_Body_As_Text,
-                                      Header => False)));
-
-                        else
-                           raise Constraint_Error with
-                             "Unknown CTE: " & CTE.To_UTF_8_String;
-                        end if;
-                     end;
-                  end if;
-               end loop;
+               Find_Plain_Text (Root, Result, Found);
+               pragma Assert (Found);
             end;
          elsif CT = Text_HTML then
             if CTE = Eight_Bit then
@@ -1277,15 +1302,54 @@ procedure Import_Mail is
    end Storage;
 
    package body Storage is
+      type Paragraph is record
+         Text  : League.Strings.Universal_String;
+         Quote : Natural := 0;
+      end record;
+
+      type Optional_Paragraph (Is_Set : Boolean := False) is record
+         case Is_Set is
+            when True =>
+               Value : Paragraph;
+            when False =>
+               null;
+         end case;
+      end record;
+
+      package Paragraph_Lists is new Ada.Containers.Doubly_Linked_Lists
+        (Paragraph);
+
+      procedure Parse_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List);
+      --  Split message text to list of paragraphs
+
+      procedure Parse_Flowed_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List);
+
+      procedure Parse_Plain_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List);
+
       SQL_Text : constant League.Strings.Universal_String :=
-        +("insert into posts (author, sent, parent, id, subject, text) " &
-            "values (:f,(:d),:r,:i,:s,:t)");
+        +("insert into posts (author, sent, parent, id, subject) " &
+            "values (:f,(:d),:r,:i,:s)");
+      SQL_Para_Text : constant League.Strings.Universal_String :=
+        +("insert into post_lines (post, pos, quote, text) " &
+            "values (:i,:p,:q,:t)");
       Format :  constant League.Strings.Universal_String :=
         +"yyyy-MM-dd HH:mm:ss";
 
+      -----------------
+      -- Insert_Post --
+      -----------------
+
       procedure Insert_Post (Value : Mails.Mail) is
          Option : SQL.Options.SQL_Options;
+         List   : Paragraph_Lists.List;
       begin
+         Parse_Message (Value, List);
          Option.Set (+"dbname", +"mail");
          declare
             DB : SQL.Databases.SQL_Database :=
@@ -1310,7 +1374,6 @@ procedure Import_Mail is
                  (+":i", League.Holders.To_Holder (Value.Message_Id));
 
                S.Bind_Value (+":s", League.Holders.To_Holder (Value.Subject));
-               S.Bind_Value (+":t", League.Holders.To_Holder (Value.Text));
                S.Execute;
 
                if not S.Error_Message.Is_Empty then
@@ -1319,8 +1382,185 @@ procedure Import_Mail is
                   Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
                end if;
             end;
+
+            declare
+               S : SQL.Queries.SQL_Query := DB.Query (SQL_Para_Text);
+               Index : Positive := 1;
+            begin
+               for Para of List loop
+                  S.Bind_Value
+                    (+":i", League.Holders.To_Holder (Value.Message_Id));
+
+                  S.Bind_Value
+                    (+":p", League.Holders.Integers.To_Holder (Index));
+
+                  S.Bind_Value
+                    (+":q", League.Holders.Integers.To_Holder (Para.Quote));
+
+                  S.Bind_Value (+":t", League.Holders.To_Holder (Para.Text));
+                  Index := Index + 1;
+                  S.Execute;
+
+                  if not S.Error_Message.Is_Empty then
+                     Ada.Wide_Wide_Text_IO.Put_Line
+                       (S.Error_Message.To_Wide_Wide_String);
+                     Ada.Command_Line.Set_Exit_Status
+                       (Ada.Command_Line.Failure);
+                  end if;
+               end loop;
+            end;
          end;
       end Insert_Post;
+
+      --------------------------
+      -- Parse_Flowed_Message --
+      --------------------------
+
+      procedure Parse_Flowed_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List)
+      is
+         Prev    : Optional_Paragraph;
+         Lines   : constant League.String_Vectors.Universal_String_Vector :=
+           Value.Text.Split
+             (League.Characters.Latin.Line_Feed,
+              League.Strings.Keep_Empty);
+      begin
+         for J in 1 .. Lines.Length loop
+            declare
+               Line  : League.Strings.Universal_String := Lines.Element (J);
+               Quote : Natural := 0;
+            begin
+               for K in 1 .. Line.Length loop
+                  if Line.Element (K).To_Wide_Wide_Character = '>' then
+                     Quote := Quote + 1;
+                  else
+                     exit;
+                  end if;
+               end loop;
+
+               Line := Line.Tail_From (Quote + 1);
+
+               if Line.Starts_With (" ") then
+                  --  line has been space-stuffed
+                  Line := Line.Tail_From (2);
+               end if;
+
+               if Prev.Is_Set then
+                  pragma Assert (Prev.Value.Quote = Quote);
+                  Prev.Value.Text.Append (Line);
+
+                  if not Line.Ends_With (" ") then
+                     Result.Append (Prev.Value);
+                     Prev := (Is_Set => False);
+                  end if;
+               elsif Line.Ends_With (" ") then
+                  Prev := (Is_Set => True,
+                           Value  => (Quote => Quote, Text => Line));
+               else
+                  Result.Append ((Quote => Quote, Text => Line));
+               end if;
+            end;
+         end loop;
+      end Parse_Flowed_Message;
+
+      -------------------
+      -- Parse_Message --
+      -------------------
+
+      procedure Parse_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List)
+      is
+      begin
+         if Value.Is_Flowed then
+            Parse_Flowed_Message (Value, Result);
+         else
+            Parse_Plain_Message (Value, Result);
+         end if;
+
+         --  Drop any empty or quoted paragraphs at the end of message
+         while not Result.Is_Empty loop
+            declare
+               Last : constant Paragraph := Result.Last_Element;
+            begin
+               exit when Last.Quote = 0 and not Last.Text.Is_Empty;
+               Result.Delete_Last;
+            end;
+         end loop;
+      end Parse_Message;
+
+      -------------------------
+      -- Parse_Plain_Message --
+      -------------------------
+
+      procedure Parse_Plain_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List)
+      is
+         subtype Full_Line is Positive range 65 .. 79;
+         --  If line length in this range suppose that it has soft line break
+
+         Prev    : Optional_Paragraph;
+         Lines   : constant League.String_Vectors.Universal_String_Vector :=
+           Value.Text.Split
+             (League.Characters.Latin.Line_Feed,
+              League.Strings.Keep_Empty);
+      begin
+         for J in 1 .. Lines.Length loop
+            declare
+               Line  : League.Strings.Universal_String := Lines.Element (J);
+               Quote : Natural := 0;
+               Force : Boolean;
+            begin
+               if Line.Starts_With (">") then
+                  for K in 1 .. Line.Length loop
+                     if Line.Element (K).To_Wide_Wide_Character = '>' then
+                        Quote := Quote + 1;
+                     elsif Line.Element (K).To_Wide_Wide_Character /= ' ' then
+                        Line := Line.Tail_From (K - 1);
+                        exit;
+                     end if;
+
+                     if K = Line.Length then
+                        Line.Clear;
+                     end if;
+                  end loop;
+               end if;
+
+               Force := Line.Starts_With ("- ")
+                 or else (Line.Length > 1 and then
+                          Line (2).To_Wide_Wide_Character = ')');
+
+               if Prev.Is_Set and then
+                 (Prev.Value.Quote /= Quote or Force)
+               then
+                  Result.Append (Prev.Value);
+                  Prev := (Is_Set => False);
+               end if;
+
+               if Prev.Is_Set then
+                  Prev.Value.Text.Append (" ");
+                  Prev.Value.Text.Append (Line);
+
+                  if Line.Length not in Full_Line then
+                     Result.Append (Prev.Value);
+                     Prev := (Is_Set => False);
+                  end if;
+               elsif Line.Length in Full_Line then
+                  Prev := (Is_Set => True,
+                           Value  => (Quote => Quote, Text => Line));
+               else
+                  Result.Append ((Quote => Quote, Text => Line));
+               end if;
+            end;
+         end loop;
+
+         if Prev.Is_Set then
+            Result.Append (Prev.Value);
+         end if;
+      end Parse_Plain_Message;
+
    end Storage;
 
    Value : League.Strings.Universal_String :=

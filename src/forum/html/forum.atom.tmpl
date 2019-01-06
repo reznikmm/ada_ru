@@ -23,7 +23,9 @@
       <author>
         <name>${topic.starter.author.name}</name>
       </author>
-      <content>${topic.starter.text}</content>
+      <content>
+        <mtl:for expression="para of topic.starter.para">${para.text}</mtl:for>
+      </content>
     </entry>
   </mtl:for>
 </feed>

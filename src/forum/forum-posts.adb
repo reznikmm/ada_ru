@@ -1,5 +1,6 @@
 with League.Calendars.ISO_8601;
 with League.Holders;
+with League.Holders.Integers;
 with League.String_Vectors;
 with SQL.Queries;
 
@@ -124,7 +125,9 @@ package body Forum.Posts is
       end To_Date;
 
       Query : SQL.Queries.SQL_Query := DB.Query
-        (+"select id,author,sent,parent,subject,text from posts");
+        (+"select id,author,sent,parent,subject from posts");
+      Q2 : SQL.Queries.SQL_Query := DB.Query
+        (+"select text, quote from post_lines where post=:p order by pos");
    begin
       Query.Execute;
 
@@ -136,10 +139,23 @@ package body Forum.Posts is
                     Date     => To_Date (Query.Value (3)),
                     Parent   => To_String (Query.Value (4)),
                     Subject  => League.Holders.Element (Query.Value (5)),
-                    Text     => League.Holders.Element (Query.Value (6)),
+                    Para     => Paragraph_Lists.Empty_List,
                     Nickname => League.Strings.Empty_Universal_String,
                     Topic    => League.Strings.Empty_Universal_String);
          begin
+            Q2.Bind_Value (+":p", Query.Value (1));
+            Q2.Execute;
+
+            while Q2.Next loop
+               declare
+                  Para : constant Paragraph :=
+                    (Text  => League.Holders.Element (Q2.Value (1)),
+                     Quote => League.Holders.Integers.Element (Q2.Value (2)));
+               begin
+                  Object.Para.Append (Para);
+               end;
+            end loop;
+
             Users.Create_User (Object.From, Object.Nickname);
             Self.Post_Map.Insert (Object.Id, Object);
          end;

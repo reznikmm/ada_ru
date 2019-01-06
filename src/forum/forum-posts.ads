@@ -1,3 +1,4 @@
+with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Containers.Hashed_Maps;
 
 with League.Calendars;
@@ -35,6 +36,14 @@ package Forum.Posts is
       Left  : League.Strings.Universal_String;
       Right : League.Strings.Universal_String) return Boolean;
 
+   type Paragraph is record
+      Text  : League.Strings.Universal_String;
+      Quote : Natural := 0;
+   end record;
+
+   package Paragraph_Lists is new Ada.Containers.Doubly_Linked_Lists
+     (Paragraph);
+
 private
 
    type Post is record
@@ -43,7 +52,7 @@ private
       Date     : League.Calendars.Date_Time;
       Parent   : League.Strings.Universal_String;
       Subject  : League.Strings.Universal_String;
-      Text     : League.Strings.Universal_String;
+      Para     : Paragraph_Lists.List;
       --
       Nickname : League.Strings.Universal_String;
       Topic    : League.Strings.Universal_String;
