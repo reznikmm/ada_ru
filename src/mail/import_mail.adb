@@ -1016,11 +1016,16 @@ procedure Import_Mail is
          Charset : League.Strings.Universal_String)
            return League.Strings.Universal_String
       is
+         UTF_8 : constant League.Strings.Universal_String := +"utf-8";
          Codec : constant League.Text_Codecs.Text_Codec :=
            League.Text_Codecs.Codec (Charset);
       begin
          if Self.Data.Is_Empty then
-            raise Constraint_Error with "Expected binary file";
+            if Charset ** UTF_8 then
+               return Self.Text;
+            else
+               raise Constraint_Error with "Expected binary file";
+            end if;
          end if;
 
          return Codec.Decode (Self.Data);
