@@ -34,3 +34,10 @@ create table emails (
   main     char(1));
 
 INSERT INTO forums VALUES(1,10,'Обсуждение языка Ада');
+
+create table tg_books (
+  id        varchar primary key,
+  file_name varchar not null,
+  title     varchar,
+  caption   varchar,
+  descr     varchar);

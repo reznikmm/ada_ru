@@ -7,11 +7,15 @@ with AWS.Headers;
 with AWS.Messages;
 with AWS.Response;
 
+with League.Calendars.ISO_8601;
 with League.Characters.Latin;
 with League.Holders;
+with League.Holders.Integers;
 with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Values;
+
+with SQL.Queries;
 
 with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
@@ -246,6 +250,17 @@ package body Axe.Bots is
               (Ada.Exceptions.Exception_Information (E)).To_Wide_Wide_String);
    end Bot_Loop;
 
+   -----------------
+   -- Get_Options --
+   -----------------
+
+   function Get_Options return SQL.Options.SQL_Options is
+   begin
+      return Result : SQL.Options.SQL_Options do
+         Result.Set (+"dbname", +"mail");
+      end return;
+   end Get_Options;
+
    ----------------
    -- Initialize --
    ----------------
@@ -254,8 +269,7 @@ package body Axe.Bots is
      (Self     : in out Bot;
       Password : League.Strings.Universal_String;
       Telegram : League.Strings.Universal_String;
-      Viber    : League.Strings.Universal_String)
-   is
+      Viber    : League.Strings.Universal_String) is
    begin
       --  XMPP.Logger.Enable_Debug;
       --  AWS.Client.Set_Debug (True);
@@ -277,6 +291,9 @@ package body Axe.Bots is
       Self.Telegram.Token := Telegram;
 
       AWS.Client.Create (Self.Viber.Connection, "https://chatapi.viber.com");
+
+      Self.DB.Open;
+
       Self.Viber.Token := Viber;
       Read_Subscribers (Self.Viber.Subscribed);
    end Initialize;
@@ -619,6 +636,9 @@ package body Axe.Bots is
       function Get_Nick (Object : League.JSON.Objects.JSON_Object)
         return League.Strings.Universal_String;
 
+      procedure Get_Document;
+      --  Extract and save document from the message if any
+
       -----------------
       -- Fetch_Photo --
       -----------------
@@ -662,6 +682,9 @@ package body Axe.Bots is
 
             if AWS.Response.Status_Code (Result) in AWS.Messages.Success then
                declare
+                  Date   : constant League.Strings.Universal_String :=
+                    League.Calendars.ISO_8601.Image
+                     (+"yyyy-MM-dd-", League.Calendars.Clock);
                   Image  : Wide_Wide_String :=
                     Positive'Wide_Wide_Image (Self.File_Number);
                   Output : Ada.Streams.Stream_IO.File_Type;
@@ -669,6 +692,7 @@ package body Axe.Bots is
                   Self.File_Number := Self.File_Number + 1;
                   Image (1) := 'x';
                   URL.Append ("/files/bot/");
+                  URL.Append (Date);
                   URL.Append (Image);
                   URL.Append (".jpg");
 
@@ -685,6 +709,47 @@ package body Axe.Bots is
             end if;
          end if;
       end Fetch_Photo;
+
+      ------------------
+      -- Get_Document --
+      ------------------
+
+      procedure Get_Document is
+         Doc       : League.JSON.Objects.JSON_Object;
+         File_Id   : League.Strings.Universal_String;
+         File_Name : League.Strings.Universal_String;
+      begin
+         if not Message.Value (+"document").Is_Object then
+            return;
+         end if;
+
+         Doc := Message.Value (+"document").To_Object;
+         File_Id := Doc.Value (+"file_id").To_String;
+         File_Name := Doc.Value (+"file_name").To_String;
+
+         declare
+            Q : SQL.Queries.SQL_Query := Self.DB.Query
+              (+"select count(*) from tg_books where id=:id");
+         begin
+            Q.Bind_Value (+":id", League.Holders.To_Holder (File_Id));
+            Q.Execute;
+
+            if Q.Next then
+               if League.Holders.Integers.Element (Q.Value (1)) > 0 then
+                  return;
+               end if;
+            end if;
+         end;
+
+         declare
+            Q : SQL.Queries.SQL_Query := Self.DB.Query
+              (+"insert into tg_books (id, file_name) values (:id, :name)");
+         begin
+            Q.Bind_Value (+":id", League.Holders.To_Holder (File_Id));
+            Q.Bind_Value (+":name", League.Holders.To_Holder (File_Name));
+            Q.Execute;
+         end;
+      end Get_Document;
 
       --------------
       -- Get_Nick --
@@ -714,6 +779,7 @@ package body Axe.Bots is
         Message.Value (+"forward_from").To_Object;
    begin
       if Chat.Value (+"username").To_String /= +"adalang" then
+         Get_Document;
          return;
       end if;
 
@@ -779,6 +845,7 @@ package body Axe.Bots is
       elsif Message.Contains (+"audio") then
          Output.Append ("<прислал аудио файл>");
       elsif Message.Contains (+"document") then
+         Get_Document;
          Output.Append ("<прислал документ>");
       elsif Message.Contains (+"sticker") then
          declare
