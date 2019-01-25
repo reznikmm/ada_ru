@@ -156,10 +156,9 @@ package body IRC.Sessions is
       User      : League.Strings.Universal_String;
       Real_Name : League.Strings.Universal_String)
    is
-      Address : constant GNAT.Sockets.Sock_Addr_Type :=
+      Address : GNAT.Sockets.Sock_Addr_Type :=
         (Family => GNAT.Sockets.Family_Inet,
-         Addr   => GNAT.Sockets.Addresses
-           (GNAT.Sockets.Get_Host_By_Name (Host.To_UTF_8_String), 1),
+         Addr   => <>,
          Port   => Port);
       Vector  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Value   : League.Strings.Universal_String;
@@ -169,9 +168,11 @@ package body IRC.Sessions is
       GNAT.Sockets.Create_Socket (Socket);
 
       begin
+         Address.Addr := GNAT.Sockets.Addresses
+           (GNAT.Sockets.Get_Host_By_Name (Host.To_UTF_8_String), 1);
          GNAT.Sockets.Connect_Socket (Socket, Address);
       exception
-         when GNAT.Sockets.Socket_Error =>
+         when GNAT.Sockets.Socket_Error | GNAT.Sockets.Host_Error =>
             GNAT.Sockets.Close_Socket (Socket);
             Socket := GNAT.Sockets.No_Socket;
             return;

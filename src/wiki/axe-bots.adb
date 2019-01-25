@@ -10,7 +10,6 @@ with AWS.Response;
 with League.Calendars.ISO_8601;
 with League.Characters.Latin;
 with League.Holders;
-with League.Holders.Integers;
 with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Values;
@@ -234,7 +233,7 @@ package body Axe.Bots is
                   end if;
                end loop;
 
-               delay until Time + 1.0;  --  Avoid to Excess Flood errors
+               delay until Time + 1.5;  --  Avoid to Excess Flood errors
             else
                exit;
             end select;
@@ -733,9 +732,15 @@ package body Axe.Bots is
          begin
             Q.Bind_Value (+":id", League.Holders.To_Holder (File_Id));
             Q.Execute;
+            if not Q.Error_Message.Is_Empty then
+               Ada.Wide_Wide_Text_IO.Put_Line
+                 (Q.Error_Message.To_Wide_Wide_String);
+            end if;
 
             if Q.Next then
-               if League.Holders.Integers.Element (Q.Value (1)) > 0 then
+               if League.Holders.Element
+                 (Q.Value (1)).To_Wide_Wide_String /= "0"
+               then
                   return;
                end if;
             end if;
@@ -748,6 +753,11 @@ package body Axe.Bots is
             Q.Bind_Value (+":id", League.Holders.To_Holder (File_Id));
             Q.Bind_Value (+":name", League.Holders.To_Holder (File_Name));
             Q.Execute;
+
+            if not Q.Error_Message.Is_Empty then
+               Ada.Wide_Wide_Text_IO.Put_Line
+                 (Q.Error_Message.To_Wide_Wide_String);
+            end if;
          end;
       end Get_Document;
 
