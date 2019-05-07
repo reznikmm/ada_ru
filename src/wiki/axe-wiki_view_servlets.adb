@@ -661,6 +661,10 @@ package body Axe.Wiki_View_Servlets is
       Response.Set_Content_Type (+"text/html");
       Response.Set_Character_Encoding (UTF_8);
 
+      if Is_Edit then
+         Response.Set_Header (+"Cache-Control", +"no-cache");
+      end if;
+
       Response.Get_Output_Stream.Write (Output.Get_Text);
    end Render_Wiki;
 
