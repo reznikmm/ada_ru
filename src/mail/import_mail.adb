@@ -1477,6 +1477,48 @@ procedure Import_Mail is
         (Value  : Mails.Mail;
          Result : out Paragraph_Lists.List)
       is
+         use type Ada.Containers.Count_Type;
+
+         procedure Find_Quoted_Message (Index : out Ada.Containers.Count_Type);
+         --  Look for quoted message in Result and return Index of the
+         --  first paragraph of quoted message.
+
+         -------------------------
+         -- Find_Quoted_Message --
+         -------------------------
+
+         procedure Find_Quoted_Message
+           (Index : out Ada.Containers.Count_Type)
+         is
+            Pattern_1 : constant League.Strings.Universal_String :=
+              +"From: ada_ru@yahoogroups.com";
+            Pattern_2 : constant League.Strings.Universal_String :=
+              +"----- Исходное сообщение -----";
+            Cursor  : Paragraph_Lists.Cursor := Result.First;
+            Count   : Ada.Containers.Count_Type := 0;
+         begin
+            while Paragraph_Lists.Has_Element (Cursor) loop
+               declare
+                  Item : constant Paragraph :=
+                    Paragraph_Lists.Element (Cursor);
+               begin
+                  Count := Count + 1;
+
+                  if Item.Text.Starts_With (Pattern_1)
+                    or Item.Text.Starts_With (Pattern_2)
+                  then
+                     Index := Count;
+                     return;
+                  end if;
+
+                  Cursor := Paragraph_Lists.Next (Cursor);
+               end;
+            end loop;
+
+            Index := 0;
+         end Find_Quoted_Message;
+
+         Quoted : Ada.Containers.Count_Type;
       begin
          if Value.Is_Flowed then
             Parse_Flowed_Message (Value, Result);
@@ -1484,12 +1526,24 @@ procedure Import_Mail is
             Parse_Plain_Message (Value, Result);
          end if;
 
+         Find_Quoted_Message (Quoted);
+
+         --  Quoted paragraphs counting from the end of list:
+         if Quoted > 0 then
+            Quoted := Result.Length - Quoted + 1;
+         end if;
+
          --  Drop any empty or quoted paragraphs at the end of message
          while not Result.Is_Empty loop
             declare
                Last : constant Paragraph := Result.Last_Element;
             begin
-               exit when Last.Quote = 0 and not Last.Text.Is_Empty;
+               if Quoted > 0 then
+                  Quoted := Quoted - 1;
+               else
+                  exit when Last.Quote = 0 and not Last.Text.Is_Empty;
+               end if;
+
                Result.Delete_Last;
             end;
          end loop;
