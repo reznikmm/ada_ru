@@ -890,7 +890,7 @@ procedure Import_Mail is
          if Time_Zone_Sign = '+' then
             Result := Result - Time_Zone_Off;
          else
-            Result := Result - Time_Zone_Off;
+            Result := Result + Time_Zone_Off;
          end if;
 
          return Result;

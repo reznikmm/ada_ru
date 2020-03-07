@@ -271,6 +271,7 @@ package body IRC.Sessions is
 
       GNAT.Sockets.Send_Socket
         (Self.Socket, Vector.To_Stream_Element_Array, Last);
+      --  FIXME: Socket_Error could be raised here
    end Raw_Command;
 
    ------------------
