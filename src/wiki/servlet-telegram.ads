@@ -50,7 +50,8 @@ private
    not overriding procedure Analyze_Message
     (Self     : in out Telegram_Servlet;
      Message  : League.JSON.Objects.JSON_Object;
-     Result   : out Message_Action);
+     Result   : out Message_Action;
+     Response : out League.JSON.Objects.JSON_Object);
 
    overriding procedure Do_Post
     (Self     : in out Telegram_Servlet;

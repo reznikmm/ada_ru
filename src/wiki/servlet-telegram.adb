@@ -1,5 +1,7 @@
 with Ada.Streams;
 with Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
+with Ada.Exceptions;
 
 with League.JSON.Arrays;
 with League.JSON.Documents;
@@ -55,10 +57,109 @@ package body Servlet.Telegram is
    not overriding procedure Analyze_Message
     (Self     : in out Telegram_Servlet;
      Message  : League.JSON.Objects.JSON_Object;
-     Result   : out Message_Action)
-   is
+     Result   : out Message_Action;
+     Response : out League.JSON.Objects.JSON_Object) is
+
+      procedure Greeting (User_Id : Wide_Wide_String);
+
       function Has_Bad_Enity (Value : League.JSON.Values.JSON_Value)
         return Boolean;
+
+      procedure Greeting (User_Id : Wide_Wide_String) is
+         Input : Ada.Wide_Wide_Text_IO.File_Type;
+         Chat_Name : constant League.Strings.Universal_String :=
+           Message.Value (chat).To_Object.Value (+"username").To_String;
+         Text      : League.Strings.Universal_String;
+         Item      : League.Strings.Universal_String;
+         From      : Natural;
+         Pattern   : constant Wide_Wide_String := "<user_id>";
+         Reply     : League.JSON.Objects.JSON_Object;
+         Inline    : League.JSON.Arrays.JSON_Array;
+         --  ^^ Array of Array of InlineKeyboardButton
+      begin
+         Ada.Wide_Wide_Text_IO.Open
+           (Input,
+            Ada.Wide_Wide_Text_IO.In_File,
+            "install/CAPTCHA/" & Chat_Name.To_UTF_8_String & "/greeting.txt",
+            "SHARED=NO");
+
+         while not Ada.Wide_Wide_Text_IO.End_Of_File (Input) loop
+            declare
+               Line : constant Wide_Wide_String :=
+                 Ada.Wide_Wide_Text_IO.Get_Line (Input);
+            begin
+               if Line /= "" then
+                  Item.Append (Line);
+               elsif Text.Is_Empty then
+                  Text := Item;
+                  Item.Clear;
+                  From := Text.Index (Pattern);
+
+                  if From > 0 then
+                     Text.Replace (From, From + Pattern'Length - 1, User_Id);
+                  end if;
+               else
+                  declare
+                     --  InlineKeyboardButton
+                     Good   : constant Boolean := Item.Starts_With ("*");
+                     Button : League.JSON.Objects.JSON_Object;
+                     Row    : League.JSON.Arrays.JSON_Array;
+                  begin
+                     if Good then
+                        Item := Item.Tail_From (2);
+                     end if;
+
+                     Button.Insert
+                       (+"text", League.JSON.Values.To_JSON_Value (Item));
+                     Button.Insert
+                       (+"callback_data",
+                        League.JSON.Values.To_JSON_Value
+                         (+(User_Id & "#" & Boolean'Wide_Wide_Image (Good))));
+                     Row.Append (Button.To_JSON_Value);
+                     Inline.Append (Row.To_JSON_Value);
+                     Item.Clear;
+                  end;
+               end if;
+            end;
+         end loop;
+
+         Ada.Wide_Wide_Text_IO.Close (Input);
+
+         Reply.Insert
+           (+"force_reply",
+            League.JSON.Values.To_JSON_Value (True));
+         Reply.Insert
+           (+"selective",
+            League.JSON.Values.To_JSON_Value (True));
+         Reply.Insert (+"inline_keyboard", Inline.To_JSON_Value);
+
+         Response.Insert
+           (method,
+            League.JSON.Values.To_JSON_Value (+"sendMessage"));
+         Response.Insert
+           (chat_id,
+            Message.Value (chat).To_Object.Value (id));
+         Response.Insert (message_id, Message.Value (message_id));
+         Response.Insert
+           (+"text",
+            League.JSON.Values.To_JSON_Value (Text));
+         Response.Insert
+           (+"parse_mode",
+            League.JSON.Values.To_JSON_Value (+"MarkdownV2"));
+         Response.Insert
+           (+"disable_notification",
+            League.JSON.Values.To_JSON_Value (True));
+         Response.Insert
+           (+"reply_to_message_id",
+            Message.Value (message_id));
+         Response.Insert (+"reply_markup", Reply.To_JSON_Value);
+      exception
+         when Ada.Wide_Wide_Text_IO.Name_Error =>
+            null;
+         when E : others =>
+            Ada.Text_IO.Put_Line
+              (Ada.Exceptions.Exception_Information (E));
+      end Greeting;
 
       -------------
       -- Has_Bad_Enity --
@@ -114,8 +215,11 @@ package body Servlet.Telegram is
                     List.Element (J).To_Object;
                   User_Id : constant User_Identifier :=
                     User.Value (id).To_Integer;
+                  Image   : constant Wide_Wide_String :=
+                    User_Identifier'Wide_Wide_Image (User_Id);
                begin
                   Self.New_Users.Include (User_Id);
+                  Greeting (Image (2 .. Image'Last));
                end;
             end loop;
 
@@ -181,7 +285,7 @@ package body Servlet.Telegram is
 
       if Object.Contains (+"message") then
          Object := Object.Value (+"message").To_Object;
-         Self.Analyze_Message (Object, Action);
+         Self.Analyze_Message (Object, Action, Result);
 
          case Action is
             when Pass =>
@@ -202,6 +306,8 @@ package body Servlet.Telegram is
       else
          Document := Result.To_JSON_Document;
          Response.Get_Output_Stream.Write (Document.To_JSON);
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Document.To_JSON.To_Wide_Wide_String);
       end if;
    end Do_Post;
 
