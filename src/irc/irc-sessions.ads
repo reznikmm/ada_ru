@@ -55,12 +55,14 @@ private
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
+   type Text_Codec_Access is access League.Text_Codecs.Text_Codec;
+
    type Session (Listener : access IRC.Listeners.Listener'Class) is
      tagged limited
    record
       Socket   : GNAT.Sockets.Socket_Type;
       Vector   : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Codec    : access League.Text_Codecs.Text_Codec :=
+      Codec    : Text_Codec_Access :=
         new League.Text_Codecs.Text_Codec
           '(League.Text_Codecs.Codec (+"UTF-8"));
    end record;

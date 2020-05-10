@@ -143,6 +143,8 @@ private
 
    function Get_Options return SQL.Options.SQL_Options;
 
+   type IRC_Session is access all IRC.Sessions.Session;
+
    type Bot is tagged limited record
       DB            : SQL.Databases.SQL_Database := SQL.Databases.Create
                         (League.Strings.To_Universal_String ("POSTGRESQL"),
@@ -150,7 +152,7 @@ private
       Network_Loop  : Bot_Loop (Bot'Unchecked_Access);
       Queue         : Message_Queue;
       IRC_Listener  : aliased Axe.Bots.IRC_Listener (Bot'Unchecked_Access);
-      IRC_Session   : access IRC.Sessions.Session;
+      IRC_Session   : Axe.Bots.IRC_Session;
       Selector      : GNAT.Sockets.Selector_Type;
       XMPP_Session  : aliased XMPP.Sessions.XMPP_Session;
       XMPP_Listener : aliased Axe.Bots.XMPP_Listener (Bot'Unchecked_Access);
