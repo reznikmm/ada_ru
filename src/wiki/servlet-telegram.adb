@@ -3,10 +3,15 @@ with Ada.Wide_Wide_Text_IO;
 with Ada.Text_IO;
 with Ada.Exceptions;
 
+with AWS.Client;
+with AWS.Messages;
+with AWS.Response;
+
 with League.JSON.Arrays;
 with League.JSON.Documents;
 with League.JSON.Values;
 with League.Stream_Element_Vectors;
+with League.String_Vectors;
 with League.Text_Codecs;
 
 package body Servlet.Telegram is
@@ -23,32 +28,47 @@ package body Servlet.Telegram is
      (Message  : League.JSON.Objects.JSON_Object;
       Response : out League.JSON.Objects.JSON_Object);
 
+   procedure Delete_Message
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      Message  : Message_Identifier;
+      Chat     : Chat_Identifier);
+
+   procedure Kick_User
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      User       : User_Identifier;
+      Chat       : Chat_Identifier);
+
+   procedure Send_Message
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      Object     : League.JSON.Objects.JSON_Object;
+      Message_Id : out Message_Identifier);
+
+   procedure Callback
+     (Self     : in out Telegram_Servlet;
+      Query    : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object);
+
    -----------------------
    --  String Constants --
    -----------------------
 
    chat : constant League.Strings.Universal_String := +"chat";
    chat_id : constant League.Strings.Universal_String := +"chat_id";
-   entities : constant League.Strings.Universal_String := +"entities";
-   forward_from : constant League.Strings.Universal_String := +"forward_from";
-   forward_from_chat : constant League.Strings.Universal_String :=
-     +"forward_from_chat";
-   forward_from_msg : constant League.Strings.Universal_String :=
-     +"forward_from_message_id";
    from : constant League.Strings.Universal_String := +"from";
    id : constant League.Strings.Universal_String := +"id";
    left_chat_member : constant League.Strings.Universal_String :=
      +"left_chat_member";
    new_chat_members : constant League.Strings.Universal_String :=
      +"new_chat_members";
-   mention : constant League.Strings.Universal_String := +"mention";
    message_id : constant League.Strings.Universal_String := +"message_id";
    method : constant League.Strings.Universal_String := +"method";
-   hashtag  : constant League.Strings.Universal_String :=
-     +"hashtag";
-   url  : constant League.Strings.Universal_String := +"url";
-   text_link  : constant League.Strings.Universal_String := +"text_link";
-   text_mention : constant League.Strings.Universal_String := +"text_mention";
+   callback_query : constant League.Strings.Universal_String :=
+     +"callback_query";
+   reply_to_message : constant League.Strings.Universal_String :=
+     +"reply_to_message";
 
    ---------------------
    -- Analyze_Message --
@@ -57,26 +77,42 @@ package body Servlet.Telegram is
    not overriding procedure Analyze_Message
     (Self     : in out Telegram_Servlet;
      Message  : League.JSON.Objects.JSON_Object;
-     Result   : out Message_Action;
-     Response : out League.JSON.Objects.JSON_Object) is
+     Result   : out Message_Action)
+   is
 
-      procedure Greeting (User_Id : Wide_Wide_String);
+      procedure Greeting (User : League.JSON.Objects.JSON_Object);
 
-      function Has_Bad_Enity (Value : League.JSON.Values.JSON_Value)
-        return Boolean;
+      --------------
+      -- Greeting --
+      --------------
 
-      procedure Greeting (User_Id : Wide_Wide_String) is
-         Input : Ada.Wide_Wide_Text_IO.File_Type;
+      procedure Greeting (User : League.JSON.Objects.JSON_Object) is
+         Input   : Ada.Wide_Wide_Text_IO.File_Type;
+         Pattern : constant Wide_Wide_String := "<user_id>";
+         User_Id : constant User_Identifier := User.Value (id).To_Integer;
+         Image   : constant Wide_Wide_String :=
+           User_Identifier'Wide_Wide_Image (User_Id);
          Chat_Name : constant League.Strings.Universal_String :=
            Message.Value (chat).To_Object.Value (+"username").To_String;
+         Chat_Id   : constant Chat_Identifier :=
+           Message.Value (chat).To_Object.Value (id).To_Integer;
+         Join_Id   : constant Servlet.Telegram.Message_Identifier :=
+           Message.Value (message_id).To_Integer;
          Text      : League.Strings.Universal_String;
          Item      : League.Strings.Universal_String;
          From      : Natural;
-         Pattern   : constant Wide_Wide_String := "<user_id>";
          Reply     : League.JSON.Objects.JSON_Object;
          Inline    : League.JSON.Arrays.JSON_Array;
          --  ^^ Array of Array of InlineKeyboardButton
+         Good : Natural;
+         Response : League.JSON.Objects.JSON_Object;
       begin
+         Self.New_Users.Add_User
+           (Id      => User_Id,
+            Chat    => Chat_Id,
+            Message => Join_Id,
+            Good    => Good);
+
          Ada.Wide_Wide_Text_IO.Open
            (Input,
             Ada.Wide_Wide_Text_IO.In_File,
@@ -96,17 +132,24 @@ package body Servlet.Telegram is
                   From := Text.Index (Pattern);
 
                   if From > 0 then
-                     Text.Replace (From, From + Pattern'Length - 1, User_Id);
+                     Text.Replace
+                       (From,
+                        From + Pattern'Length - 1,
+                        Image (2 .. Image'Last));
                   end if;
                else
                   declare
                      --  InlineKeyboardButton
-                     Good   : constant Boolean := Item.Starts_With ("*");
-                     Button : League.JSON.Objects.JSON_Object;
-                     Row    : League.JSON.Arrays.JSON_Array;
+                     Is_Good : constant Boolean := Item.Starts_With ("*");
+                     Button  : League.JSON.Objects.JSON_Object;
+                     Row     : League.JSON.Arrays.JSON_Array;
+                     Answer  : Natural;
                   begin
-                     if Good then
+                     if Is_Good then
                         Item := Item.Tail_From (2);
+                        Answer := Good;
+                     else
+                        Self.New_Users.Get_Random (User_Id, Answer);
                      end if;
 
                      Button.Insert
@@ -114,7 +157,7 @@ package body Servlet.Telegram is
                      Button.Insert
                        (+"callback_data",
                         League.JSON.Values.To_JSON_Value
-                         (+(User_Id & "#" & Boolean'Wide_Wide_Image (Good))));
+                          (+("JOIN" & Natural'Wide_Wide_Image (Answer))));
                      Row.Append (Button.To_JSON_Value);
                      Inline.Append (Row.To_JSON_Value);
                      Item.Clear;
@@ -134,18 +177,14 @@ package body Servlet.Telegram is
          Reply.Insert (+"inline_keyboard", Inline.To_JSON_Value);
 
          Response.Insert
-           (method,
-            League.JSON.Values.To_JSON_Value (+"sendMessage"));
-         Response.Insert
-           (chat_id,
+           (Servlet.Telegram.chat_id,
             Message.Value (chat).To_Object.Value (id));
-         Response.Insert (message_id, Message.Value (message_id));
          Response.Insert
            (+"text",
             League.JSON.Values.To_JSON_Value (Text));
          Response.Insert
            (+"parse_mode",
-            League.JSON.Values.To_JSON_Value (+"MarkdownV2"));
+            League.JSON.Values.To_JSON_Value (+"Markdown"));
          Response.Insert
            (+"disable_notification",
             League.JSON.Values.To_JSON_Value (True));
@@ -153,6 +192,18 @@ package body Servlet.Telegram is
            (+"reply_to_message_id",
             Message.Value (message_id));
          Response.Insert (+"reply_markup", Reply.To_JSON_Value);
+
+         declare
+            Id         : Message_Identifier;
+            Connection : AWS.Client.HTTP_Connection;
+         begin
+            AWS.Client.Create (Connection, "https://api.telegram.org");
+            Send_Message (Connection, Self.Token, Response, Id);
+            Self.New_Users.New_Reply
+              (Id       => Id,
+               Reply_To => Join_Id);
+         end;
+
       exception
          when Ada.Wide_Wide_Text_IO.Name_Error =>
             null;
@@ -161,42 +212,6 @@ package body Servlet.Telegram is
               (Ada.Exceptions.Exception_Information (E));
       end Greeting;
 
-      -------------
-      -- Has_Bad_Enity --
-      -------------
-
-      function Has_Bad_Enity (Value : League.JSON.Values.JSON_Value)
-        return Boolean is
-      begin
-         if Value.Is_Array then
-            declare
-               List : constant League.JSON.Arrays.JSON_Array :=
-                 Value.To_Array;
-            begin
-               for J in 1 .. List.Length loop
-                  declare
-                     Entity : constant League.JSON.Objects.JSON_Object :=
-                       List (J).To_Object;
-                     Kind : constant League.Strings.Universal_String :=
-                       Entity.Value (+"type").To_String;
-                  begin
-                     if Kind in
-                       mention | hashtag | url | text_link | text_mention
-                     then
-                        return True;
-                     end if;
-                  end;
-               end loop;
-
-               return False;
-            end;
-         else
-            return False;
-         end if;
-      end Has_Bad_Enity;
-
-      Entities_Value : constant League.JSON.Values.JSON_Value :=
-        Message.Value (entities);
       From_Value : constant League.JSON.Values.JSON_Value :=
         Message.Value (from);
       New_Members_Value : constant League.JSON.Values.JSON_Value :=
@@ -211,15 +226,10 @@ package body Servlet.Telegram is
          begin
             for J in 1 .. List.Length loop
                declare
-                  User    : constant League.JSON.Objects.JSON_Object :=
+                  User : constant League.JSON.Objects.JSON_Object :=
                     List.Element (J).To_Object;
-                  User_Id : constant User_Identifier :=
-                    User.Value (id).To_Integer;
-                  Image   : constant Wide_Wide_String :=
-                    User_Identifier'Wide_Wide_Image (User_Id);
                begin
-                  Self.New_Users.Include (User_Id);
-                  Greeting (Image (2 .. Image'Last));
+                  Greeting (User);
                end;
             end loop;
 
@@ -234,29 +244,92 @@ package body Servlet.Telegram is
 
             User_Id : constant User_Identifier := User.Value (id).To_Integer;
 
-            Bad_Message : constant Boolean :=
-              Message.Contains (forward_from) or
-              Message.Contains (forward_from_chat) or
-              Message.Contains (forward_from_msg) or
-              Has_Bad_Enity (Entities_Value);
          begin
             if Self.New_Users.Contains (User_Id) then
-               if Bad_Message then
-                  Result := Delete;
-               else
-                  Self.New_Users.Delete (User_Id);
-               end if;
+               Result := Delete;
             end if;
          end;
+      elsif Message.Contains (reply_to_message) then
+         Self.New_Users.New_Reply
+           (Id       => Message.Value (message_id).To_Integer,
+            Reply_To => Message.Value (reply_to_message).To_Object
+              .Value (message_id).To_Integer);
       end if;
    end Analyze_Message;
+
+   --------------
+   -- Callback --
+   --------------
+
+   procedure Callback
+     (Self     : in out Telegram_Servlet;
+      Query    : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object)
+   is
+      From_Value : constant League.JSON.Objects.JSON_Object :=
+        Query.Value (from).To_Object;
+      User_Id : constant User_Identifier := From_Value.Value (id).To_Integer;
+      Data    : constant League.Strings.Universal_String :=
+        Query.Value (+"data").To_String;
+      From       : Positive := 1;
+   begin
+      if Data.Starts_With ("JOIN ") then
+         declare
+            use type Message_Identifier;
+            Greeting : Servlet.Telegram.Greeting;
+            List : constant League.String_Vectors.Universal_String_Vector :=
+              Data.Split (' ');
+            Answer : Natural;
+            Connection : AWS.Client.HTTP_Connection;
+         begin
+            AWS.Client.Create (Connection, "https://api.telegram.org");
+
+            Answer := Natural'Wide_Wide_Value (List (2).To_Wide_Wide_String);
+            Self.New_Users.Delete_User (User_Id, Greeting);
+
+            if Greeting.Chat /= 0 then
+               if Answer = Greeting.Good then
+                  From := 2;
+                  Response.Insert
+                    (+"text",
+                     League.JSON.Values.To_JSON_Value (+"good"));
+               else
+                  From := 1;
+                  Response.Insert
+                    (+"text",
+                     League.JSON.Values.To_JSON_Value (+"bad"));
+                  Kick_User (Connection, Self.Token, User_Id, Greeting.Chat);
+               end if;
+
+               for J in From .. Greeting.Messages'Last loop
+                  if Greeting.Messages (J) /= 0  then
+                     Delete_Message
+                       (Connection,
+                        Self.Token,
+                        Greeting.Messages (J),
+                        Greeting.Chat);
+                  end if;
+               end loop;
+            end if;
+         exception
+            when Constraint_Error =>
+               null;
+         end;
+      end if;
+
+      Response.Insert
+        (method,
+         League.JSON.Values.To_JSON_Value (+"answerCallbackQuery"));
+
+      Response.Insert (+"callback_query_id", Query.Value (id));
+   end Callback;
 
    --------------------
    -- Delete_Message --
    --------------------
 
    procedure Delete_Message
-     (Message : League.JSON.Objects.JSON_Object;
+     (Message  : League.JSON.Objects.JSON_Object;
       Response : out League.JSON.Objects.JSON_Object) is
    begin
       Response.Insert
@@ -264,6 +337,37 @@ package body Servlet.Telegram is
          League.JSON.Values.To_JSON_Value (+"deleteMessage"));
       Response.Insert (chat_id, Message.Value (chat).To_Object.Value (id));
       Response.Insert (message_id, Message.Value (message_id));
+   end Delete_Message;
+
+   --------------------
+   -- Delete_Message --
+   --------------------
+
+   procedure Delete_Message
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      Message    : Message_Identifier;
+      Chat       : Chat_Identifier)
+   is
+      Result : AWS.Response.Data;
+      Method : constant String := "deleteMessage";
+      Header : AWS.Client.Header_List;
+      Item   : League.JSON.Objects.JSON_Object;
+   begin
+      Item.Insert (chat_id, League.JSON.Values.To_JSON_Value (Chat));
+      Item.Insert (message_id, League.JSON.Values.To_JSON_Value (Message));
+      Header.Add ("Connection", "Keep-Alive");
+
+      AWS.Client.Post
+        (Connection,
+         Result,
+         Item.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+         Content_Type => "application/json",
+         Headers      => Header,
+         URI          => "/bot" & Token.To_UTF_8_String & "/" & Method);
+
+      Ada.Text_IO.Put_Line (AWS.Response.Status_Code (Result)'Img);
+      Ada.Text_IO.Put_Line (AWS.Response.Message_Body (Result));
    end Delete_Message;
 
    -------------
@@ -285,7 +389,7 @@ package body Servlet.Telegram is
 
       if Object.Contains (+"message") then
          Object := Object.Value (+"message").To_Object;
-         Self.Analyze_Message (Object, Action, Result);
+         Self.Analyze_Message (Object, Action);
 
          case Action is
             when Pass =>
@@ -295,6 +399,8 @@ package body Servlet.Telegram is
             when Delete =>
                Delete_Message (Object, Result);
          end case;
+      elsif Object.Contains (callback_query) then
+         Self.Callback (Object.Value (callback_query).To_Object, Result);
       end if;
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
@@ -302,13 +408,12 @@ package body Servlet.Telegram is
       Response.Set_Character_Encoding (+"utf-8");
 
       if Result.Is_Empty then
-         Response.Get_Output_Stream.Write (+"{}");
-      else
-         Document := Result.To_JSON_Document;
-         Response.Get_Output_Stream.Write (Document.To_JSON);
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Document.To_JSON.To_Wide_Wide_String);
+         Result := League.JSON.Objects.Empty_JSON_Object;
       end if;
+
+      Document := Result.To_JSON_Document;
+      Response.Get_Output_Stream.Write (Document.To_JSON);
+      Ada.Wide_Wide_Text_IO.Put_Line (Document.To_JSON.To_Wide_Wide_String);
    end Do_Post;
 
    ----------------------
@@ -356,8 +461,182 @@ package body Servlet.Telegram is
    is
       pragma Unreferenced (Parameters);
    begin
-      return Result : Telegram_Servlet;
+      return Result : Telegram_Servlet do
+         Result.New_Users.Reset;
+      end return;
    end Instantiate;
+
+   ---------------
+   -- Kick_User --
+   ---------------
+
+   procedure Kick_User
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      User       : User_Identifier;
+      Chat       : Chat_Identifier)
+   is
+      Result : AWS.Response.Data;
+      Method : constant String := "kickChatMember";
+      Header : AWS.Client.Header_List;
+      Item   : League.JSON.Objects.JSON_Object;
+   begin
+      Item.Insert (chat_id, League.JSON.Values.To_JSON_Value (Chat));
+      Item.Insert (+"user_id", League.JSON.Values.To_JSON_Value (User));
+
+      Header.Add ("Connection", "Keep-Alive");
+
+      AWS.Client.Post
+        (Connection,
+         Result,
+         Item.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+         Content_Type => "application/json",
+         Headers      => Header,
+         URI          => "/bot" & Token.To_UTF_8_String & "/" & Method);
+
+      Ada.Text_IO.Put_Line (AWS.Response.Status_Code (Result)'Img);
+      Ada.Text_IO.Put_Line (AWS.Response.Message_Body (Result));
+   end Kick_User;
+
+   ---------------
+   -- Newcomers --
+   ---------------
+
+   protected body Newcomers is
+
+      --------------
+      -- Add_User --
+      --------------
+
+      procedure Add_User
+        (Id      : User_Identifier;
+         Chat    : Chat_Identifier;
+         Message : League.Holders.Universal_Integer;
+         Good    : out Natural) is
+      begin
+         Good := Natural_Random.Random (Random);
+
+         Map.Include
+           (Id,
+            (Time => League.Calendars.Clock,
+             Chat => Chat,
+             Good => Good,
+             Messages => (Message, others => 0)));
+      end Add_User;
+
+      --------------
+      -- Contains --
+      --------------
+
+      function Contains (User_Id : User_Identifier) return Boolean is
+      begin
+         return Map.Contains (User_Id);
+      end Contains;
+
+      -----------------
+      -- Delete_User --
+      -----------------
+
+      procedure Delete_User
+        (Id    : User_Identifier;
+         Value : out Greeting) is
+      begin
+         if Map.Contains (Id) then
+            Value := Map (Id);
+            Map.Delete (Id);
+         else
+            Value :=
+              (Chat => 0, Good => 0, Messages => (others => 0), others => <>);
+         end if;
+      end Delete_User;
+
+      ----------------
+      -- Get_Random --
+      ----------------
+
+      procedure Get_Random
+        (Id    : User_Identifier;
+         Value : out Natural)
+      is
+         Good : Natural := 0;
+      begin
+         if Map.Contains (Id) then
+            Good := Map (Id).Good;
+         end if;
+
+         Value := Good;
+
+         while Value = Good loop
+            Value := Natural_Random.Random (Random);
+         end loop;
+      end Get_Random;
+
+      ---------------
+      -- New_Reply --
+      ---------------
+
+      procedure New_Reply
+        (Id       : Message_Identifier;
+         Reply_To : Message_Identifier)
+      is
+         use type Message_Identifier;
+      begin
+         for J of Map loop
+            if Reply_To = J.Messages (1) then
+               J.Messages :=
+                 J.Messages (1) & Id & J.Messages (2 .. J.Messages'Last - 1);
+            end if;
+         end loop;
+      end New_Reply;
+
+      -----------
+      -- Reset --
+      -----------
+
+      procedure Reset is
+      begin
+         Natural_Random.Reset (Random);
+      end Reset;
+
+   end Newcomers;
+
+   procedure Send_Message
+     (Connection : in out AWS.Client.HTTP_Connection;
+      Token      : League.Strings.Universal_String;
+      Object     : League.JSON.Objects.JSON_Object;
+      Message_Id : out Message_Identifier)
+   is
+      Result : AWS.Response.Data;
+      Method : constant String := "sendMessage";
+      Header : AWS.Client.Header_List;
+   begin
+      Header.Add ("Connection", "Keep-Alive");
+
+      AWS.Client.Post
+        (Connection,
+         Result,
+         Object.To_JSON_Document.To_JSON.To_Stream_Element_Array,
+         Content_Type => "application/json",
+         Headers      => Header,
+         URI          => "/bot" & Token.To_UTF_8_String & "/" & Method);
+
+      Ada.Text_IO.Put_Line (AWS.Response.Status_Code (Result)'Img);
+      Ada.Text_IO.Put_Line (AWS.Response.Message_Body (Result));
+
+      if AWS.Response.Status_Code (Result) in AWS.Messages.Success then
+         declare
+            Document : constant League.JSON.Documents.JSON_Document :=
+              League.JSON.Documents.From_JSON
+                (AWS.Response.Message_Body (Result));
+         begin
+            Message_Id := Document.To_JSON_Object
+              .Value (+"result").To_Object
+              .Value (Telegram.message_id).To_Integer;
+         end;
+      else
+         Message_Id := 0;
+      end if;
+   end Send_Message;
 
    ------------------
    -- Set_Listener --
