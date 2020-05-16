@@ -1,7 +1,8 @@
 with Ada.Streams;
-with Ada.Wide_Wide_Text_IO;
-with Ada.Text_IO;
+with Ada.Calendar.Conversions;
 with Ada.Exceptions;
+with Ada.Text_IO;
+with Ada.Wide_Wide_Text_IO;
 
 with AWS.Client;
 with AWS.Messages;
@@ -476,6 +477,8 @@ package body Servlet.Telegram is
       User       : User_Identifier;
       Chat       : Chat_Identifier)
    is
+      use type Ada.Calendar.Time;
+
       Result : AWS.Response.Data;
       Method : constant String := "kickChatMember";
       Header : AWS.Client.Header_List;
@@ -483,6 +486,12 @@ package body Servlet.Telegram is
    begin
       Item.Insert (chat_id, League.JSON.Values.To_JSON_Value (Chat));
       Item.Insert (+"user_id", League.JSON.Values.To_JSON_Value (User));
+      Item.Insert
+        (+"until_date",
+         League.JSON.Values.To_JSON_Value
+          (League.Holders.Universal_Integer
+            (Ada.Calendar.Conversions.To_Unix_Time
+              (Ada.Calendar.Clock + 60.0))));
 
       Header.Add ("Connection", "Keep-Alive");
 
