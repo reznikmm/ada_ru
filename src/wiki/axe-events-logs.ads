@@ -41,4 +41,8 @@ private
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);
 
+   overriding procedure On_New_Runable
+     (Self  : in out Event_Log_Writer;
+      Value : Axe.Schedulers.Scheduled_Item);
+
 end Axe.Events.Logs;

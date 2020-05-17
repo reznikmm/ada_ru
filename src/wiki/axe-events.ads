@@ -1,5 +1,6 @@
 with League.Strings;
 with League.JSON.Objects;
+with Axe.Schedulers;
 
 package Axe.Events is
 
@@ -26,6 +27,10 @@ package Axe.Events is
      (Self    : in out Listener;
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object) is null;
+
+   not overriding procedure On_New_Runable
+     (Self  : in out Listener;
+      Value : Axe.Schedulers.Scheduled_Item) is null;
 
    type Listener_Access is access all Listener'Class;
 

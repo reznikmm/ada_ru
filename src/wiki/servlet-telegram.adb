@@ -3,6 +3,7 @@ with Ada.Calendar.Conversions;
 with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
+with Ada.Unchecked_Deallocation;
 
 with AWS.Client;
 with AWS.Messages;
@@ -14,6 +15,8 @@ with League.JSON.Values;
 with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
+
+with Axe.Schedulers;
 
 package body Servlet.Telegram is
 
@@ -52,6 +55,22 @@ package body Servlet.Telegram is
       Query    : League.JSON.Objects.JSON_Object;
       Response : out League.JSON.Objects.JSON_Object);
 
+   procedure On_User_Answer
+     (Self   : in out Telegram_Servlet'Class;
+      User   : User_Identifier;
+      Answer : Natural;
+      Result : out League.Strings.Universal_String);
+
+   type User_Watchdog (Servlet : not null access Telegram_Servlet) is
+     new Axe.Schedulers.Runable with
+   record
+      User : User_Identifier;
+   end record;
+
+   overriding procedure Run (Self : aliased in out User_Watchdog);
+
+   type User_Watchdog_Access is access all User_Watchdog;
+
    -----------------------
    --  String Constants --
    -----------------------
@@ -88,6 +107,8 @@ package body Servlet.Telegram is
       --------------
 
       procedure Greeting (User : League.JSON.Objects.JSON_Object) is
+         use type Ada.Calendar.Time;
+
          Input   : Ada.Wide_Wide_Text_IO.File_Type;
          Pattern : constant Wide_Wide_String := "<user_id>";
          User_Id : constant User_Identifier := User.Value (id).To_Integer;
@@ -106,7 +127,9 @@ package body Servlet.Telegram is
          Inline    : League.JSON.Arrays.JSON_Array;
          --  ^^ Array of Array of InlineKeyboardButton
          Good : Natural;
-         Response : League.JSON.Objects.JSON_Object;
+         Response  : League.JSON.Objects.JSON_Object;
+         Watchdog  : constant User_Watchdog_Access := new User_Watchdog'
+           (Self'Unchecked_Access, User => User_Id);
       begin
          Self.New_Users.Add_User
            (Id      => User_Id,
@@ -205,6 +228,9 @@ package body Servlet.Telegram is
                Reply_To => Join_Id);
          end;
 
+         Self.Listener.On_New_Runable
+           ((Time => Ada.Calendar.Clock + 60.0,
+             Value => Axe.Schedulers.Runable_Access (Watchdog)));
       exception
          when Ada.Wide_Wide_Text_IO.Name_Error =>
             null;
@@ -272,46 +298,20 @@ package body Servlet.Telegram is
       User_Id : constant User_Identifier := From_Value.Value (id).To_Integer;
       Data    : constant League.Strings.Universal_String :=
         Query.Value (+"data").To_String;
-      From       : Positive := 1;
    begin
       if Data.Starts_With ("JOIN ") then
          declare
-            use type Message_Identifier;
-            Greeting : Servlet.Telegram.Greeting;
             List : constant League.String_Vectors.Universal_String_Vector :=
               Data.Split (' ');
             Answer : Natural;
-            Connection : AWS.Client.HTTP_Connection;
+            Result : League.Strings.Universal_String;
          begin
-            AWS.Client.Create (Connection, "https://api.telegram.org");
-
             Answer := Natural'Wide_Wide_Value (List (2).To_Wide_Wide_String);
-            Self.New_Users.Delete_User (User_Id, Greeting);
 
-            if Greeting.Chat /= 0 then
-               if Answer = Greeting.Good then
-                  From := 2;
-                  Response.Insert
-                    (+"text",
-                     League.JSON.Values.To_JSON_Value (+"good"));
-               else
-                  From := 1;
-                  Response.Insert
-                    (+"text",
-                     League.JSON.Values.To_JSON_Value (+"bad"));
-                  Kick_User (Connection, Self.Token, User_Id, Greeting.Chat);
-               end if;
-
-               for J in From .. Greeting.Messages'Last loop
-                  if Greeting.Messages (J) /= 0  then
-                     Delete_Message
-                       (Connection,
-                        Self.Token,
-                        Greeting.Messages (J),
-                        Greeting.Chat);
-                  end if;
-               end loop;
-            end if;
+            Self.On_User_Answer (User_Id, Answer, Result);
+            Response.Insert
+              (+"text",
+               League.JSON.Values.To_JSON_Value (Result));
          exception
             when Constraint_Error =>
                null;
@@ -575,7 +575,7 @@ package body Servlet.Telegram is
 
          Value := Good;
 
-         while Value = Good loop
+         while Value = Good or Value = 0 loop
             Value := Natural_Random.Random (Random);
          end loop;
       end Get_Random;
@@ -608,6 +608,65 @@ package body Servlet.Telegram is
       end Reset;
 
    end Newcomers;
+
+   --------------------
+   -- On_User_Answer --
+   --------------------
+
+   procedure On_User_Answer
+     (Self   : in out Telegram_Servlet'Class;
+      User   : User_Identifier;
+      Answer : Natural;
+      Result : out League.Strings.Universal_String)
+   is
+      use type Message_Identifier;
+      Greeting   : Servlet.Telegram.Greeting;
+      Connection : AWS.Client.HTTP_Connection;
+      From       : Positive;
+   begin
+      AWS.Client.Create (Connection, "https://api.telegram.org");
+      Self.New_Users.Delete_User (User, Greeting);
+
+      if Greeting.Chat /= 0 then
+         if Answer = Greeting.Good then
+            From := 2;
+            Result := +"good";
+         else
+            From := 1;
+            Result := +"bad";
+            Kick_User (Connection, Self.Token, User, Greeting.Chat);
+         end if;
+
+         for J in From .. Greeting.Messages'Last loop
+            if Greeting.Messages (J) /= 0  then
+               Delete_Message
+                 (Connection,
+                  Self.Token,
+                  Greeting.Messages (J),
+                  Greeting.Chat);
+            end if;
+         end loop;
+      end if;
+   end On_User_Answer;
+
+   ---------
+   -- Run --
+   ---------
+
+   overriding procedure Run (Self : aliased in out User_Watchdog) is
+      procedure Free is new Ada.Unchecked_Deallocation
+        (User_Watchdog, User_Watchdog_Access);
+
+      Ignore : League.Strings.Universal_String;
+      This   : User_Watchdog_Access := Self'Unchecked_Access;
+   begin
+      Self.Servlet.On_User_Answer (Self.User, Answer => 0, Result => Ignore);
+      Free (This);
+   end Run;
+
+   ------------------
+   -- Send_Message --
+   ------------------
 
    procedure Send_Message
      (Connection : in out AWS.Client.HTTP_Connection;

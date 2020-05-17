@@ -33,6 +33,13 @@ package body Axe.Events.Logs is
       Self.Bot.Initialize (Text, Telegram, Viber);
    end Initialize;
 
+   overriding procedure On_New_Runable
+     (Self  : in out Event_Log_Writer;
+      Value : Axe.Schedulers.Scheduled_Item) is
+   begin
+      Self.Bot.New_Runable (Value);
+   end On_New_Runable;
+
    -----------------
    -- On_Telegram --
    -----------------

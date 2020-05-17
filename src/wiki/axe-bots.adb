@@ -158,6 +158,7 @@ package body Axe.Bots is
 
       Socket   : GNAT.Sockets.Socket_Type;  --  IRC socket
       Status   : GNAT.Sockets.Selector_Status;
+      Item     : Schedulers.Runable_Access;
    begin
       accept Start;
 
@@ -166,6 +167,9 @@ package body Axe.Bots is
       GNAT.Sockets.Create_Selector (Bot.Selector);
 
       loop
+         Schedulers.Scheduler.Get_Ready (Item);
+         Item.Start_If_Assigned;
+
          Time := Ada.Calendar.Clock;
 
          if IRC_Reconnect <= Time then  --  Try to connect IRC
@@ -202,7 +206,8 @@ package body Axe.Bots is
                W_Socket_Set => Write,
                E_Socket_Set => Error,
                Status       => Status,
-               Timeout      => 60.0);
+               Timeout      => Schedulers.Scheduler.Next (60.0) -
+                                 Ada.Calendar.Clock);
 
             if Status in GNAT.Sockets.Completed then
                if not GNAT.Sockets.Is_Empty (Read) then
@@ -222,8 +227,12 @@ package body Axe.Bots is
          end;
 
          loop
+            Time := Ada.Calendar.Clock;
+
             select
                Bot.Queue.Dequeue (Next_Message);
+
+               delay until Time;
 
                for Origin in Send'Range loop
                   if Next_Message.Origin /= Origin
@@ -233,7 +242,7 @@ package body Axe.Bots is
                   end if;
                end loop;
 
-               delay until Time + 1.5;  --  Avoid to Excess Flood errors
+               Time := Time + 1.5;  --  Avoid to Excess Flood errors
             else
                exit;
             end select;
@@ -320,6 +329,14 @@ package body Axe.Bots is
             Text));
       end if;
    end Message;
+
+   not overriding procedure New_Runable
+     (Self  : in out Bot;
+      Value : Axe.Schedulers.Scheduled_Item) is
+   begin
+      Axe.Schedulers.Scheduler.Insert (Value);
+      GNAT.Sockets.Abort_Selector (Self.Selector);
+   end New_Runable;
 
    ----------------
    -- On_Message --

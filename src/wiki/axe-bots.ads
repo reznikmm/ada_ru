@@ -1,6 +1,8 @@
 with League.JSON.Objects;
 with League.Strings;
 
+with Axe.Schedulers;
+
 private with Ada.Containers.Bounded_Synchronized_Queues;
 private with Ada.Containers.Synchronized_Queue_Interfaces;
 private with AWS.Client;
@@ -37,6 +39,10 @@ package Axe.Bots is
      (Self    : in out Bot;
       Message : League.JSON.Objects.JSON_Object;
       Result  : out League.JSON.Objects.JSON_Object);
+
+   not overriding procedure New_Runable
+     (Self  : in out Bot;
+      Value : Axe.Schedulers.Scheduled_Item);
 
 private
 

@@ -89,9 +89,9 @@ private
    type Message_Action is (Pass, Skip, Delete);
 
    not overriding procedure Analyze_Message
-     (Self     : in out Telegram_Servlet;
+    (Self     : in out Telegram_Servlet;
      Message  : League.JSON.Objects.JSON_Object;
-      Result   : out Message_Action);
+     Result   : out Message_Action);
 
    overriding procedure Do_Post
     (Self     : in out Telegram_Servlet;
