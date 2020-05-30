@@ -33,6 +33,11 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Value  : Original_Message);
 
+   procedure IRC_Send_Text
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String;
+      Before : Boolean);
+
    procedure Send_Telegram
      (Self   : in out Bot'Class;
       Value  : Original_Message);
@@ -146,17 +151,9 @@ package body Axe.Bots is
    task body Bot_Loop is
       use type Ada.Calendar.Time;
 
-      Time          : Ada.Calendar.Time;  --  Start of cycle
-      Next_Message  : Original_Message;
-      IRC_Reconnect : Ada.Calendar.Time := Ada.Calendar.Clock;
-      --  Scheduled time to reconnect IRC. If IRC connected then Never
-      Never         : constant Ada.Calendar.Time :=
-        Ada.Calendar.Time_Of
-          (Ada.Calendar.Year_Number'Last,
-           Ada.Calendar.Month_Number'Last,
-           Ada.Calendar.Day_Number'Last);
+      Time         : Ada.Calendar.Time := Ada.Calendar.Clock;
+      Next_Message : Original_Message;
 
-      Socket   : GNAT.Sockets.Socket_Type;  --  IRC socket
       Status   : GNAT.Sockets.Selector_Status;
       Item     : Schedulers.Runable_Access;
    begin
@@ -166,38 +163,22 @@ package body Axe.Bots is
 
       GNAT.Sockets.Create_Selector (Bot.Selector);
 
+      Bot.New_Runable
+        ((Time  => Ada.Calendar.Clock + 1.0,
+          Value => Bot.IRC_Connect'Unchecked_Access));
+
       loop
          Schedulers.Scheduler.Get_Ready (Item);
          Item.Start_If_Assigned;
 
-         Time := Ada.Calendar.Clock;
-
-         if IRC_Reconnect <= Time then  --  Try to connect IRC
-            Bot.IRC_Session.Connect
-              (Socket    => Socket,
-               Host      => +"irc.odessa.ua",
-               Port      => 7777,
-               Nick      => +"ada-ru",
-               Password  => +"",
-               User      => +"ada_ru",
-               Real_Name => +"Ada Ru Bot");
-
-            if Socket in GNAT.Sockets.No_Socket then
-               IRC_Reconnect := Time + 60.0;
-            else
-               IRC_Reconnect := Never;
-               Ada.Wide_Wide_Text_IO.Put_Line ("Connected to IRC");
-            end if;
-         end if;
-
          declare  --  Read IRC if connected
-            Read     : GNAT.Sockets.Socket_Set_Type;
-            Write    : GNAT.Sockets.Socket_Set_Type;
-            Error    : GNAT.Sockets.Socket_Set_Type;
+            Read  : GNAT.Sockets.Socket_Set_Type;
+            Write : GNAT.Sockets.Socket_Set_Type;
+            Error : GNAT.Sockets.Socket_Set_Type;
          begin
-            if IRC_Reconnect = Never then
-               GNAT.Sockets.Set (Read, Socket);
-               GNAT.Sockets.Set (Error, Socket);
+            if Bot.IRC_Online then
+               GNAT.Sockets.Set (Read, Bot.IRC_Socket);
+               GNAT.Sockets.Set (Error, Bot.IRC_Socket);
             end if;
 
             GNAT.Sockets.Check_Selector
@@ -206,29 +187,25 @@ package body Axe.Bots is
                W_Socket_Set => Write,
                E_Socket_Set => Error,
                Status       => Status,
-               Timeout      => Schedulers.Scheduler.Next (60.0) -
-                                 Ada.Calendar.Clock);
+               Timeout      => Duration'Max
+                 (Schedulers.Scheduler.Next (60.0) - Ada.Calendar.Clock,
+                  0.0));
 
             if Status in GNAT.Sockets.Completed then
                if not GNAT.Sockets.Is_Empty (Read) then
-                  declare
-                     IRC_Closed : Boolean;
-                  begin
-                     Bot.IRC_Session.Check_Socket (IRC_Closed);
+                  Bot.IRC_Session.Check_Socket (Bot.IRC_Online);
 
-                     if IRC_Closed then
-                        Ada.Wide_Wide_Text_IO.Put_Line
-                          ("Disconnected from IRC");
-                        IRC_Reconnect := Time + 1.0;
-                     end if;
-                  end;
+                  if not Bot.IRC_Online then
+                     Ada.Wide_Wide_Text_IO.Put_Line ("Disconnected from IRC");
+                     Bot.New_Runable
+                       ((Time  => Ada.Calendar.Clock + 10.0,
+                         Value => Bot.IRC_Connect'Unchecked_Access));
+                  end if;
                end if;
             end if;
          end;
 
          loop
-            Time := Ada.Calendar.Clock;
-
             select
                Bot.Queue.Dequeue (Next_Message);
 
@@ -306,6 +283,44 @@ package body Axe.Bots is
       Read_Subscribers (Self.Viber.Subscribed);
    end Initialize;
 
+   -------------------
+   -- IRC_Send_Text --
+   -------------------
+
+   procedure IRC_Send_Text
+     (Self   : in out Bot'Class;
+      Text   : League.Strings.Universal_String;
+      Before : Boolean)
+   is
+      use type Ada.Calendar.Time;
+
+      Ok : Boolean;
+   begin
+      if Self.IRC_Online and (Before or Self.IRC_Queue.Is_Empty) then
+         Self.IRC_Session.Send_Message (+"#ada", Text, Ok);
+
+         if Ok then
+            return;
+         end if;
+
+         Self.IRC_Online := False;
+         Self.New_Runable
+           ((Time => Ada.Calendar.Clock + 60.0,
+             Value => Self.IRC_Connect'Unchecked_Access));
+      end if;
+
+      if Before then
+         declare
+            List : League.String_Vectors.Universal_String_Vector;
+         begin
+            List.Append (Text);
+            Self.IRC_Queue.Prepend (List);
+         end;
+      else
+         Self.IRC_Queue.Append (Text);
+      end if;
+   end IRC_Send_Text;
+
    -------------
    -- Message --
    -------------
@@ -349,6 +364,7 @@ package body Axe.Bots is
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String)
    is
+      pragma Unreferenced (Session);
       From : constant League.Strings.Universal_String :=
         Source.Head_To (Source.Index ("!") - 1);
    begin
@@ -363,8 +379,6 @@ package body Axe.Bots is
                (Name => From, others => <>),
                Text));
          end if;
-      else
-         Session.Send_Message (Source, Text);
       end if;
    end On_Message;
 
@@ -434,6 +448,55 @@ package body Axe.Bots is
       Ada.Wide_Wide_Text_IO.Close (File);
    end Read_Subscribers;
 
+   ---------
+   -- Run --
+   ---------
+
+   overriding procedure Run (Self : aliased in out IRC_Reconnector) is
+      use type GNAT.Sockets.Socket_Type;
+      use type Ada.Calendar.Time;
+   begin
+      if not Self.Bot.IRC_Online then  --  Try to connect IRC
+         Self.Bot.IRC_Session.Connect
+           (Socket    => Self.Bot.IRC_Socket,
+            Host      => +"irc.odessa.ua",
+            Port      => 7777,
+            Nick      => +"ada-ru",
+            Password  => +"",
+            User      => +"ada_ru",
+            Real_Name => +"Ada Ru Bot");
+
+         if Self.Bot.IRC_Socket in GNAT.Sockets.No_Socket then
+            Ada.Wide_Wide_Text_IO.Put_Line ("Connect to IRC failed");
+            Self.Bot.New_Runable
+              ((Time => Ada.Calendar.Clock + 60.0,
+                Value => Self'Unchecked_Access));
+         else
+            Ada.Wide_Wide_Text_IO.Put_Line ("Connected to IRC");
+            Self.Bot.IRC_Online := True;
+            Self.Bot.New_Runable
+              ((Time => Ada.Calendar.Clock + 15.0,
+                Value => Self'Unchecked_Access));
+         end if;
+      elsif not Self.Bot.IRC_Queue.Is_Empty then
+         declare
+            Text : constant League.Strings.Universal_String :=
+              Self.Bot.IRC_Queue.Element (1);
+         begin
+            Self.Bot.IRC_Queue := Self.Bot.IRC_Queue.Slice
+              (2, Self.Bot.IRC_Queue.Length);
+
+            Self.Bot.IRC_Send_Text (Text, True);
+
+            if Self.Bot.IRC_Online and not Self.Bot.IRC_Queue.Is_Empty then
+               Self.Bot.New_Runable
+                 ((Time  => Ada.Calendar.Clock + 2.0,
+                   Value => Self'Unchecked_Access));
+            end if;
+         end;
+      end if;
+   end Run;
+
    --------------
    -- Send_IRC --
    --------------
@@ -442,11 +505,10 @@ package body Axe.Bots is
      (Self   : in out Bot'Class;
       Value  : Original_Message)
    is
-      Target : constant League.Strings.Universal_String := +"#ada";
       Text   : constant League.Strings.Universal_String :=
         "(" & Value.Sender.Name & ") " & Value.Text;
    begin
-      Self.IRC_Session.Send_Message (Target, Text);
+      Self.IRC_Send_Text (Text, Before => False);
    end Send_IRC;
 
    ------------------

@@ -31,7 +31,8 @@ package IRC.Sessions is
    not overriding procedure Send_Message
      (Self   : in out Session;
       Target : League.Strings.Universal_String;
-      Text   : League.Strings.Universal_String);
+      Text   : League.Strings.Universal_String;
+      Ok     : out Boolean);
    --  Request sending new message
 
    not overriding procedure Pong
@@ -46,7 +47,7 @@ package IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Closed : out Boolean);
+      Online : out Boolean);
    --  This procedure called by driver when socket changes its state
 
 private

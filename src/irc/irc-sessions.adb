@@ -16,7 +16,7 @@ package body IRC.Sessions is
 
    not overriding procedure Check_Socket
      (Self   : in out Session;
-      Closed : out Boolean)
+      Online : out Boolean)
    is
       use type Ada.Streams.Stream_Element;
       use type Ada.Streams.Stream_Element_Offset;
@@ -116,13 +116,16 @@ package body IRC.Sessions is
       loop
          begin
             GNAT.Sockets.Receive_Socket (Self.Socket, Data, Last);
-            Closed := Last = Data'First - 1;
+            Online := Last /= Data'First - 1;
          exception
             when GNAT.Sockets.Socket_Error =>
-               Closed := True;
-               GNAT.Sockets.Close_Socket (Self.Socket);
-               return;
+               Online := False;
          end;
+
+         if not Online then
+            GNAT.Sockets.Close_Socket (Self.Socket);
+            return;
+         end if;
 
          First := Data'First;
 
@@ -281,7 +284,8 @@ package body IRC.Sessions is
    not overriding procedure Send_Message
      (Self   : in out Session;
       Target : League.Strings.Universal_String;
-      Text   : League.Strings.Universal_String)
+      Text   : League.Strings.Universal_String;
+      Ok     : out Boolean)
    is
       procedure Send_Line (Text : League.Strings.Universal_String);
 
@@ -290,10 +294,10 @@ package body IRC.Sessions is
       ---------------
 
       procedure Send_Line (Text : League.Strings.Universal_String) is
+         use type Ada.Streams.Stream_Element_Offset;
          Value  : League.Strings.Universal_String;
          Vector : League.Stream_Element_Vectors.Stream_Element_Vector;
          Last   : Ada.Streams.Stream_Element_Offset;
-         pragma Unreferenced (Last);
       begin
          Value.Append ("PRIVMSG ");
          Value.Append (Target);
@@ -304,11 +308,18 @@ package body IRC.Sessions is
 
          GNAT.Sockets.Send_Socket
            (Self.Socket, Vector.To_Stream_Element_Array, Last);
+
+         if Last = -1 then
+            GNAT.Sockets.Close_Socket (Self.Socket);
+            Ok := False;
+         end if;
       end Send_Line;
 
       List   : constant League.String_Vectors.Universal_String_Vector :=
         Text.Split (Ada.Characters.Wide_Wide_Latin_1.LF);
    begin
+      Ok := True;
+
       if List.Length > 1 then
          for J in 1 .. List.Length loop
             if J > 1 then
@@ -321,7 +332,10 @@ package body IRC.Sessions is
       else
          Send_Line (Text);
       end if;
-
+   exception
+      when GNAT.Sockets.Socket_Error =>
+         GNAT.Sockets.Close_Socket (Self.Socket);
+         Ok := False;
    end Send_Message;
 
 end IRC.Sessions;

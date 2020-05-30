@@ -132,7 +132,7 @@ private
 
    package Message_Queues is new Ada.Containers.Bounded_Synchronized_Queues
      (Queue_Interfaces => Message_Queue_Interfaces,
-      Default_Capacity => 5);
+      Default_Capacity => 50);
 
    subtype Message_Queue is Message_Queues.Queue;
 
@@ -151,14 +151,23 @@ private
 
    type IRC_Session is access all IRC.Sessions.Session;
 
+   type IRC_Reconnector (Bot : not null access Axe.Bots.Bot) is new
+     Axe.Schedulers.Runable with null record;
+
+   overriding procedure Run (Self : aliased in out IRC_Reconnector);
+
    type Bot is tagged limited record
       DB            : SQL.Databases.SQL_Database := SQL.Databases.Create
                         (League.Strings.To_Universal_String ("POSTGRESQL"),
                          Get_Options);
       Network_Loop  : Bot_Loop (Bot'Unchecked_Access);
       Queue         : Message_Queue;
+      IRC_Socket    : GNAT.Sockets.Socket_Type;
       IRC_Listener  : aliased Axe.Bots.IRC_Listener (Bot'Unchecked_Access);
       IRC_Session   : Axe.Bots.IRC_Session;
+      IRC_Online    : Boolean := False;
+      IRC_Queue     : League.String_Vectors.Universal_String_Vector;
+      IRC_Connect   : aliased IRC_Reconnector (Bot'Unchecked_Access);
       Selector      : GNAT.Sockets.Selector_Type;
       XMPP_Session  : aliased XMPP.Sessions.XMPP_Session;
       XMPP_Listener : aliased Axe.Bots.XMPP_Listener (Bot'Unchecked_Access);
