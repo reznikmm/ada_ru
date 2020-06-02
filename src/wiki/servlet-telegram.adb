@@ -4,6 +4,7 @@ with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
+with Ada.Calendar.Formatting;
 
 with AWS.Client;
 with AWS.Messages;
@@ -228,6 +229,8 @@ package body Servlet.Telegram is
                Reply_To => Join_Id);
          end;
 
+         Ada.Text_IO.Put_Line
+           ("Greeting:" & Ada.Calendar.Formatting.Image (Ada.Calendar.Clock));
          Self.Listener.On_New_Runable
            ((Time => Ada.Calendar.Clock + 60.0,
              Value => Axe.Schedulers.Runable_Access (Watchdog)));
@@ -660,7 +663,11 @@ package body Servlet.Telegram is
       Ignore : League.Strings.Universal_String;
       This   : User_Watchdog_Access := Self'Unchecked_Access;
    begin
-      Self.Servlet.On_User_Answer (Self.User, Answer => 0, Result => Ignore);
+      Ada.Text_IO.Put_Line
+        ("Watchdog Run:" & Ada.Calendar.Formatting.Image (Ada.Calendar.Clock));
+
+      --  Self.Servlet.On_User_Answer
+      --  (Self.User, Answer => 0, Result => Ignore);
       Free (This);
    end Run;
 
