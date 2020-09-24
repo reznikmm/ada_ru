@@ -345,6 +345,10 @@ package body Axe.Bots is
       end if;
    end Message;
 
+   -----------------
+   -- New_Runable --
+   -----------------
+
    not overriding procedure New_Runable
      (Self  : in out Bot;
       Value : Axe.Schedulers.Scheduled_Item) is
@@ -525,6 +529,10 @@ package body Axe.Bots is
           Origin => Other_Origin,
           Kind   => Axe.Bots.Text));
    end Send_Message;
+
+   ------------------
+   -- Send_Message --
+   ------------------
 
    not overriding procedure Send_Message
      (Self   : in out Bot;

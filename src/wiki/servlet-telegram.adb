@@ -231,6 +231,7 @@ package body Servlet.Telegram is
 
          Ada.Text_IO.Put_Line
            ("Greeting:" & Ada.Calendar.Formatting.Image (Ada.Calendar.Clock));
+
          Self.Listener.On_New_Runable
            ((Time => Ada.Calendar.Clock + 60.0,
              Value => Axe.Schedulers.Runable_Access (Watchdog)));
@@ -666,8 +667,8 @@ package body Servlet.Telegram is
       Ada.Text_IO.Put_Line
         ("Watchdog Run:" & Ada.Calendar.Formatting.Image (Ada.Calendar.Clock));
 
-      --  Self.Servlet.On_User_Answer
-      --  (Self.User, Answer => 0, Result => Ignore);
+      Self.Servlet.On_User_Answer (Self.User, Answer => 0, Result => Ignore);
+
       Free (This);
    end Run;
 

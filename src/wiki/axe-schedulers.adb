@@ -50,10 +50,13 @@ package body Axe.Schedulers is
       ---------------
 
       procedure Get_Ready (Value : out Runable_Access) is
+         use type Ada.Calendar.Time;
       begin
-         if Set.Is_Empty then
-            Value := null;
-         else
+         Value := null;
+
+         if not Set.Is_Empty
+           and then Set.First_Element.Time <= Ada.Calendar.Clock
+         then
             Value := Set.First_Element.Value;
             Set.Delete_First;
          end if;

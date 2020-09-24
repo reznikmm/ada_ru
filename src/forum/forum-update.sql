@@ -75,3 +75,6 @@ select post, min(pos)  as pos from post_lines where
 text like '----- Исходное сообщение -----%'and post like '%JavaMail.byserg%'
 group by post) as x
 where p.post = x.post and p.pos >= x.pos);
+
+update posts set parent=null where id='<20200118160312.DBE872409E@forge.ada-ru.org>';
+update posts set parent='<20200118160312.DBE872409E@forge.ada-ru.org>' where id='<20200119063236.4F2F3240AE@forge.ada-ru.org>';
