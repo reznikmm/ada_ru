@@ -56,6 +56,11 @@ package body Servlet.Telegram is
       Query    : League.JSON.Objects.JSON_Object;
       Response : out League.JSON.Objects.JSON_Object);
 
+   procedure On_Inline_Query
+     (Self     : in out Telegram_Servlet;
+      Query    : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object);
+
    procedure On_User_Answer
      (Self   : in out Telegram_Servlet'Class;
       User   : User_Identifier;
@@ -90,6 +95,7 @@ package body Servlet.Telegram is
      +"callback_query";
    reply_to_message : constant League.Strings.Universal_String :=
      +"reply_to_message";
+   inline_query : constant League.Strings.Universal_String := +"inline_query";
 
    ---------------------
    -- Analyze_Message --
@@ -267,7 +273,7 @@ package body Servlet.Telegram is
             Result := Skip;
          end;
       elsif Message.Contains (left_chat_member) then
-            Result := Skip;
+         Result := Skip;
       elsif From_Value.Is_Object then
          declare
             User : constant League.JSON.Objects.JSON_Object :=
@@ -404,6 +410,8 @@ package body Servlet.Telegram is
             when Delete =>
                Delete_Message (Object, Result);
          end case;
+      elsif Object.Contains (inline_query) then
+         Self.On_Inline_Query (Object.Value (inline_query).To_Object, Result);
       elsif Object.Contains (callback_query) then
          Self.Callback (Object.Value (callback_query).To_Object, Result);
       end if;
@@ -612,6 +620,95 @@ package body Servlet.Telegram is
       end Reset;
 
    end Newcomers;
+
+   ---------------------
+   -- On_Inline_Query --
+   ---------------------
+
+   procedure On_Inline_Query
+     (Self     : in out Telegram_Servlet;
+      Query    : League.JSON.Objects.JSON_Object;
+      Response : out League.JSON.Objects.JSON_Object)
+   is
+      pragma Unreferenced (Self);
+
+      Results    : League.JSON.Arrays.JSON_Array;
+
+      procedure Append
+        (Result_Id    : League.Strings.Universal_String;
+         Result_Title : League.Strings.Universal_String;
+         Result_URL   : League.Strings.Universal_String);
+      --  Append an article to results
+
+      ------------
+      -- Append --
+      ------------
+
+      procedure Append
+        (Result_Id    : League.Strings.Universal_String;
+         Result_Title : League.Strings.Universal_String;
+         Result_URL   : League.Strings.Universal_String)
+      is
+         Text : League.Strings.Universal_String;
+         Content : League.JSON.Objects.JSON_Object;
+         Result  : League.JSON.Objects.JSON_Object;
+      begin
+         Text.Append ("[");
+         Text.Append (Result_Title);
+         Text.Append ("](");
+         Text.Append (Result_URL);
+         Text.Append (")");
+
+         Content.Insert
+           (+"message_text", League.JSON.Values.To_JSON_Value (Text));
+         Content.Insert
+           (+"parse_mode",
+            League.JSON.Values.To_JSON_Value (+"Markdown"));
+
+         Result.Insert
+           (+"type", League.JSON.Values.To_JSON_Value (+"article"));
+         Result.Insert
+           (id, League.JSON.Values.To_JSON_Value (Result_Id));
+         Result.Insert
+           (+"title", League.JSON.Values.To_JSON_Value (Result_Title));
+         Result.Insert
+           (+"input_message_content",
+            Content.To_JSON_Value);
+         Result.Insert
+           (+"url", League.JSON.Values.To_JSON_Value (Result_URL));
+
+         Results.Append (Result.To_JSON_Value);
+      end Append;
+--        Query_Text : League.Strings.Universal_String :=
+--          Query.Value (+"query").To_String;
+   begin
+      Response.Insert
+        (method,
+         League.JSON.Values.To_JSON_Value (+"answerInlineQuery"));
+
+      Append
+        (+"RM-2012",
+         +"Ada Reference Manual 2012",
+         +"http://www.ada-auth.org/standards/rm12_w_tc1/html/RM-TTL.html");
+
+      Append
+        (+"AARM-2012",
+         +"Annotated Ada Reference Manual 2012",
+         +"http://www.ada-auth.org/standards/aarm12_w_tc1/html/AA-TTL.html");
+
+      Append
+        (+"RM-2020",
+         +"Ada Reference Manual 2020 (Draft)",
+         +"http://www.ada-auth.org/standards/2xrm/html/RM-TTL.html");
+
+      Append
+        (+"AARM-2020",
+         +"Annotated Ada Reference Manual 2020 (Draft)",
+         +"http://www.ada-auth.org/standards/2xaarm/html/AA-TTL.html");
+
+      Response.Insert (+"inline_query_id", Query.Value (id));
+      Response.Insert (+"results", Results.To_JSON_Value);
+   end On_Inline_Query;
 
    --------------------
    -- On_User_Answer --
