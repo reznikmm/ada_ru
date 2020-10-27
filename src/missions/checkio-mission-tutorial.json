@@ -1,0 +1,24 @@
+{
+  "title": "Multiply (Intro)",
+  "slug": "multiply-intro",
+  "points": "5",
+  "power": "empty",
+  "station": {
+    "name": "Elementary",
+    "slug": "library"
+  },
+  "replace": [
+    {"from": "{% if ", "to": " else %}", "text": ""},
+    {"from": "{% if ", "to": " else %}", "text": ""},
+    {"from": "{% if ", "to": " else %}", "text": ""},
+    {"from": "{% endif %}", "to": "endif %}", "text": ""},
+    {"from": "{% endif %}", "to": "endif %}", "text": ""},
+    {"from": "{% endif %}", "to": "endif %}", "text": ""},
+    {"from": "{{MEDIA}}", "to": "}}", "text": "../multiply-intro/"},
+    {"from": "{{MEDIA}}", "to": "}}", "text": "../multiply-intro/"},
+    {"from": "<pre class=\"brush: python\">\n",
+     "to": "</pre>",
+     "text": "<pre><code class='language-ada'>\nfunction Mult_Two (A, B : Integer) return Integer is\nbegin\n   return A * B;\nend Mult_Two;\n</code></pre>\n"
+    }
+  ]
+}
