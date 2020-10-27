@@ -1,0 +1,3 @@
+[submodule "src/missions/checkio-mission-tutorial"]
+	path = src/missions/checkio-mission-tutorial
+	url = https://github.com/CheckiO/checkio-mission-tutorial.git
