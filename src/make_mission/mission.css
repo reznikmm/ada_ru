@@ -12,6 +12,11 @@ body {
     display: none;
 }
 
+#station-progress {
+    height: 3px;
+    width: 10em;
+}
+
 .align-right { float: right; }
 
 .langs {

@@ -1,0 +1,63 @@
+body {
+    font-family: verdana, helvetica, arial, sans-serif;
+    /* background-color:#fffae8; */
+}
+  
+/*
+http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
+*/
+.row-ar, .col-ar { overflow: hidden; position: absolute; }
+.row-ar { left: 0px; right: 0px; }
+.col-ar { top: 0px; bottom: 0px; }
+.scroll-x { overflow-x: auto; }
+.scroll-y { overflow-y: auto; }
+
+#row1 {
+    height: 2.2em;
+    top: 0em;
+    padding: 0.3em;
+}
+
+#row1 a {
+    margin-left: 0.5em;
+    font-size: 70%;
+}
+
+#row2 {
+    top: 2.2em;
+    bottom: 0em;
+    text-align: justify;
+}
+
+#col1 {
+    left: 0;
+    width: 70%;
+}
+
+#col2 {
+    right: 0;
+    width: 30%;
+}
+
+#col1-row1 {
+    top: 0;
+    height: 75%;
+}
+
+#col1-row2 {
+    bottom: 0;
+    height: 25%;
+}
+
+#profile {
+    float:right;
+}
+
+#mission-description {
+    padding: 0.5em;
+}
+
+.for_info_only {
+    display: none;
+}
+

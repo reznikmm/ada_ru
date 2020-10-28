@@ -45,6 +45,12 @@ procedure Make_Mission is
      (Full : in out League.Strings.Universal_String;
       List : League.JSON.Arrays.JSON_Array);
 
+   procedure Expand_Template
+     (File_Name : League.Strings.Universal_String;
+      Descr     : League.Strings.Universal_String;
+      Context   : League.JSON.Objects.JSON_Object;
+      Result    : out League.Strings.Universal_String);
+
    Mission_Dir : constant League.Strings.Universal_String :=
      League.Application.Arguments.Element (1);
    Path        : constant League.String_Vectors.Universal_String_Vector :=
@@ -133,14 +139,15 @@ procedure Make_Mission is
       end loop;
    end Do_Replace;
 
-   -----------------------
-   -- Make_Mission_File --
-   -----------------------
+   ---------------------
+   -- Expand_Template --
+   ---------------------
 
-   procedure Make_Mission_File
-     (Prefix  : League.Strings.Universal_String;
-      Lang    : League.Strings.Universal_String;
-      Context : in out League.JSON.Objects.JSON_Object)
+   procedure Expand_Template
+     (File_Name : League.Strings.Universal_String;
+      Descr     : League.Strings.Universal_String;
+      Context   : League.JSON.Objects.JSON_Object;
+      Result    : out League.Strings.Universal_String)
    is
       Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
       Reader : aliased XML.SAX.Simple_Readers.Simple_Reader;
@@ -149,31 +156,10 @@ procedure Make_Mission is
       Output : aliased XML.SAX.Output_Destinations.Strings
         .String_Output_Destination;
 
-      Short_File : constant League.Strings.Universal_String :=
-        Mission_Dir & Prefix & "/info/task_short_description.html";
-      Full_File : constant League.Strings.Universal_String :=
-        Mission_Dir & Prefix & "/info/task_description.html";
-      Short  : League.Strings.Universal_String;
-      Full   : League.Strings.Universal_String;
-      Text   : League.Strings.Universal_String;
       Placeholder : constant Wide_Wide_String := "description_place_holder";
       Pos    : Natural;
-      Dir    : constant String := "/tmp/game/" & Lang.To_UTF_8_String;
-      Dump   : Ada.Wide_Wide_Text_IO.File_Type;
    begin
-      if Ada.Directories.Exists (Short_File.To_UTF_8_String) then
-         Read_File (Short_File, Short);
-         Context.Insert
-           (+"short_description", League.JSON.Values.To_JSON_Value (Short));
-      end if;
-
-      if Ada.Directories.Exists (Full_File.To_UTF_8_String) then
-         Read_File (Full_File, Full);
-         Do_Replace (Full, Context.Value (+"replace").To_Array);
-      end if;
-
-      Context.Insert (+"lang", League.JSON.Values.To_JSON_Value (Lang));
-      Input.Open_By_File_Name (+"make_mission/mission.xhtml");
+      Input.Open_By_File_Name (File_Name);
       Reader.Set_Input_Source (Input'Unchecked_Access);
       Reader.Set_Content_Handler (Filter'Unchecked_Access);
       Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
@@ -184,16 +170,74 @@ procedure Make_Mission is
          League.Holders.JSON_Objects.To_Holder (Context));
       Writer.Set_Output_Destination (Output'Unchecked_Access);
       Reader.Parse;
-      Text := Output.Get_Text;
-      Pos := Text.Index (Placeholder);
-      Text.Replace (Pos, Pos + Placeholder'Length - 1, Full);
+      Result := Output.Get_Text;
+      Pos := Result.Index (Placeholder);
+      Result.Replace
+        (Pos,
+         Pos + Placeholder'Length - 1,
+         Descr);
+   end Expand_Template;
 
-      Ada.Directories.Create_Path (Dir);
+   -----------------------
+   -- Make_Mission_File --
+   -----------------------
+
+   procedure Make_Mission_File
+     (Prefix  : League.Strings.Universal_String;
+      Lang    : League.Strings.Universal_String;
+      Context : in out League.JSON.Objects.JSON_Object)
+   is
+      Lang_Dir   : constant String := "/tmp/game/" & Lang.To_UTF_8_String;
+      Short_File : constant League.Strings.Universal_String :=
+        Mission_Dir & Prefix & "/info/task_short_description.html";
+      Full_File : constant League.Strings.Universal_String :=
+        Mission_Dir & Prefix & "/info/task_description.html";
+      Short  : League.Strings.Universal_String;
+      Full   : League.Strings.Universal_String;
+      Text   : League.Strings.Universal_String;
+      Output : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      if Ada.Directories.Exists (Short_File.To_UTF_8_String) then
+         Read_File (Short_File, Short);
+         Context.Insert
+           (+"short_description", League.JSON.Values.To_JSON_Value (Short));
+      end if;
+
+      if Ada.Directories.Exists (Full_File.To_UTF_8_String) then
+         Read_File (Full_File, Full);
+         Do_Replace (Full, Context.Value (+"replace").To_Array);
+         Context.Insert
+           (+"description", League.JSON.Values.To_JSON_Value (Full));
+      else
+         Full := Context.Value (+"description").To_String;
+      end if;
+
+      Context.Insert (+"lang", League.JSON.Values.To_JSON_Value (Lang));
+
+      Expand_Template
+        (File_Name => +"make_mission/mission.xhtml",
+         Descr     => Full,
+         Context   => Context,
+         Result    => Text);
+
+      Ada.Directories.Create_Path (Lang_Dir);
       Ada.Wide_Wide_Text_IO.Create
-        (Dump,
-         Name => Dir & "/" & Slug.To_UTF_8_String & ".html");
-      Ada.Wide_Wide_Text_IO.Put (Dump, Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Close (Dump);
+        (Output,
+         Name => Lang_Dir & "/" & Slug.To_UTF_8_String & ".html");
+      Ada.Wide_Wide_Text_IO.Put (Output, Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Output);
+
+      Expand_Template
+        (File_Name => +"make_mission/solve.xhtml",
+         Descr     => Full,
+         Context   => Context,
+         Result    => Text);
+
+      Ada.Wide_Wide_Text_IO.Create
+        (Output,
+         Name => Lang_Dir & "/" & Slug.To_UTF_8_String & "-solve.html");
+      Ada.Wide_Wide_Text_IO.Put (Output, Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Output);
    end Make_Mission_File;
 
    ---------------
@@ -280,7 +324,7 @@ begin
    Ada.Directories.Copy_File
      (Mission_Dir.To_UTF_8_String & ".ada",
       "/tmp/game/" & Slug.To_UTF_8_String & "/" &
-        Slug.To_UTF_8_String & ".ada");
+        Slug.To_UTF_8_String & ".txt");
 
    if Ada.Directories.Exists (Media_Dir) then
       Ada.Directories.Search
