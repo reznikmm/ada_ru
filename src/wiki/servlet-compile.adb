@@ -47,6 +47,9 @@ package body Servlet.Compile is
       File_Name : constant League.Strings.Universal_String :=
         Store & "/gcc-error.txt";
 
+      Run_File_Name : constant League.Strings.Universal_String :=
+        Store & "/run.txt";
+
    begin
       if not Ada.Directories.Exists (Store.To_UTF_8_String) then
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
@@ -100,6 +103,15 @@ package body Servlet.Compile is
             Object.Insert
               (+"completed", League.JSON.Values.To_JSON_Value (True));
 
+            if Ada.Directories.Exists (Run_File_Name.To_UTF_8_String) then
+               Object.Insert
+                 (+"output",
+                  League.JSON.Values.To_JSON_Value
+                    (Axe.Read_File
+                      (Run_File_Name,
+                       League.Text_Codecs.Codec_For_Application_Locale)));
+            end if;
+
             JSON.Set_Object (Object);
             Response.Set_Status (Servlet.HTTP_Responses.OK);
             Response.Set_Content_Type (+"application/json");
@@ -124,6 +136,7 @@ package body Servlet.Compile is
    is
       pragma Unreferenced (Self);
 
+      Action       : League.Strings.Universal_String := +"compile";
       Text         : League.String_Vectors.Universal_String_Vector;
       Content_Type : constant League.String_Vectors.Universal_String_Vector :=
         Request.Get_Headers (+"Content-Type");
@@ -151,6 +164,10 @@ package body Servlet.Compile is
             for J in 1 .. List.Length loop
                Text.Append (List.Element (J).To_String);
             end loop;
+
+            if Object.Contains (+"action") then
+               Action := Object.Value (+"action").To_String;
+            end if;
          else
             Response.Set_Status (Servlet.HTTP_Responses.Bad_Request);
             return;
@@ -184,7 +201,7 @@ package body Servlet.Compile is
             Name => Prefix & "/jobs/" & Hash.To_UTF_8_String,
             Form => "WCEM=8");
 
-         Ada.Wide_Wide_Text_IO.Put (File, "compile");
+         Ada.Wide_Wide_Text_IO.Put_Line (File, Action.To_Wide_Wide_String);
          Ada.Wide_Wide_Text_IO.Close (File);
 
          declare
