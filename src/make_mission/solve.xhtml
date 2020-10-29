@@ -55,10 +55,10 @@
   <div id="row1" class="row-ar">
     <a class="pure-button" href="/"><i class="fas fa-home"></i> Home</a>
     <a class="pure-button" href="${context.slug}.html"><i class="fas fa-info-circle"></i> Mission Info...</a>
-    <a class="pure-button" href="#"><i class="fas fa-play"></i> Run</a>
-    <a class="pure-button" href="#"><i class="fas fa-check"></i> Check</a>
+    <a id="run_button"   class="pure-button" href="#"><i class="fas fa-play"></i> Run</a>
+    <a id="check_button" class="pure-button" href="#"><i class="fas fa-check"></i> Check</a>
     <a id="reset_button" class="pure-button" href="#"><i class="fas fa-undo"></i> Reset code</a>
-    <a id="help_button" class="pure-button" href="#"><i class="fas fa-terminal"></i> Help</a>
+    <a id="help_button"  class="pure-button" href="#"><i class="fas fa-terminal"></i> Help</a>
     <span id="profile">
       <a class="pure-button" href="#"><i class="fas fa-user"></i> Profile</a>
     </span>
@@ -70,7 +70,7 @@
       <div id="col1-row1" class="row-ar" style="border: 1px solid blue">
         <div id="container" style="width:100%;height:100%;border:1px solid grey"></div>
       </div>
-      <div id="col1-row2" class="row-ar" style="border: 1px solid green">console</div>
+      <div id="col1-row2" class="row-ar" style="border: 1px solid green"><pre id="console">console</pre></div>
     </div>
     <div id="col2" class="col-ar scroll-y">
 <!-- mission description -->

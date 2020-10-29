@@ -161,6 +161,33 @@ define(['vs/editor/editor.main'], function() {
     function init(slug){
         var host = `${document.location.protocol}//${document.location.host}`;
         var initial = `${host}/game/${slug}/${slug}.txt`;
+        var compile = `${host}/compile`;
+
+        function watchCompilation(id){
+            function askCompilation(){
+                fetch(`${compile}?id=${id}`)
+                    .then(response => response.ok ? response.json() :
+                                        response.status == 503 ? { completed: false } :
+                                          console.log(`Bad response: ${response.status}`))
+                    .then(json => {
+                        if (json.completed) {
+                            var markers = json.messages.map((x) => ({
+                                endColumn: x.column,
+                                endLineNumber: x.line,
+                                message: x.text,
+                                severity: monaco.MarkerSeverity.Error,
+                                startColumn: x.column,
+                                startLineNumber: x.line
+                            }));
+                            monaco.editor.setModelMarkers(model, 'me', markers);
+                            document.getElementById('console').innerText = json.output;
+                        } else
+                            watchCompilation(id)
+                    });
+            };
+
+            setTimeout(askCompilation, 500);
+        };
 
         fetch(`${host}/game/code/${slug}`)
           .then (response => response.ok?response.text():
@@ -168,10 +195,24 @@ define(['vs/editor/editor.main'], function() {
               .then (response => response.ok?response.text():''))
           .then (text => model.setValue (text));
 
-          document.getElementById('reset_button').onclick = function() {
+        document.getElementById('reset_button').onclick = function() {
             fetch(initial)
               .then (response => response.ok?response.text():'')
               .then (text => model.setValue (text));
+        };
+
+        document.getElementById('run_button').onclick = function() {
+            var text = model.getValue(monaco.editor.EndOfLinePreference.LF);
+            var list = text.split ('\n');
+            var json = {text: list, action: 'mission_run'};
+            var options= {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(json)
+            };
+            fetch(compile, options)
+              .then (response => response.json())
+              .then (response => watchCompilation(response.id));
         };
 
         document.getElementById('help_button').onclick = function() {

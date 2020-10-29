@@ -122,6 +122,7 @@ package body Servlet.Compile is
          Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
          Response.Set_Header (+"Retry-After", +"2");
          Response.Set_Header (+"Cache-Control", +"no-cache");
+         Response.Set_Header (+"Connection", +"keep-alive");
       end if;
    end Do_Get;
 
