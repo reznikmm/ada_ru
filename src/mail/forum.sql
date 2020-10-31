@@ -41,3 +41,31 @@ create table tg_books (
   title     varchar,
   caption   varchar,
   descr     varchar);
+
+create table game_stations (
+  station varchar not null primary key,
+  name    varchar not null
+);
+
+create table game_missions (
+  mission varchar not null primary key,
+  station varchar not null references game_stations,
+  name    varchar not null,
+  points  integer not null,
+  reputation integer not null
+);
+
+create table solved_missions (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  solved   timestamp not null default current_timestamp,
+  primary key (nickname, mission)
+);
+
+create table solution_texts (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  line     integer not null,
+  text     varchar not null,
+  primary key (nickname, mission, line)
+);

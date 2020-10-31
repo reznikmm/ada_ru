@@ -18,7 +18,7 @@ http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-t
     padding: 0.3em;
 }
 
-#row1 a {
+#row1 a, #row1 button {
     margin-left: 0.5em;
     font-size: 70%;
 }
@@ -61,3 +61,54 @@ http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-t
     display: none;
 }
 
+#solved { display: none; }
+#known_user { display: none; }
+
+#user {
+    display: none;
+}
+
+#known_user:checked ~ #user {
+    display: inline;
+}
+
+#login {
+    display: inline;
+}
+
+#known_user:checked ~ #login {
+    display: none;
+}
+
+#grac {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+#solved:checked ~ #grac {
+    display: block;
+}
+
+#grac div {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%; /* Could be more or less, depending on screen size */
+}
+
+#grac div .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}

@@ -55,12 +55,14 @@
   <div id="row1" class="row-ar">
     <a class="pure-button" href="/"><i class="fas fa-home"></i> Home</a>
     <a class="pure-button" href="${context.slug}.html"><i class="fas fa-info-circle"></i> Mission Info...</a>
-    <a id="run_button"   class="pure-button" href="#"><i class="fas fa-play"></i> Run</a>
-    <a id="check_button" class="pure-button" href="#"><i class="fas fa-check"></i> Check</a>
-    <a id="reset_button" class="pure-button" href="#"><i class="fas fa-undo"></i> Reset code</a>
-    <a id="help_button"  class="pure-button" href="#"><i class="fas fa-terminal"></i> Help</a>
+    <button id="run_button"   class="pure-button"><i class="fas fa-play"></i> Run</button>
+    <button id="check_button" class="pure-button"><i class="fas fa-check"></i> Check</button>
+    <button id="reset_button" class="pure-button"><i class="fas fa-undo"></i> Reset code</button>
+    <button id="help_button"  class="pure-button"><i class="fas fa-terminal"></i> Help</button>
     <span id="profile">
-      <a class="pure-button" href="#"><i class="fas fa-user"></i> Profile</a>
+      <input id="known_user" type="checkbox"/>
+      <a id="user" class="pure-button" href="#"><i class="fas fa-user"></i> Profile</a>
+      <a id="login" class="pure-button" href="/oauth2?path=/game/${context.lang}/${context.slug}-solve.html"><i class="fas fa-sign-in-alt"></i> Login</a>
     </span>
   </div>
   <div id="row2" class="row-ar">
@@ -80,13 +82,21 @@ description_place_holder
 <!-- mission description end -->      
     </div>
   </div>
+  <input id="solved" type="checkbox"/>
+  <div id="grac">
+    <div>
+      <label for="solved" class="close">x</label>
+      Solved!
+    </div>
+  </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/components/prism-core.min.js" integrity="sha512-hqRrGU7ys5tkcqxx5FIZTBb7PkO2o3mU6U5+qB9b55kgMlBUT4J2wPwQfMCxeJW1fC8pBxuatxoH//z0FInhrA==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-Q3qGP1uJL/B0sEmu57PKXjCirgPKMbg73OLRbTJ6lfHCVU5zkHqmcTI5EV2fSoPV1MHdKsCBE7m/aS6q0pPjRQ==" crossorigin="anonymous"></script>  
   <script>
-    require.config({paths: {'vs': '../min/vs'}});
+    require.config({paths: {'vs': '/game/min/vs'}, 'baseUrl': '/js/'});
     if (['de','es','fr','it','ja','ko','ru','zh-cn','zh-tw'].indexOf('${context.lang}') >= 0)
       require.config({'vs/nls': {availableLanguages: {'*': '${context.lang}'}}});
-    require(['../solve.js'], function (solve){
+      require(['logins'], function(logins) { logins.start(); });
+      require(['../solve.js'], function (solve){
       solve('${context.slug}')
     });
   </script>

@@ -7,6 +7,7 @@ with Ada.Text_IO;
 package body Mission is
    function Mult_Two (A, B : Integer) return Integer is
    begin
+      --  Put your code here
       return A - B;
    end Mult_Two;
 

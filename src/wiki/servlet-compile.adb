@@ -14,6 +14,8 @@ with League.Text_Codecs;
 with Axe.Common;
 with Axe.Read_File;
 
+with Sessions;
+
 package body Servlet.Compile is
    use type League.Strings.Universal_String;
 
@@ -41,16 +43,28 @@ package body Servlet.Compile is
       Id      : constant League.Strings.Universal_String :=
         Request.Get_Parameter (+"id");
 
+      Solve   : constant League.Strings.Universal_String :=
+        Request.Get_Parameter (+"solve");
+
       Store : constant League.Strings.Universal_String :=
         League.Strings.From_UTF_8_String (Prefix & "store/") & Id;
 
-      File_Name : constant League.Strings.Universal_String :=
-        Store & "/gcc-error.txt";
+      File_Name : League.Strings.Universal_String := Store;
 
       Run_File_Name : constant League.Strings.Universal_String :=
         Store & "/run.txt";
 
+      Solved_File_Name : constant League.Strings.Universal_String :=
+        Store & "/solved.txt";
+
    begin
+      if Solve.Is_Empty then
+         File_Name.Append ("/gcc-error.txt");
+      else
+         --  In solve mode we use another log file name to avoid interference
+         File_Name.Append ("/gcc-check.txt");
+      end if;
+
       if not Ada.Directories.Exists (Store.To_UTF_8_String) then
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
 
@@ -103,6 +117,12 @@ package body Servlet.Compile is
             Object.Insert
               (+"completed", League.JSON.Values.To_JSON_Value (True));
 
+            if Ada.Directories.Exists (Solved_File_Name.To_UTF_8_String) then
+               Object.Insert
+                 (+"solved",
+                  League.JSON.Values.To_JSON_Value (True));
+            end if;
+
             if Ada.Directories.Exists (Run_File_Name.To_UTF_8_String) then
                Object.Insert
                  (+"output",
@@ -110,6 +130,10 @@ package body Servlet.Compile is
                     (Axe.Read_File
                       (Run_File_Name,
                        League.Text_Codecs.Codec_For_Application_Locale)));
+            else
+               Object.Insert
+                 (+"output",
+                  League.JSON.Values.To_JSON_Value (Text));
             end if;
 
             JSON.Set_Object (Object);
@@ -121,9 +145,9 @@ package body Servlet.Compile is
       else
          Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
          Response.Set_Header (+"Retry-After", +"2");
-         Response.Set_Header (+"Cache-Control", +"no-cache");
-         Response.Set_Header (+"Connection", +"keep-alive");
       end if;
+
+      Response.Set_Header (+"Cache-Control", +"no-cache");
    end Do_Get;
 
    -------------
@@ -137,6 +161,10 @@ package body Servlet.Compile is
    is
       pragma Unreferenced (Self);
 
+      Session : constant Sessions.HTTP_Session_Access :=
+        Sessions.HTTP_Session_Access (Request.Get_Session);
+
+      Info         : constant Sessions.User_Info := Session.Get_User_Info;
       Action       : League.Strings.Universal_String := +"compile";
       Text         : League.String_Vectors.Universal_String_Vector;
       Content_Type : constant League.String_Vectors.Universal_String_Vector :=
@@ -168,6 +196,13 @@ package body Servlet.Compile is
 
             if Object.Contains (+"action") then
                Action := Object.Value (+"action").To_String;
+            end if;
+
+            if Object.Contains (+"mission") then
+               Action.Append (" ");
+               Action.Append (Object.Value (+"mission").To_String);
+               Action.Append (" ");
+               Action.Append (Info.User);
             end if;
          else
             Response.Set_Status (Servlet.HTTP_Responses.Bad_Request);

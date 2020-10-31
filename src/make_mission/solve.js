@@ -158,17 +158,27 @@ define(['vs/editor/editor.main'], function() {
         language: 'ada'
     });
 
+    var run_button = document.getElementById('run_button');
+    var check_button = document.getElementById('check_button');
+
+    function disable_buttons(value){
+        run_button.disabled = value;
+        check_button.disabled = value;
+    }
+
     function init(slug){
         var host = `${document.location.protocol}//${document.location.host}`;
         var initial = `${host}/game/${slug}/${slug}.txt`;
         var compile = `${host}/compile`;
 
-        function watchCompilation(id){
+        function watchCompilation(id, solve){
             function askCompilation(){
-                fetch(`${compile}?id=${id}`)
+                var extra=solve?"&solve=1":"";
+                fetch(`${compile}?id=${id}${extra}`)
                     .then(response => response.ok ? response.json() :
                                         response.status == 503 ? { completed: false } :
-                                          console.log(`Bad response: ${response.status}`))
+                                        (disable_buttons(false),
+                                         console.log(`Bad response: ${response.status}`)))
                     .then(json => {
                         if (json.completed) {
                             var markers = json.messages.map((x) => ({
@@ -181,8 +191,10 @@ define(['vs/editor/editor.main'], function() {
                             }));
                             monaco.editor.setModelMarkers(model, 'me', markers);
                             document.getElementById('console').innerText = json.output;
+                            document.getElementById('solved').checked = solve && json.solved;
+                            disable_buttons(false);
                         } else
-                            watchCompilation(id)
+                            watchCompilation(id, solve)
                     });
             };
 
@@ -195,13 +207,13 @@ define(['vs/editor/editor.main'], function() {
               .then (response => response.ok?response.text():''))
           .then (text => model.setValue (text));
 
-        document.getElementById('reset_button').onclick = function() {
+          document.getElementById('reset_button').onclick = function() {
             fetch(initial)
               .then (response => response.ok?response.text():'')
               .then (text => model.setValue (text));
         };
 
-        document.getElementById('run_button').onclick = function() {
+        run_button.onclick = function() {
             var text = model.getValue(monaco.editor.EndOfLinePreference.LF);
             var list = text.split ('\n');
             var json = {text: list, action: 'mission_run'};
@@ -210,9 +222,25 @@ define(['vs/editor/editor.main'], function() {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(json)
             };
+            disable_buttons(true);
             fetch(compile, options)
               .then (response => response.json())
-              .then (response => watchCompilation(response.id));
+              .then (response => watchCompilation(response.id, false));
+        };
+
+        check_button.onclick = function() {
+            var text = model.getValue(monaco.editor.EndOfLinePreference.LF);
+            var list = text.split ('\n');
+            var json = {text: list, action: 'mission_check', mission: slug};
+            var options= {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(json)
+            };
+            disable_buttons(true);
+            fetch(compile, options)
+              .then (response => response.json())
+              .then (response => watchCompilation(response.id, true));
         };
 
         document.getElementById('help_button').onclick = function() {
