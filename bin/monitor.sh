@@ -120,7 +120,7 @@ mark_solved() {
     mission=$1
     user=$2
     echo $user solved $mission
-    if [ -n "$user"]; then
+    if [ -n "$user" ]; then
       CMD="insert into solved_missions(nickname,mission) values(:'nick',:'mission');commit;"
       echo $CMD| psql -v mission="$mission" -v nick="$user" mail
     fi
@@ -129,13 +129,12 @@ mark_solved() {
 update_text(){
     mission=$1
     user=$2
-    if [ -n "$user"]; then
+    if [ -n "$user" ]; then
         # Escape backslash and column separator characters
         sed -e 's/[\\~]/\\&/g' $SBOX/_source.adb > $SBOX/import.txt
         psql -v mission="$mission" -v nick="$user" mail <<-EOF
 create table temp_text (line serial, text varchar);
-copy temp_text (text) from '$SBOX/import.txt'
-with DELIMITER '~' NULL '' ENCODING 'utf-8';
+\\copy temp_text (text) from '$SBOX/import.txt' with DELIMITER '~' NULL '' ENCODING 'utf-8';
 delete from solution_texts where nickname=:'nick' and mission=:'mission';
 insert into solution_texts select :'nick', :'mission', line, coalesce(text,'')
 from temp_text;

@@ -1,5 +1,15 @@
 package body Sessions is
 
+   --------------
+   -- Database --
+   --------------
+
+   function Database
+     (Self : HTTP_Session'Class) return Databases.SQL_Database is
+   begin
+      return Self.Pool.Create;
+   end Database;
+
    -----------------------
    -- Get_Creation_Time --
    -----------------------

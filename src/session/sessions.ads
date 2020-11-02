@@ -5,6 +5,8 @@ with League.String_Vectors;
 with Servlet.HTTP_Sessions;
 with League.Calendars;
 
+with Databases;
+
 package Sessions is
 
    type HTTP_Session is new Servlet.HTTP_Sessions.HTTP_Session with private;
@@ -21,6 +23,10 @@ package Sessions is
    not overriding function Get_User_Info
      (Self : HTTP_Session) return User_Info;
 
+   function Database
+    (Self : HTTP_Session'Class) return Databases.SQL_Database;
+   --  Return new or reused session. Note that result is already openned.
+
 private
 
    type HTTP_Session is new Servlet.HTTP_Sessions.HTTP_Session with record
@@ -28,6 +34,7 @@ private
       Info     : User_Info;
       Created  : League.Calendars.Date_Time;
       Accessed : League.Calendars.Date_Time;
+      Pool     : not null access Databases.SQL_Database_Pool;
    end record;
 
    overriding function Get_Creation_Time

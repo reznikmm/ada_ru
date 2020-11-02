@@ -245,7 +245,8 @@ package body Sessions.Managers is
    is
       Result : Session_Access;
    begin
-      Result := new Sessions.HTTP_Session;
+      Result := new Sessions.HTTP_Session'
+        (Pool => Self.Pool'Unchecked_Access, others => <>);
       Self.Change_Session_Id (Result);
 
       return Result;

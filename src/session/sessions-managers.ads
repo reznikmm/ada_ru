@@ -41,7 +41,7 @@ private
    with record
       Random : Stream_Element_Random.Generator;
       Map    : Session_Maps.Map;
-      Pool   : Databases.SQL_Database_Pool;
+      Pool   : aliased Databases.SQL_Database_Pool;
       Events : access Axe.Events.Listener'Class;
    end record;
 

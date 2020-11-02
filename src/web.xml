@@ -3,6 +3,15 @@
   <library-name>ada_ru</library-name>
 
   <servlet>
+    <servlet-name>Solution</servlet-name>
+    <servlet-tag>SERVLET.GAME_SOLUTIONS.SOLUTION_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Solution</servlet-name>
+    <url-pattern>/game/code/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>StaticResource</servlet-name>
     <servlet-tag>AWFC.STATIC_RESOURCE_SERVLETS.STATIC_RESOURCE_SERVLET</servlet-tag>
   </servlet>
@@ -93,5 +102,14 @@
   <servlet-mapping>
     <servlet-name>Compile</servlet-name>
     <url-pattern>/compile</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Solution</servlet-name>
+    <servlet-tag>SERVLET.GAME_SOLUTIONS.SOLUTION_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Solution</servlet-name>
+    <url-pattern>/game/code/*</url-pattern>
   </servlet-mapping>
 </web-app>
