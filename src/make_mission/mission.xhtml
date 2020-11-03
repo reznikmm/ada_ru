@@ -60,26 +60,30 @@
             <!-- Hamburger icon -->
             <label for="menu_checkbox"><i class="fas fa-bars"></i></label>
         </div>
-          
         <div id="menu">
-            <div class="pure-menu">
-                <a class="pure-menu-heading" href="#">${context.station.name}
-                <br/>
-                <progress id="station-progress" max="100" value="0"></progress></a>
-                <ul class="pure-menu-list">
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Home</a></li>
-                    <li class="pure-menu-item">
-                        <a class="pure-menu-link" href="${context.slug}-solve.html"><i class="fas fa-flask"></i> Solve It</a>
-                    </li>
-                    <li class="pure-menu-item menu-item-divided pure-menu-selected">
-                        <a href="#" class="pure-menu-link">Services</a>
-                    </li>
-    
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contact</a></li>
-                </ul>
-            </div>
+          <div class="pure-menu">
+            <a id="station" class="pure-menu-heading" href="#">${context.station.name}
+              <br />
+              <progress id="station-progress" max="100" value="0"></progress></a>
+            <ul class="pure-menu-list">
+              <li class="pure-menu-item"><a href="#" class="pure-menu-link">Home</a></li>
+              <li class="pure-menu-item">
+                <a class="pure-menu-link" href="${context.slug}-solve.html"><i class="fas fa-flask"></i> Solve It</a>
+              </li>
+              <li class="pure-menu-item menu-item-divided pure-menu-selected">
+                <a href="#" class="pure-menu-link">Services</a>
+              </li>
+        
+              <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <hr/>
+            Users attempted: <span id="attempted"></span><br/>
+            Users succeeded: <span id="succeeded"></span><br/>
+            Score for solving: ${context.points}
+          </div>
         </div>
-    
         <div id="main">
             <div class="header">
                 <h1>${context.title}</h1>
@@ -87,7 +91,6 @@
                     <i class="fas fa-battery-${context.power}"></i> ${context.station.name}
                 </h2>
             </div>
-    
             <div class="content">
               <p class="content-subhead">
                     <spam class="align-right langs">
@@ -102,13 +105,12 @@ description_place_holder
                 <a href="https://py.checkio.org/blog/how-to-improve-checkio-missions/">How to improve this mission?</a>
                 <a href="https://github.com/CheckiO/${context.repo}">https://github.com/CheckiO/${context.repo}</a>
               </p>
-
               <p>
                   <a class="pure-button pure-button-primary" href="${context.slug}-solve.html"><i class="fas fa-flask"></i> Solve It! (+${context.points})</a>
                   <span class="align-right">
-                      <a href="#"><i class="far fa-plus-square"></i></a>
-                      <a href="#" class="pure-button">0</a>
-                      <a href="#"><i class="far fa-minus-square"></i></a>
+                      <button class="pure-button" id="vote+1"><i class="far fa-plus-square"></i></button>
+                      <button class="pure-button" id="vote0">0</button>
+                      <button class="pure-button" id="vote-1"><i class="far fa-minus-square"></i></button>
                   </span>
               </p>
             </div>
@@ -116,5 +118,43 @@ description_place_holder
     </div>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/components/prism-core.min.js" integrity="sha512-hqRrGU7ys5tkcqxx5FIZTBb7PkO2o3mU6U5+qB9b55kgMlBUT4J2wPwQfMCxeJW1fC8pBxuatxoH//z0FInhrA==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-Q3qGP1uJL/B0sEmu57PKXjCirgPKMbg73OLRbTJ6lfHCVU5zkHqmcTI5EV2fSoPV1MHdKsCBE7m/aS6q0pPjRQ==" crossorigin="anonymous"></script>  
-  </body>
+    <script>
+function get_stats(){
+      fetch(`$${document.location.protocol}//$${document.location.host}/game/mission?mission=${context.slug}`)
+        .then(response => response.json())
+        .then(json => {
+          document.getElementById('station-progress').max = json.total;
+          document.getElementById('station-progress').value = json.solved;
+          document.getElementById('station').title = `$${json.solved}/$${json.total}`;
+          document.getElementById('vote0').innerText = json.votes;
+          document.getElementById('attempted').innerText = json.attempted;
+          document.getElementById('succeeded').innerText = json.successed;
+        })
+};
+function bind_vote(vote){
+  var data = new FormData();
+  data.append('mission', '${context.slug}');
+  data.append('vote', vote);
+  var options = {
+    method: 'POST',
+    body: data
+  };
+  document.getElementById(`vote$${vote}`).onclick=function(){
+    var host=`$${document.location.protocol}//$${document.location.host}`;
+    fetch(`$${host}/game/mission`, options)
+    .then(response => {
+      if (response.status == 401) {
+        document.location.replace(`$${host}/oauth2?path=$${document.location.pathname}`)
+      }else{
+        get_stats()
+      }
+    });
+  }
+};
+bind_vote('-1');
+bind_vote('0');
+bind_vote('+1');
+get_stats();
+    </script>
+    </body>
 </html>

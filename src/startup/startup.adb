@@ -43,6 +43,8 @@ with Servlet.Compile;
 pragma Unreferenced (Servlet.Compile);
 with Servlet.Game_Solutions;
 pragma Unreferenced (Servlet.Game_Solutions);
+with Servlet.Game_Missions;
+pragma Unreferenced (Servlet.Game_Missions);
 
 with Axe.Wiki_View_Servlets;
 

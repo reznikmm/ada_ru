@@ -51,8 +51,14 @@ create table game_missions (
   mission varchar not null primary key,
   station varchar not null references game_stations,
   name    varchar not null,
-  points  integer not null,
-  reputation integer not null
+  points  integer not null
+);
+
+create table game_mission_votes (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  vote     integer not null,
+  primary key (nickname, mission)
 );
 
 create table solved_missions (

@@ -105,11 +105,12 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>Solution</servlet-name>
-    <servlet-tag>SERVLET.GAME_SOLUTIONS.SOLUTION_SERVLET</servlet-tag>
+    <servlet-name>Mission</servlet-name>
+    <servlet-tag>SERVLET.GAME_MISSIONS.MISSION_SERVLET</servlet-tag>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Solution</servlet-name>
-    <url-pattern>/game/code/*</url-pattern>
+    <servlet-name>Mission</servlet-name>
+    <url-pattern>/game/mission</url-pattern>
   </servlet-mapping>
+
 </web-app>
