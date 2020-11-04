@@ -8,7 +8,7 @@
   <meta property="og:url"          content="https://www.ada-ru.org/game/${context.slug}.html"/>
   <meta property="og:title"        content="${context.title}"/>
   <meta property="og:description"  content="${context.short_description}"/>
-  <meta property="og:image"        content="{context.image}"/>
+  <meta property="og:image"        content="https://www.ada-ru.org/game/svg/${context.svg}.svg"/>
   <meta property="og:type"         content="article"/>
   <meta property="og:locale"       content="${context.lang}"/>
   <meta property="fb:app_id"       content="994592483896446"/>
@@ -16,7 +16,7 @@
   <meta name="twitter:site" content="@ReznikMaxim" />
   <meta name="twitter:title" content="${context.title}" />
   <meta name="twitter:description" content="${context.short_description}" />
-  <meta name="twitter:image" content="{context.image}"/>
+  <meta name="twitter:image" content="https://www.ada-ru.org/game/svg/${context.svg}.svg"/>
   <meta name="google-site-verification" content="VFsKvtWDSjtwpDm4ZL9cb2ESsYtiNsAOO3zh-vNjAWY" />
   <title>${context.title} - Ada coding challenges</title>
   <!--- Favicons -->
@@ -62,7 +62,9 @@
         </div>
         <div id="menu">
           <div class="pure-menu">
-            <a id="station" class="pure-menu-heading" href="#">${context.station.name}
+            <a id="station" class="pure-menu-heading" href="/game/${context.station.slug}.html">
+              <img class="station-icon" src="/game/svg/${context.station.svg}.svg" alt="${context.station.name}"/>
+              ${context.station.name}
               <br />
               <progress id="station-progress" max="100" value="0"></progress></a>
             <ul class="pure-menu-list">
@@ -86,19 +88,19 @@
         </div>
         <div id="main">
             <div class="header">
-                <h1>${context.title}</h1>
+                <h1><img src="/game/svg/${context.svg}.svg" alt="${context.title}" class="mission-icon"/> ${context.title}</h1>
                 <h2>
-                    <i class="fas fa-battery-${context.power}"></i> ${context.station.name}
+                    <i class="fas fa-battery-${context.power}"></i> <a href="/game/${context.station.slug}.html">${context.station.name}</a>
                 </h2>
             </div>
             <div class="content">
               <p class="content-subhead">
-                    <spam class="align-right langs">
+                    <span class="align-right langs">
                         <a href="../en/${context.slug}.html">en</a>
                         <mtl:for expression="lang of context.langs">
                             <a href="../${lang}/${context.slug}.html">${lang}</a>
                         </mtl:for>
-                    </spam>
+                    </span>
               </p>
 description_place_holder
               <p class="content-subhead">

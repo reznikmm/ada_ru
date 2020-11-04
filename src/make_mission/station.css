@@ -1,0 +1,33 @@
+body {
+    color: #777;
+}
+
+#layout {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 0.5em;
+}
+
+h1 {
+    background: #191818;
+    color: #999;
+    padding: 0.3em;
+}
+
+h2 {
+    background: #191818;
+    color: #999;
+    padding: 0.3em;
+}
+
+.station-icon {
+    height: 1em;
+}
+
+.mission-icon {
+    height: 0.8em;
+}
+
+.power{
+    float:right;
+}

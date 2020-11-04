@@ -6,7 +6,7 @@ project Mk_Mission is
     ("../make_mission");
    for Object_Dir use ".objs/mk_mission";
 
-   for Main use ("make_mission");
+   for Main use ("make_station");
 
    Default_Ada_Switches :=
      ("-g",             --  Generates debug information

@@ -1,0 +1,7 @@
+{
+  "slug": "library",
+  "name": "Elementary",
+  "svg": "light-bulb",
+  "missions": ["checkio-mission-tutorial"],
+  "short_description": "The simplest tasks for the competition"
+}

@@ -3,10 +3,8 @@
   "slug": "multiply-intro",
   "points": "5",
   "power": "empty",
-  "station": {
-    "name": "Elementary",
-    "slug": "library"
-  },
+  "svg": "info",
+  "station": "library",
   "replace": [
     {"from": "{% if ", "to": " else %}", "text": ""},
     {"from": "{% if ", "to": " else %}", "text": ""},
