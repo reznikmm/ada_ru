@@ -77,15 +77,15 @@
                 <a id="user" class="pure-menu-link" href="#"><i class="fas fa-user"></i> Profile</a>
                 <a id="login" class="pure-menu-link" href="/oauth2?path=/game/${context.lang}/${context.slug}.html"><i class="fas fa-sign-in-alt"></i> Login</a>
               </li>
-        
               <li class="pure-menu-item"><a href="/forum" class="pure-menu-link"><i class="fas fa-book-reader"></i> Forum</a></li>
             </ul>
           </div>
-          <div>
+          <div id="statistics">
             <hr/>
             Users attempted: <span id="attempted"></span><br/>
             Users succeeded: <span id="succeeded"></span><br/>
-            Score for solving: ${context.points}
+            Score for solving: ${context.points}<hr/>
+            <i class="fas fa-tachometer-alt"></i> Your score: <span id="my-score">-</span>
           </div>
         </div>
         <div id="main">
@@ -138,6 +138,7 @@ function get_stats(){
           document.getElementById('vote0').innerText = json.votes;
           document.getElementById('attempted').innerText = json.attempted;
           document.getElementById('succeeded').innerText = json.successed;
+          document.getElementById('my-score').innerText = json['my-score'];
         })
 };
 function bind_vote(vote){

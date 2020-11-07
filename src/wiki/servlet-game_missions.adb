@@ -22,6 +22,10 @@ package body Servlet.Game_Missions is
      "where station = " &
        "(select station from game_missions where mission=:mission) " &
      "union all " &
+     "select 'my-score', sum(points) from solved_missions s, game_missions m" &
+     " where s.mission=m.mission " &
+     "and s.nickname = :user " &
+     "union all " &
      "select 'solved', count(*) from solved_missions s, game_missions m " &
      "where s.mission=m.mission " &
      "and s.nickname = :user " &

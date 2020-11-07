@@ -60,6 +60,10 @@ body {
     display: none;
 }
 
+#statistics {
+    padding: 0.6em;
+}
+
 /*
 This is the parent `<div>` that contains the menu and the content area.
 */
