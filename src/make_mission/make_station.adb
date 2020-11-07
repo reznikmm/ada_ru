@@ -24,6 +24,9 @@ procedure Make_Station is
 begin
    IO.Read_JSON (Station_File, Station);
    Missions := Station.Value (+"missions").To_Array;
+   Station.Insert
+     (+"count",
+      League.JSON.Values.To_JSON_Value (+Missions.Length'Wide_Wide_Image));
 
    for J in 1 .. Missions.Length loop
       declare

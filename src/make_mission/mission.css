@@ -27,11 +27,11 @@ body {
 
 .station-icon {
     height: 1em;
+    filter: invert(1);
 }
 
 .mission-icon {
     height: 0.8em;
-    filter: invert(1);
 }
 
 /*

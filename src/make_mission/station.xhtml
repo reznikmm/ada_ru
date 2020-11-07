@@ -54,7 +54,9 @@
     <div id="layout">
       <h1>
         <a href="#" class="pure-menu-heading">  
-        <img src="/game/svg/${context.svg}.svg" alt="${context.name}" class="station-icon"/> ${context.name}
+            <img src="/game/svg/${context.svg}.svg" alt="${context.name}" class="station-icon"/> ${context.name}
+            <br/>
+            <progress id="station-progress" max="${context.count}" value="0"></progress>
         </a>
     </h1>
     <p>${context.short_description}</p>
@@ -65,6 +67,10 @@
                 <span class="power"><i class="fas fa-battery-${mission.power}"></i></span>
             </h2>
             <p>
+                <span class="solved">
+                    <input id="${mission.slug}" type="checkbox"/>
+                    <i class="fas fa-check"></i>
+                </span>
                 ${mission.short_description}
                 <br />
                 
@@ -78,5 +84,16 @@
         </div>
       </mtl:for>
     </div>
+    <script>
+fetch(`$${document.location.protocol}//$${document.location.host}/game/station?station=${context.slug}`)
+  .then(response => response.json())
+  .then(json => {
+      var progress = document.getElementById('station-progress');
+      json.forEach (item => {
+        document.getElementById(item).checked = true;
+        progress.value++;
+      });
+  });
+    </script>
   </body>
 </html>

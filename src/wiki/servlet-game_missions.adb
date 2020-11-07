@@ -64,16 +64,18 @@ package body Servlet.Game_Missions is
       Query  : SQL.Queries.SQL_Query := DB.Query;
       Object : League.JSON.Objects.JSON_Object;
    begin
-      Query.Prepare (+Statistics_SQL);
-      Query.Bind_Value (+":user", League.Holders.To_Holder (Info.User));
-      Query.Bind_Value (+":mission", League.Holders.To_Holder (Slug));
-      Query.Execute;
+      if not Info.User.Is_Empty then
+         Query.Prepare (+Statistics_SQL);
+         Query.Bind_Value (+":user", League.Holders.To_Holder (Info.User));
+         Query.Bind_Value (+":mission", League.Holders.To_Holder (Slug));
+         Query.Execute;
 
-      while Query.Next loop
-         Object.Insert
-           (-Query.Value (1),
-            League.JSON.Values.To_JSON_Value (-Query.Value (2)));
-      end loop;
+         while Query.Next loop
+            Object.Insert
+              (-Query.Value (1),
+               League.JSON.Values.To_JSON_Value (-Query.Value (2)));
+         end loop;
+      end if;
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (+"application/json");

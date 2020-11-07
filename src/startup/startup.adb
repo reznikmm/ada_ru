@@ -45,6 +45,8 @@ with Servlet.Game_Solutions;
 pragma Unreferenced (Servlet.Game_Solutions);
 with Servlet.Game_Missions;
 pragma Unreferenced (Servlet.Game_Missions);
+with Servlet.Game_Stations;
+pragma Unreferenced (Servlet.Game_Stations);
 
 with Axe.Wiki_View_Servlets;
 

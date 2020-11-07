@@ -113,4 +113,13 @@
     <url-pattern>/game/mission</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>Station</servlet-name>
+    <servlet-tag>SERVLET.GAME_STATIONS.STATION_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Station</servlet-name>
+    <url-pattern>/game/station</url-pattern>
+  </servlet-mapping>
+
 </web-app>
