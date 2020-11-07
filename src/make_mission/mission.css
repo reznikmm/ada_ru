@@ -34,6 +34,32 @@ body {
     height: 0.8em;
 }
 
+#known_user { display: none; }
+
+#user {
+    display: none;
+}
+
+#known_user:checked ~ #user {
+    display: inline;
+}
+
+#login {
+    display: inline;
+}
+
+#known_user:checked ~ #login {
+    display: none;
+}
+
+.solved input:checked ~ i {
+    display: inline;
+}
+
+.solved i, .solved input {
+    display: none;
+}
+
 /*
 This is the parent `<div>` that contains the menu and the content area.
 */

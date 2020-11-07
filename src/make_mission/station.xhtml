@@ -32,7 +32,7 @@
   <!--- CSS and Fonts -->
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono" rel="stylesheet"/>
-  <link rel="stylesheet" href="station.css" type="text/css"/>
+  <link rel="stylesheet" href="mission.css" type="text/css"/>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous"/>
   <link rel="stylesheet" href="pure-min.css"/>
   <script type="text/javascript">
@@ -52,38 +52,73 @@
     <meta itemprop="inLanguage" content="en" />
 
     <div id="layout">
-      <h1>
-        <a href="#" class="pure-menu-heading">  
-            <img src="/game/svg/${context.svg}.svg" alt="${context.name}" class="station-icon"/> ${context.name}
-            <br/>
-            <progress id="station-progress" max="${context.count}" value="0"></progress>
-        </a>
-    </h1>
-    <p>${context.short_description}</p>
-    <mtl:for expression="mission of context.missions">
-        <div class="mission">
-            <h2>
-                <img src="/game/svg/${mission.svg}.svg" alt="${mission.title}" class="mission-icon" /> ${mission.title}
-                <span class="power"><i class="fas fa-battery-${mission.power}"></i></span>
-            </h2>
-            <p>
-                <span class="solved">
-                    <input id="${mission.slug}" type="checkbox"/>
-                    <i class="fas fa-check"></i>
-                </span>
-                ${mission.short_description}
-                <br />
-                
-                <span class="align-right langs">
-                    <a href="en/${mission.slug}.html">en</a>
-                    <mtl:for expression="lang of mission.langs">
-                        <a href="${lang}/${mission.slug}.html">${lang}</a>
-                    </mtl:for>
-                </span>
-            </p>
+        <!-- Menu toggle -->
+        <input type="checkbox" id="menu_checkbox"/>
+        <div id="header">
+            <!-- Hamburger icon -->
+            <label for="menu_checkbox"><i class="fas fa-bars"></i></label>
         </div>
-      </mtl:for>
+        <div id="menu">
+          <div class="pure-menu">
+            <a id="station" class="pure-menu-heading" href="/game/${context.slug}.html">
+              <img class="station-icon" src="/game/svg/${context.svg}.svg" alt="${context.name}"/>
+              ${context.name}
+            </a>
+            <ul class="pure-menu-list">
+              <li class="pure-menu-item"><a href="/game/index.html" class="pure-menu-link"><i class="fas fa-home"></i> Home</a></li>
+              <li class="pure-menu-item">
+                <input id="known_user" type="checkbox"/>
+                <a id="user" class="pure-menu-link" href="#"><i class="fas fa-user"></i> Profile</a>
+                <a id="login" class="pure-menu-link" href="/oauth2?path=/game/${context.slug}.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+              </li>
+              <li class="pure-menu-item"><a href="/forum" class="pure-menu-link"><i class="fas fa-book-reader"></i> Forum</a></li>
+            </ul>
+          </div>
+          <div>
+            <hr/>
+            Score for solving: ${context.points}
+          </div>
+        </div>
+        <div id="main">
+            <div class="header">
+                <h1>
+                    <img src="/game/svg/${context.svg}.svg" alt="${context.name}" class="mission-icon"/> ${context.name}
+                    <br/>
+                    <progress id="station-progress" max="${context.count}" value="0"></progress>
+                </h1>
+                <h2>${context.short_description}</h2>
+            </div>
+            <div class="content">
+                <mtl:for expression="mission of context.missions">
+                    <div class="mission">
+                        <h2>
+                            <img src="/game/svg/${mission.svg}.svg" alt="${mission.title}" class="mission-icon" /> ${mission.title}
+                            <span class="align-right">${mission.points} <i class="fas fa-battery-${mission.power}"></i></span>
+                        </h2>
+                        <p>
+                            <span class="solved align-right">
+                                <input id="${mission.slug}" type="checkbox"/>
+                                <i class="fas fa-check"></i>
+                            </span>
+                            ${mission.short_description}
+                            <br />
+                            <span class="align-right langs">
+                                <a href="en/${mission.slug}.html">en</a>
+                                <mtl:for expression="lang of mission.langs">
+                                    <a href="${lang}/${mission.slug}.html">${lang}</a>
+                                </mtl:for>
+                            </span>
+                        </p>
+                    </div>
+                </mtl:for>
+            </div>
+        </div>
     </div>
+    <script src="/js/require.js"/>
+    <script>
+      require.config({xhtml:false, baseUrl: '/js'});
+      require(['logins'], function(logins) { logins.start(); });
+    </script>
     <script>
 fetch(`$${document.location.protocol}//$${document.location.host}/game/station?station=${context.slug}`)
   .then(response => response.json())

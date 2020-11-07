@@ -68,15 +68,17 @@
               <br />
               <progress id="station-progress" max="100" value="0"></progress></a>
             <ul class="pure-menu-list">
-              <li class="pure-menu-item"><a href="#" class="pure-menu-link">Home</a></li>
+              <li class="pure-menu-item"><a href="/game/index.html" class="pure-menu-link"><i class="fas fa-home"></i> Home</a></li>
               <li class="pure-menu-item">
                 <a class="pure-menu-link" href="${context.slug}-solve.html"><i class="fas fa-flask"></i> Solve It</a>
               </li>
-              <li class="pure-menu-item menu-item-divided pure-menu-selected">
-                <a href="#" class="pure-menu-link">Services</a>
+              <li class="pure-menu-item menu-item-divided">
+                <input id="known_user" type="checkbox"/>
+                <a id="user" class="pure-menu-link" href="#"><i class="fas fa-user"></i> Profile</a>
+                <a id="login" class="pure-menu-link" href="/oauth2?path=/game/${context.lang}/${context.slug}.html"><i class="fas fa-sign-in-alt"></i> Login</a>
               </li>
         
-              <li class="pure-menu-item"><a href="#" class="pure-menu-link">Contact</a></li>
+              <li class="pure-menu-item"><a href="/forum" class="pure-menu-link"><i class="fas fa-book-reader"></i> Forum</a></li>
             </ul>
           </div>
           <div>
@@ -111,7 +113,7 @@ description_place_holder
                   <a class="pure-button pure-button-primary" href="${context.slug}-solve.html"><i class="fas fa-flask"></i> Solve It! (+${context.points})</a>
                   <span class="align-right">
                       <button class="pure-button" id="vote+1"><i class="far fa-plus-square"></i></button>
-                      <button class="pure-button" id="vote0">0</button>
+                      <button class="pure-button" id="vote0">0 <i class="far fa-star"></i></button>
                       <button class="pure-button" id="vote-1"><i class="far fa-minus-square"></i></button>
                   </span>
               </p>
@@ -120,6 +122,11 @@ description_place_holder
     </div>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/components/prism-core.min.js" integrity="sha512-hqRrGU7ys5tkcqxx5FIZTBb7PkO2o3mU6U5+qB9b55kgMlBUT4J2wPwQfMCxeJW1fC8pBxuatxoH//z0FInhrA==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha512-Q3qGP1uJL/B0sEmu57PKXjCirgPKMbg73OLRbTJ6lfHCVU5zkHqmcTI5EV2fSoPV1MHdKsCBE7m/aS6q0pPjRQ==" crossorigin="anonymous"></script>  
+    <script src="/js/require.js"/>
+    <script>
+      require.config({xhtml:false, baseUrl: '/js'});
+      require(['logins'], function(logins) { logins.start(); });
+    </script>
     <script>
 function get_stats(){
       fetch(`$${document.location.protocol}//$${document.location.host}/game/mission?mission=${context.slug}`)

@@ -20,7 +20,7 @@ procedure Make_Station is
    Station  : League.JSON.Objects.JSON_Object;
    Missions : League.JSON.Arrays.JSON_Array;
    List     : League.JSON.Arrays.JSON_Array;
-
+   Points   : Integer := 0;
 begin
    IO.Read_JSON (Station_File, Station);
    Missions := Station.Value (+"missions").To_Array;
@@ -34,6 +34,8 @@ begin
       begin
          Make_Mission ("missions/" & Missions (J).To_String, Station, Object);
          List.Append (Object.To_JSON_Value);
+         Points := Points + Integer'Wide_Wide_Value
+           (Object.Value (+"points").To_String.To_Wide_Wide_String);
       end;
    end loop;
 
@@ -42,6 +44,9 @@ begin
         Station.Value (+"slug").To_String;
    begin
       Station.Insert (+"missions", List.To_JSON_Value);
+      Station.Insert
+        (+"points",
+         League.JSON.Values.To_JSON_Value (+Points'Wide_Wide_Image));
 
       IO.Expand_Template
         (File_Name => +"make_mission/station.xhtml",
