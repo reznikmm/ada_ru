@@ -34,6 +34,10 @@ body {
     height: 0.8em;
 }
 
+.mission {
+    padding-top: 1em;
+}
+
 #known_user { display: none; }
 
 #user {

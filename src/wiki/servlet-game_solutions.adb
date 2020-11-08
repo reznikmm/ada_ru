@@ -54,7 +54,12 @@ package body Servlet.Game_Solutions is
                Lines.Append (League.Holders.Element (Query.Value (1)));
             end loop;
 
-            Response.Set_Status (Servlet.HTTP_Responses.OK);
+            if Lines.Is_Empty then
+               Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+            else
+               Response.Set_Status (Servlet.HTTP_Responses.OK);
+            end if;
+
             Response.Set_Content_Type (+"text/html");
             Response.Set_Character_Encoding (+"utf-8");
             Response.Get_Output_Stream.Write
