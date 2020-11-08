@@ -45,7 +45,8 @@ project Mission_Run is
    package Compiler is
       for Default_Switches ("Ada") use (
         "-gnata",         --  Enable assertions
-        "-gnat12",        --  Enable Ada 2012 mode
+        "-gnat2020",      --  Enable Ada 2020 mode
+        "-gnatX",         --  Enable Language extensions permitted
         "-gnatW8");       --  Interpret source files as UTF-8 encoded.
    end Compiler;
 end Mission_Run;
@@ -72,7 +73,8 @@ project Mission_Check is
    package Compiler is
       for Default_Switches ("Ada") use (
         "-gnata",         --  Enable assertions
-        "-gnat12",        --  Enable Ada 2012 mode
+        "-gnat2020",      --  Enable Ada 2020 mode
+        "-gnatX",         --  Enable Language extensions permitted
         "-gnatW8");       --  Interpret source files as UTF-8 encoded.
    end Compiler;
 end Mission_Check;

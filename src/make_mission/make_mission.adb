@@ -85,33 +85,51 @@ is
               List (J).To_Object;
             Text : constant League.Strings.Universal_String :=
               Item.Value (+"text").To_String;
+            Count : constant Positive :=
+              (if Item.Contains (+"count") then
+                    Positive (Item.Value (+"count").To_Integer)
+                   else 1);
          begin
-            if Item.Contains (+"from") then
-               declare
-                  From : constant Natural :=
-                    Full.Index (Item.Value (+"from").To_String);
-                  Value : constant League.Strings.Universal_String :=
-                    Item.Value (+"to").To_String;
-                  To   : constant Natural := Full.Index (From + 1, Value);
-               begin
-                  if From > 0 and To > 0 then
-                     Full.Replace (From, To + Value.Length - 1, Text);
-                  end if;
-               end;
-            elsif Item.Contains (+"regexp") then
-               declare
-                  Pattern : constant League.Regexps.Regexp_Pattern :=
-                    League.Regexps.Compile (Item.Value (+"regexp").To_String);
-                  Match   : constant League.Regexps.Regexp_Match :=
-                    Pattern.Find_Match (Full);
-               begin
-                  if Match.Is_Matched then
-                     Full.Replace (Match.First_Index, Match.Last_Index, Text);
-                  end if;
-               end;
-            else
-               raise Program_Error;
-            end if;
+            for K in 1 .. Count loop
+               if Item.Contains (+"to") then
+                  declare
+                     From  : constant Natural :=
+                       Full.Index (Item.Value (+"from").To_String);
+                     Value : constant League.Strings.Universal_String :=
+                       Item.Value (+"to").To_String;
+                     To    : constant Natural := Full.Index (From + 1, Value);
+                  begin
+                     if From > 0 and To > 0 then
+                        Full.Replace (From, To + Value.Length - 1, Text);
+                     end if;
+                  end;
+               elsif Item.Contains (+"from") then
+                  declare
+                     Value : constant League.Strings.Universal_String :=
+                       Item.Value (+"from").To_String;
+                     From  : constant Natural := Full.Index (Value);
+                  begin
+                     if From > 0 then
+                        Full.Replace (From, From + Value.Length - 1, Text);
+                     end if;
+                  end;
+               elsif Item.Contains (+"regexp") then
+                  declare
+                     Pattern : constant League.Regexps.Regexp_Pattern :=
+                       League.Regexps.Compile
+                         (Item.Value (+"regexp").To_String);
+                     Match   : constant League.Regexps.Regexp_Match :=
+                       Pattern.Find_Match (Full);
+                  begin
+                     if Match.Is_Matched then
+                        Full.Replace
+                          (Match.First_Index, Match.Last_Index, Text);
+                     end if;
+                  end;
+               else
+                  raise Program_Error;
+               end if;
+            end loop;
          end;
       end loop;
    end Do_Replace;

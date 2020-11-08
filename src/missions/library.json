@@ -2,6 +2,9 @@
   "slug": "library",
   "name": "Elementary",
   "svg": "light-bulb",
-  "missions": ["checkio-mission-tutorial"],
+  "missions": [
+    "checkio-mission-tutorial",
+    "checkio-mission-elementary-unpack"
+  ],
   "short_description": "The simplest tasks for the competition"
 }

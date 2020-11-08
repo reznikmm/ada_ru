@@ -1,0 +1,29 @@
+{
+    "title": "Easy Unpack",
+    "slug": "easy-unpack",
+    "points": "5",
+    "power": "empty",
+    "svg": "cardboard-box",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " else %}", "text": "", "count": 6},
+        {"from": "{% endif %}", "to": "endif %}", "text": "", "count": 6},
+        {"from": "{{MEDIA}}", "to": "}}", "text": "../easy-unpack/"},
+        {"from": "<pre class=\"brush: python\"",  "to": ">",
+        "text": "<pre><code class='language-ada'>"},
+        {"from": "</pre", "to": ">", "text": "</code></pre>\n"},
+        {"from": "==", "to": "=", "text": "=", "count": 4},
+        {"from": "a tuple", "to": "tuple", "text": "an array", "count": 2},
+        {"from": "A tuple", "to": "tuple", "text": "An array", "count": 2},
+        {"from": "un tuple", "to": "tuple", "text": "un tableau", "count": 2},
+        {"from": "Un tuple", "to": "tuple", "text": "Un tableau", "count": 2},
+        {"from": "кортеж", "to": "ортеж", "text": "массив", "count": 2},
+        {"from": "Кортеж", "to": "ортеж", "text": "Массив", "count": 2},
+        {"from": "0,", "text": "1,"},
+        {"from": "1.", "text": "0."},
+        {"from": "[1]", "to": "]", "text": " (2)"},
+        {"from": "[0]", "to": "]", "text": " (1)"},
+        {"from": "easy_unpack", "to": "asy_unpack", "text": "Easy_Unpack ", "count": 4}
+    ]
+  }
+  
