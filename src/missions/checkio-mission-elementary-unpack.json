@@ -9,9 +9,9 @@
         {"from": "{% if ", "to": " else %}", "text": "", "count": 6},
         {"from": "{% endif %}", "to": "endif %}", "text": "", "count": 6},
         {"from": "{{MEDIA}}", "to": "}}", "text": "../easy-unpack/"},
-        {"from": "<pre class=\"brush: python\"",  "to": ">",
+        {"from": "<pre class=\"brush: python\">",
         "text": "<pre><code class='language-ada'>"},
-        {"from": "</pre", "to": ">", "text": "</code></pre>\n"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
         {"from": "==", "to": "=", "text": "=", "count": 4},
         {"from": "a tuple", "to": "tuple", "text": "an array", "count": 2},
         {"from": "A tuple", "to": "tuple", "text": "An array", "count": 2},
@@ -23,7 +23,7 @@
         {"from": "1.", "text": "0."},
         {"from": "[1]", "to": "]", "text": " (2)"},
         {"from": "[0]", "to": "]", "text": " (1)"},
-        {"from": "easy_unpack", "to": "asy_unpack", "text": "Easy_Unpack ", "count": 4}
+        {"from": "easy_unpack", "text": "Easy_Unpack ", "count": 4}
     ]
   }
   

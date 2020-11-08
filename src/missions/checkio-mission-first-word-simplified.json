@@ -1,0 +1,18 @@
+{
+    "title": "First Word (simplified)",
+    "slug": "first-word-simplified",
+    "points": "5",
+    "power": "empty",
+    "svg": "transform",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " else %}", "text": ""},
+        {"from": "{% endif %}", "to": "endif %}", "text": ""},
+        {"from": "<pre class=\"brush: python\"",  "to": ">",
+        "text": "<pre><code class='language-ada'>"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "to": "=", "text": "=", "count": 4},
+        {"from": "first_word", "text": "First_Word "}
+    ]
+  }
+  

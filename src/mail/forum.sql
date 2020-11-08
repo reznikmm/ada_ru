@@ -47,12 +47,23 @@ create table game_stations (
   name    varchar not null
 );
 
+insert into game_stations values ('library','Elementary');
+
 create table game_missions (
   mission varchar not null primary key,
   station varchar not null references game_stations,
   name    varchar not null,
   points  integer not null
 );
+
+insert into game_missions (mission, station, name, points) values
+('multiply-intro', 'library', 'Multiply (Intro)', 5);
+
+insert into game_missions (mission, station, name, points) values
+('easy-unpack', 'library', 'Easy Unpack', 5);
+
+insert into game_missions (mission, station, name, points) values
+('first-word-simplified', 'library', 'First Word (simplified)', 5);
 
 create table game_mission_votes (
   nickname varchar not null references users,

@@ -4,7 +4,8 @@
   "svg": "light-bulb",
   "missions": [
     "checkio-mission-tutorial",
-    "checkio-mission-elementary-unpack"
+    "checkio-mission-elementary-unpack",
+    "checkio-mission-first-word-simplified"
   ],
   "short_description": "The simplest tasks for the competition"
 }

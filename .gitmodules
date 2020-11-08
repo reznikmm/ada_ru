@@ -4,3 +4,6 @@
 [submodule "src/missions/checkio-mission-elementary-unpack"]
 	path = src/missions/checkio-mission-elementary-unpack
 	url = https://github.com/CheckiO-Missions/checkio-mission-elementary-unpack.git
+[submodule "src/missions/checkio-mission-first-word-simplified"]
+	path = src/missions/checkio-mission-first-word-simplified
+	url = https://github.com/oduvan/checkio-mission-first-word-simplified
