@@ -5,7 +5,8 @@
   "missions": [
     "checkio-mission-tutorial",
     "checkio-mission-elementary-unpack",
-    "checkio-mission-first-word-simplified"
+    "checkio-mission-first-word-simplified",
+    "checkio-mission-acceptable-password-1"
   ],
-  "short_description": "The simplest tasks for the competition"
+  "short_description": "Simplest tasks for the competition"
 }

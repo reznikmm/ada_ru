@@ -7,3 +7,6 @@
 [submodule "src/missions/checkio-mission-first-word-simplified"]
 	path = src/missions/checkio-mission-first-word-simplified
 	url = https://github.com/oduvan/checkio-mission-first-word-simplified
+[submodule "src/missions/checkio-mission-acceptable-password-1"]
+	path = src/missions/checkio-mission-acceptable-password-1
+	url = https://github.com/oduvan/checkio-mission-acceptable-password-1
