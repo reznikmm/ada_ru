@@ -1,0 +1,18 @@
+{
+    "title": "Number Length",
+    "slug": "number-length",
+    "points": "5",
+    "power": "empty",
+    "svg": "infinity",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " else %}", "text": "", "count": 6},
+        {"from": "{% endif %}", "to": "endif %}", "text": "", "count": 6},
+        {"from": "<pre class=\"brush: python\">",
+        "text": "<pre><code class=\"language-ada\">"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "text": "=", "count": 2},
+        {"from": "number_length", "text": "Number_Length ", "count": 2}
+    ]
+  }
+  

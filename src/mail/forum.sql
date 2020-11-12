@@ -68,6 +68,9 @@ insert into game_missions (mission, station, name, points) values
 insert into game_missions (mission, station, name, points) values
 ('acceptable-password-i', 'library', 'Acceptable Password I', 5);
 
+insert into game_missions (mission, station, name, points) values
+('number-length', 'library', 'Number Length', 5);
+
 create table game_mission_votes (
   nickname varchar not null references users,
   mission  varchar not null references game_missions,

@@ -6,7 +6,8 @@
     "checkio-mission-tutorial",
     "checkio-mission-elementary-unpack",
     "checkio-mission-first-word-simplified",
-    "checkio-mission-acceptable-password-1"
+    "checkio-mission-acceptable-password-1",
+    "checkio-mission-number-length"
   ],
   "short_description": "Simplest tasks for the competition"
 }
