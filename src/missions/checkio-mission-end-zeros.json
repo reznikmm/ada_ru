@@ -1,0 +1,18 @@
+{
+    "title": "End Zeros",
+    "slug": "end-zeros",
+    "points": "5",
+    "power": "empty",
+    "svg": "infinityfire-tail",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " else %}", "text": "", "count": 1},
+        {"from": "{% endif %}", "to": "endif %}", "text": "", "count": 1},
+        {"from": "<pre class=\"brush: python\">",
+        "text": "<pre><code class=\"language-ada\">"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "text": "=", "count": 4},
+        {"from": "end_zeros", "text": "End_Zeros ", "count": 4}
+    ]
+  }
+  
