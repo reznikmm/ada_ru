@@ -74,6 +74,9 @@ insert into game_missions (mission, station, name, points) values
 insert into game_missions (mission, station, name, points) values
 ('end-zeros', 'library', 'End Zeros', 5);
 
+insert into game_missions (mission, station, name, points) values
+('backward-string', 'library', 'Backward String', 5);
+
 create table game_mission_votes (
   nickname varchar not null references users,
   mission  varchar not null references game_missions,

@@ -3,7 +3,7 @@
     "slug": "end-zeros",
     "points": "5",
     "power": "empty",
-    "svg": "infinityfire-tail",
+    "svg": "fire-tail",
     "station": "library",
     "replace": [
         {"from": "{% if ", "to": " else %}", "text": "", "count": 1},

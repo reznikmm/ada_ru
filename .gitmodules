@@ -16,3 +16,6 @@
 [submodule "src/missions/checkio-mission-end-zeros"]
 	path = src/missions/checkio-mission-end-zeros
 	url = https://github.com/oduvan/checkio-mission-end-zeros
+[submodule "src/missions/checkio-mission-backward-string"]
+	path = src/missions/checkio-mission-backward-string
+	url = https://github.com/oduvan/checkio-mission-backward-string

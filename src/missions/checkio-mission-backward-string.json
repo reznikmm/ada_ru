@@ -1,0 +1,19 @@
+{
+    "title": "Backward String",
+    "slug": "backward-string",
+    "points": "5",
+    "power": "empty",
+    "svg": "previous-button",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " else %}", "text": ""},
+        {"from": "{% endif %}", "to": "endif %}", "text": ""},
+        {"from": "<pre class=\"brush: python\"",  "to": ">",
+        "text": "<pre><code class=\"language-ada\">"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "text": "=", "count": 4},
+        {"from": "'", "text": "\"", "count": 16},
+        {"from": "backward_string", "text": "Backward_String ", "count": 4}
+    ]
+  }
+  
