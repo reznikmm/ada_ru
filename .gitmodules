@@ -19,3 +19,6 @@
 [submodule "src/missions/checkio-mission-backward-string"]
 	path = src/missions/checkio-mission-backward-string
 	url = https://github.com/oduvan/checkio-mission-backward-string
+[submodule "src/missions/checkio-mission-remove-all-before"]
+	path = src/missions/checkio-mission-remove-all-before
+	url = https://github.com/oduvan/checkio-mission-remove-all-before

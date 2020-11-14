@@ -1,0 +1,21 @@
+{
+    "title": "Remove All Before",
+    "slug": "remove-all-before",
+    "points": "5",
+    "power": "empty",
+    "svg": "bolt-cutter",
+    "station": "library",
+    "replace": [
+        {"from": "{% if ", "to": " %}", "text": "", "count": 7},
+        {"from": "{% else %}", "to": "endif %}", "text": "", "count": 7},
+        {"from": "{{MEDIA}}", "to": "}}", "text": "../remove-all-before/"},
+        {"from": "<pre class=\"brush: javascript\">",
+        "text": "<pre><code class='language-ada'>"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "text": "=", "count": 5},
+        {"from": "[]", "text": "(1 .. 0 => <>)", "count": 2},
+        {"from": "[", "text": "(", "count": 8},
+        {"from": "]", "text": ")", "count": 8},
+        {"from": "removeAllBefore", "text": "Remove_All_Before ", "count": 5}
+    ]
+}
