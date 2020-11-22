@@ -1,0 +1,21 @@
+{
+    "station": "library",
+    "slug": "all-upper-i",
+    "replace": [
+        {"from": "{% if ", "to": " %}", "text": "", "count": 1},
+        {"from": "{% else %}", "to": "endif %}", "text": "", "count": 1},
+        {"from": "<pre class=\"brush: javascript\">",
+         "text": "<pre><code class='language-ada'>"},
+        {"from": "</pre>", "text": "</code></pre>\n"},
+        {"from": "==", "text": "=", "count": 4},
+        {"from": "('", "text": "(\"", "count": 4},
+        {"from": "')", "text": "\")", "count": 4},
+        {"from": "true", "text": "True", "count": 2},
+        {"from": "false", "text": "False", "count": 2},
+        {"from": "isAllUpper", "text": "Is_All_Upper ", "count": 4}
+    ],
+    "points": "5",
+    "power": "empty",
+    "title": "All Upper I",
+    "svg": "gift-of-knowledge"
+}

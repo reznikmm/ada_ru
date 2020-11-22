@@ -56,6 +56,28 @@ create table game_missions (
   points  integer not null
 );
 
+create table game_mission_votes (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  vote     integer not null,
+  primary key (nickname, mission)
+);
+
+create table solved_missions (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  solved   timestamp not null default current_timestamp,
+  primary key (nickname, mission)
+);
+
+create table solution_texts (
+  nickname varchar not null references users,
+  mission  varchar not null references game_missions,
+  line     integer not null,
+  text     varchar not null,
+  primary key (nickname, mission, line)
+);
+
 insert into game_missions (mission, station, name, points) values
 ('multiply-intro', 'library', 'Multiply (Intro)', 5);
 
@@ -80,24 +102,5 @@ insert into game_missions (mission, station, name, points) values
 insert into game_missions (mission, station, name, points) values
 ('remove-all-before', 'library', 'Remove All Before', 5);
 
-create table game_mission_votes (
-  nickname varchar not null references users,
-  mission  varchar not null references game_missions,
-  vote     integer not null,
-  primary key (nickname, mission)
-);
-
-create table solved_missions (
-  nickname varchar not null references users,
-  mission  varchar not null references game_missions,
-  solved   timestamp not null default current_timestamp,
-  primary key (nickname, mission)
-);
-
-create table solution_texts (
-  nickname varchar not null references users,
-  mission  varchar not null references game_missions,
-  line     integer not null,
-  text     varchar not null,
-  primary key (nickname, mission, line)
-);
+insert into game_missions (mission, station, name, points) values
+('all-upper-i', 'library', 'All Upper I', 5);

@@ -22,3 +22,6 @@
 [submodule "src/missions/checkio-mission-remove-all-before"]
 	path = src/missions/checkio-mission-remove-all-before
 	url = https://github.com/oduvan/checkio-mission-remove-all-before
+[submodule "src/missions/checkio-mission-all-upper"]
+	path = src/missions/checkio-mission-all-upper
+	url = https://github.com/oduvan/checkio-mission-all-upper

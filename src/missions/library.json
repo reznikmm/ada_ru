@@ -1,16 +1,1 @@
-{
-  "slug": "library",
-  "name": "Elementary",
-  "svg": "light-bulb",
-  "missions": [
-    "checkio-mission-tutorial",
-    "checkio-mission-elementary-unpack",
-    "checkio-mission-first-word-simplified",
-    "checkio-mission-acceptable-password-1",
-    "checkio-mission-number-length",
-    "checkio-mission-end-zeros",
-    "checkio-mission-backward-string",
-    "checkio-mission-remove-all-before"
-  ],
-  "short_description": "Simplest tasks for the competition"
-}
+{"slug":"library","name":"Elementary","short_description":"Simplest tasks for the competition","missions":["checkio-mission-tutorial","checkio-mission-elementary-unpack","checkio-mission-first-word-simplified","checkio-mission-acceptable-password-1","checkio-mission-number-length","checkio-mission-end-zeros","checkio-mission-backward-string","checkio-mission-remove-all-before","checkio-mission-all-upper"],"svg":"light-bulb"}
