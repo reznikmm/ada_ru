@@ -1,12 +1,13 @@
 with "matreshka_xml.gpr";
+with "spawn.gpr";
+with "ada_pretty.gpr";
 
 project Mk_Mission is
 
-   for Source_Dirs use
-    ("../make_mission");
+   for Source_Dirs use ("../make_mission");
    for Object_Dir use ".objs/mk_mission";
 
-   for Main use ("make_station");
+   for Main use ("make_station", "add_mission");
 
    Default_Ada_Switches :=
      ("-g",             --  Generates debug information

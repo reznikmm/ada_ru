@@ -1,3 +1,5 @@
+with Ada.Directories;
+
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Wide_Wide_Text_IO;
 
@@ -11,6 +13,15 @@ with XML.SAX.HTML5_Writers;
 with XML.SAX.Output_Destinations.Strings;
 
 package body IO is
+
+   ------------
+   -- Exists --
+   ------------
+
+   function Exists (Path : League.Strings.Universal_String) return Boolean is
+   begin
+      return Ada.Directories.Exists (Path.To_UTF_8_String);
+   end Exists;
 
    ---------------------
    -- Expand_Template --
@@ -110,5 +121,39 @@ package body IO is
       Doc := League.JSON.Documents.From_JSON (Text);
       Result := Doc.To_JSON_Object;
    end Read_JSON;
+
+   ----------------
+   -- Write_File --
+   ----------------
+
+   procedure Write_File
+     (File_Name : League.Strings.Universal_String;
+      Object    : League.String_Vectors.Universal_String_Vector)
+   is
+      Output : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      Ada.Wide_Wide_Text_IO.Create (Output, Name => File_Name.To_UTF_8_String);
+      for J in 1 .. Object.Length loop
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Output, Object (J).To_Wide_Wide_String);
+      end loop;
+      Ada.Wide_Wide_Text_IO.Close (Output);
+   end Write_File;
+
+   ----------------
+   -- Write_JSON --
+   ----------------
+
+   procedure Write_JSON
+     (File_Name : League.Strings.Universal_String;
+      Object    : League.JSON.Objects.JSON_Object)
+   is
+      Output : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      Ada.Wide_Wide_Text_IO.Create (Output, Name => File_Name.To_UTF_8_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Output, Object.To_JSON_Document.To_JSON.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Output);
+   end Write_JSON;
 
 end IO;
