@@ -557,7 +557,7 @@ package body Axe.Bots is
    begin
       Object.Insert
         (+"chat_id",
-         League.JSON.Values.To_JSON_Value (+"@adalang"));
+         League.JSON.Values.To_JSON_Value (+"@ada_ru_chat"));
 
       Object.Insert
         (+"text",
@@ -875,7 +875,7 @@ package body Axe.Bots is
       Forward : constant League.JSON.Objects.JSON_Object :=
         Message.Value (+"forward_from").To_Object;
    begin
-      if Chat.Value (+"username").To_String /= +"adalang" then
+      if Chat.Value (+"username").To_String /= +"ada_ru_chat" then
          Get_Document;
          return;
       end if;
