@@ -1,9 +1,11 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 
+with League.Base_Codecs;
+with League.Holders;
+with League.Settings;
+with League.Stream_Element_Vectors;
 with League.String_Vectors;
 with League.Text_Codecs;
-with League.Stream_Element_Vectors;
-with League.Base_Codecs;
 
 with AWS.SMTP.Client;
 
@@ -15,7 +17,7 @@ package body Servlet.Forum is
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
-   function String_Carriage_Return
+   function Strip_Carriage_Return
     (Text : League.Strings.Universal_String)
      return League.Strings.Universal_String;
 
@@ -38,7 +40,6 @@ package body Servlet.Forum is
       Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
       Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
-      pragma Unreferenced (Self);
       use type League.Strings.Universal_String;
 
       Session : constant Sessions.HTTP_Session_Access :=
@@ -56,15 +57,15 @@ package body Servlet.Forum is
         Request.Get_Parameter (+"subject");
 
       Text : League.Strings.Universal_String :=
-        Escape (String_Carriage_Return (Request.Get_Parameter (+"text")));
+        Escape (Strip_Carriage_Return (Request.Get_Parameter (+"text")));
 
       Receiver : constant AWS.SMTP.Receiver :=
         AWS.SMTP.Initialize ("forge.ada-ru.org");
 
-      To : constant AWS.SMTP.E_Mail_Data :=
-        AWS.SMTP.E_Mail ("", "ada_ru@yahoogroups.com");
+      BCC : constant AWS.SMTP.E_Mail_Data :=
+        AWS.SMTP.E_Mail ("", Self.BCC.To_UTF_8_String);
    begin
-      Header.Append (+"To: ada_ru@yahoogroups.com");
+      Header.Append ("Bcc: " & Self.BCC);
 
       if Info.User.Is_Empty then
          Response.Set_Status (Servlet.HTTP_Responses.Unauthorized);
@@ -76,16 +77,20 @@ package body Servlet.Forum is
       end if;
 
       Header.Append
-        ("X-Forum-User: " &
-           Escape_Header (Info.Name) & " <" & Info.Mails (1) & ">");
-
-      Header.Append
         ("From: " & Escape_Header (Info.Name) & " <ada_ru@forge.ada-ru.org>");
 
       From := AWS.SMTP.E_Mail
         (Escape_Header (Info.Name).To_UTF_8_String,
          "ada_ru@forge.ada-ru.org");
 
+      Header.Append
+        (+"List-Unsubscribe: <mailto:ada_ru-unsubscribe@forge.ada-ru.org>");
+
+      Header.Append
+        (+"Mailing-List: list ada_ru@forge.ada-ru.org;" &
+           " contact ada_ru-owner@forge.ada-ru.org");
+
+      Header.Append (+"List-Id: <ada_ru.forge.ada-ru.org>");
       Header.Append ("Subject: " & Escape_Header (Subject));
       Header.Append (+"Content-Type: text/plain; charset=utf-8");
       Header.Append (+"Content-Transfer-Encoding: base64");
@@ -99,7 +104,8 @@ package body Servlet.Forum is
       AWS.SMTP.Client.Send
         (Server  => Receiver,
          From    => From,
-         To      => (1 => To),
+         To      => (1 .. 0 => <>),
+         BCC     => (1 => BCC),
          Source  => Text.To_UTF_8_String,
          Status  => Status);
 
@@ -170,15 +176,27 @@ package body Servlet.Forum is
       return Forum_Servlet
    is
       pragma Unreferenced (Parameters);
+
+      Settings  : League.Settings.Settings;
+
+      function Get (Key : Wide_Wide_String)
+        return League.Strings.Universal_String is
+         (League.Holders.Element (Settings.Value (+("/forum/" & Key))));
    begin
-      return Result : Forum_Servlet;
+      return Result : Forum_Servlet do
+         Result.Secret := Get ("secret");
+         Result.BCC := Get ("bcc");
+
+         pragma Assert (not Result.Secret.Is_Empty);
+         pragma Assert (not Result.BCC.Is_Empty);
+      end return;
    end Instantiate;
 
-   ----------------------------
-   -- String_Carriage_Return --
-   ----------------------------
+   ---------------------------
+   -- Strip_Carriage_Return --
+   ---------------------------
 
-   function String_Carriage_Return
+   function Strip_Carriage_Return
     (Text : League.Strings.Universal_String)
      return League.Strings.Universal_String
    is
@@ -186,7 +204,7 @@ package body Servlet.Forum is
         Text.Split (Ada.Characters.Wide_Wide_Latin_1.CR);
    begin
       return List.Join ("");
-   end String_Carriage_Return;
+   end Strip_Carriage_Return;
 
    ----------------
    -- Wrap_Lines --

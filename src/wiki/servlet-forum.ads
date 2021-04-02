@@ -16,7 +16,8 @@ package Servlet.Forum is
 private
 
    type Forum_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
-      null;
+      Secret : League.Strings.Universal_String;
+      BCC    : League.Strings.Universal_String;
    end record;
 
    overriding procedure Do_Post
