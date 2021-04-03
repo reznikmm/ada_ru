@@ -39,7 +39,8 @@ with "axmpp.gpr";
 library project Server is
 
    for Source_Dirs use
-    ("../startup", "../opm", "../awfc", "../wiki", "../irc", "../session");
+     ("../startup", "../opm", "../awfc", "../wiki", "../irc", "../session",
+      "../forum");
    for Object_Dir use ".objs";
 
    for Library_Name use "ada_ru";

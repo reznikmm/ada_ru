@@ -1,5 +1,10 @@
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Containers.Doubly_Linked_Lists;
+with Ada.Containers.Hashed_Maps;
+with Ada.Directories;
+with Ada.Exceptions;
+with Ada.Streams.Stream_IO;
+with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 
 with League.Base_Codecs;
@@ -10,6 +15,7 @@ with League.Holders.Integers;
 with League.Settings;
 with League.Stream_Element_Vectors;
 with League.String_Vectors;
+with League.Strings.Hash;
 with League.Text_Codecs;
 
 with SQL.Options;
@@ -20,6 +26,12 @@ with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
 
 with AWS.SMTP.Client;
 
+with Forum.Contexts;
+with Forum.Posts;
+with Forum.Topics;
+with Forum.Users;
+with Forum.Writers;
+
 with Sessions;
 
 package body Servlet.Forum is
@@ -27,23 +39,6 @@ package body Servlet.Forum is
    function "+" (Text : Wide_Wide_String)
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
-
-   function Strip_Carriage_Return
-    (Text : League.Strings.Universal_String)
-     return League.Strings.Universal_String;
-
-   function Escape
-     (Text : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
-
-   function Escape_Header
-     (Text : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
-
-   procedure Wrap_Lines (Text : in out League.Strings.Universal_String);
-
-   function Next_Message_Id
-     (Self : in out Forum_Servlet) return League.Strings.Universal_String;
 
    package Mails is
 
@@ -62,11 +57,34 @@ package body Servlet.Forum is
    end Mails;
 
    protected Storage is
+      --  The storage keeps queue of main to be imported
       procedure Put (Value : Mails.Mail);
-      entry Get (Value : out Mails.Mail);
+      entry Get (Value : out Mails.Mail; Last : out Boolean);
    private
       List : Mails.Mail_Lists.List;
    end Storage;
+
+   task DB_Writter is
+      entry Start (Error : out League.Strings.Universal_String);
+      --  Take mails from Storage and put it into DB
+   end DB_Writter;
+
+   function Strip_Carriage_Return
+    (Text : League.Strings.Universal_String)
+     return League.Strings.Universal_String;
+
+   function Escape
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+   function Escape_Header
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+   procedure Wrap_Lines (Text : in out League.Strings.Universal_String);
+
+   function Next_Message_Id
+     (Self : in out Forum_Servlet) return League.Strings.Universal_String;
 
    -------------
    -- Storage --
@@ -87,17 +105,19 @@ package body Servlet.Forum is
       -- Get --
       ---------
 
-      entry Get (Value : out Mails.Mail) when not List.Is_Empty is
+      entry Get
+        (Value : out Mails.Mail;
+         Last  : out Boolean) when not List.Is_Empty is
       begin
          Value := List.First_Element;
          List.Delete_First;
+         Last := List.Is_Empty;
       end Get;
    end Storage;
 
-   task DB_Writter is
-      entry Start (Error : out League.Strings.Universal_String);
-      --  Take mails from Storage and put it into DB
-   end DB_Writter;
+   ----------------
+   -- DB_Writter --
+   ----------------
 
    task body DB_Writter is
       type Paragraph is record
@@ -127,6 +147,8 @@ package body Servlet.Forum is
       procedure Parse_Plain_Message
         (Value  : Mails.Mail;
          Result : out Paragraph_Lists.List);
+
+      procedure Update_Files (DB : in out SQL.Databases.SQL_Database);
 
       SQL_Text : constant League.Strings.Universal_String :=
         +("insert into posts (author, sent, parent, id, subject) " &
@@ -291,12 +313,255 @@ package body Servlet.Forum is
          end if;
       end Parse_Plain_Message;
 
+      ------------------
+      -- Update_Files --
+      ------------------
+
+      procedure Update_Files (DB : in out SQL.Databases.SQL_Database) is
+         package Forum renames Standard.Forum;
+
+         type File_Check is record
+            Size : Ada.Streams.Stream_Element_Count;
+            Hash : League.Hash_Type;
+         end record;
+
+         package File_Check_Maps is new Ada.Containers.Hashed_Maps
+           (Key_Type        => League.Strings.Universal_String,
+            Element_Type    => File_Check,
+            Hash            => League.Strings.Hash,
+            Equivalent_Keys => League.Strings."=");
+
+         procedure Read_Map
+           (Root : String;
+            Map : out File_Check_Maps.Map);
+
+         procedure Write_File
+           (Root : String;
+            Map  : in out File_Check_Maps.Map;
+            Info : Forum.Writers.File_Information);
+
+         procedure Each_Forum
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forun : League.Holders.Holder);
+
+         procedure Each_Page
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forum : League.Holders.Holder;
+            Page  : League.Holders.Holder);
+
+         procedure Each_Topic
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forun : League.Holders.Holder;
+            Topic : League.Holders.Holder);
+
+         Output : Ada.Wide_Wide_Text_IO.File_Type;
+
+         ----------------
+         -- Each_Forum --
+         ----------------
+
+         procedure Each_Forum
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forun : League.Holders.Holder)
+         is
+            Pages : League.Holders.Holder;
+            Ok    : Boolean;
+            Info  : Forum.Writers.File_Information;
+         begin
+            League.Holders.Component (Forun, +"pages", Pages, Ok);
+
+            declare
+               Cursor : League.Holders.Iterable_Holder_Cursors.Cursor'Class :=
+                 League.Holders.First (Pages);
+            begin
+               while Cursor.Next loop
+                  Forum.Writers.Write_Forum_Page (Forun, Cursor.Element, Info);
+                  Write_File (Root, Map, Info);
+                  Each_Page (Root, Map, Forun, Cursor.Element);
+               end loop;
+            end;
+         end Each_Forum;
+
+         ---------------
+         -- Each_Page --
+         ---------------
+
+         procedure Each_Page
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forum : League.Holders.Holder;
+            Page  : League.Holders.Holder)
+         is
+            Topics : League.Holders.Holder;
+            Ok     : Boolean;
+         begin
+            League.Holders.Component (Page, +"topics", Topics, Ok);
+
+            declare
+               Cursor : League.Holders.Iterable_Holder_Cursors.Cursor'Class :=
+                 League.Holders.First (Topics);
+            begin
+               while Cursor.Next loop
+                  Each_Topic (Root, Map, Forum, Cursor.Element);
+               end loop;
+            end;
+         end Each_Page;
+
+         ----------------
+         -- Each_Topic --
+         ----------------
+
+         procedure Each_Topic
+           (Root  : String;
+            Map   : in out File_Check_Maps.Map;
+            Forun : League.Holders.Holder;
+            Topic : League.Holders.Holder)
+         is
+            Pages : League.Holders.Holder;
+            Ok    : Boolean;
+            Info  : Forum.Writers.File_Information;
+         begin
+            League.Holders.Component (Topic, +"pages", Pages, Ok);
+
+            declare
+               Cursor : League.Holders.Iterable_Holder_Cursors.Cursor'Class :=
+                 League.Holders.First (Pages);
+            begin
+               while Cursor.Next loop
+                  Forum.Writers.Write_Topic_Page
+                    (Forun, Topic, Cursor.Element, Info);
+                  Write_File (Root, Map, Info);
+               end loop;
+            end;
+         end Each_Topic;
+
+         --------------
+         -- Read_Map --
+         --------------
+
+         procedure Read_Map
+           (Root : String;
+            Map  : out File_Check_Maps.Map)
+         is
+            package Hash_IO is new Ada.Wide_Wide_Text_IO.Modular_IO
+              (League.Hash_Type);
+            package Size_IO is new Ada.Wide_Wide_Text_IO.Integer_IO
+              (Ada.Streams.Stream_Element_Count);
+
+            Input : Ada.Wide_Wide_Text_IO.File_Type;
+            Item  : File_Check;
+            Name  : League.Strings.Universal_String;
+            Space : Wide_Wide_Character;
+         begin
+            Ada.Wide_Wide_Text_IO.Open
+              (Input, Ada.Wide_Wide_Text_IO.In_File, Root & "hashes.txt");
+
+            while not Ada.Wide_Wide_Text_IO.End_Of_File (Input) loop
+               Size_IO.Get (Input, Item.Size);
+               Hash_IO.Get (Input, Item.Hash);
+               Ada.Wide_Wide_Text_IO.Get (Input, Space);
+               pragma Assert (Space = ' ');
+               Name := +Ada.Wide_Wide_Text_IO.Get_Line (Input);
+               Map.Insert (Name, Item);
+            end loop;
+
+            Ada.Wide_Wide_Text_IO.Close (Input);
+         end Read_Map;
+
+         ----------------
+         -- Write_File --
+         ----------------
+
+         procedure Write_File
+           (Root : String;
+            Map  : in out File_Check_Maps.Map;
+            Info : Forum.Writers.File_Information)
+         is
+            File   : Ada.Streams.Stream_IO.File_Type;
+            Cursor : File_Check_Maps.Cursor := Map.Find (Info.Name);
+         begin
+            Ada.Wide_Wide_Text_IO.Put_Line
+              (Output, Forum.Writers.Image (Info));
+
+            if File_Check_Maps.Has_Element (Cursor) then
+               declare
+                  use type League.Hash_Type;
+                  use type Ada.Streams.Stream_Element_Count;
+                  Have : constant File_Check := Map (Cursor);
+               begin
+                  Map.Delete (Cursor);
+
+                  if Have.Size = Info.Data.Length
+                    and Have.Hash = Info.Hash
+                  then
+                     return;
+                  end if;
+               end;
+            end if;
+
+            Ada.Streams.Stream_IO.Create
+              (File, Name => Root & Info.Name.To_UTF_8_String);
+
+            Ada.Streams.Stream_IO.Write
+              (File, Info.Data.To_Stream_Element_Array);
+
+            Ada.Streams.Stream_IO.Close (File);
+         end Write_File;
+
+         Root    : constant String := "install/forum/";
+         Map     : File_Check_Maps.Map;
+         Context : aliased Forum.Contexts.Context;
+         Top     : League.Holders.Holder;
+         Info    : Forum.Writers.File_Information;
+      begin
+         Read_Map (Root, Map);
+         Ada.Wide_Wide_Text_IO.Create (Output, Name => Root & "hashes.txt");
+
+         Context.Users.Initiaize (DB);
+         Context.Posts.Initiaize (Context.Users, DB);
+         Context.Forums.Initiaize (DB);
+         Context.Topics.Initiaize (DB, Context.Forums, Context.Posts);
+         Context.Posts.Assign_Topics (Context.Forums, Context.Topics);
+         Context.Forums.Sort_Topics;
+         Context.Topics.Sort_Posts;
+
+         Top := Context.Forums.Last_Topics_Holder;
+         Forum.Writers.Write_Forum_Atom (Top, Info);
+         Write_File (Root, Map, Info);
+
+         Top := Context.Forums.To_Holder;
+         Forum.Writers.Write_Forum_Index (Top, Info);
+         Write_File (Root, Map, Info);
+
+         declare
+            Cursor : League.Holders.Iterable_Holder_Cursors.Cursor'Class :=
+              League.Holders.First (Top);
+         begin
+            while Cursor.Next loop
+               Each_Forum (Root, Map, Cursor.Element);
+            end loop;
+         end;
+
+         --  Delete extra files
+         for J in Map.Iterate loop
+            Ada.Directories.Delete_File
+              (Root & File_Check_Maps.Key (J).To_UTF_8_String);
+         end loop;
+
+         Ada.Wide_Wide_Text_IO.Close (Output);
+      end Update_Files;
+
       Option : SQL.Options.SQL_Options;
    begin
       Option.Set (+"dbname", +"mail");
 
       declare
          Mail : Mails.Mail;
+         Last : Boolean;
          DB : SQL.Databases.SQL_Database :=
            SQL.Databases.Create (+"POSTGRESQL", Option);
       begin
@@ -310,10 +575,18 @@ package body Servlet.Forum is
          end select;
 
          loop
-            Storage.Get (Mail);
+            Storage.Get (Mail, Last);
             Insert_Post (Mail);
+
+            if Last then
+               Update_Files (DB);
+            end if;
          end loop;
       end;
+   exception
+      when E : others =>
+         Ada.Text_IO.Put_Line ("DB_Writter dead:");
+         Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information (E));
    end DB_Writter;
 
    -------------

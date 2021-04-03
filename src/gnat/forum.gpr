@@ -4,7 +4,7 @@ with "matreshka_xml.gpr";
 project Forum is
 
    for Source_Dirs use ("../forum");
-   for Object_Dir use ".objs";
+   for Object_Dir use ".objs/forum";
 
    for Main use ("forum-update");
 
