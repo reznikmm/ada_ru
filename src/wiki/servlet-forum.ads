@@ -17,7 +17,6 @@ private
 
    type Forum_Servlet is new Servlet.HTTP_Servlets.HTTP_Servlet with record
       Secret  : League.Strings.Universal_String;
-      BCC     : League.Strings.Universal_String;
       Last_Id : Natural;
    end record;
 

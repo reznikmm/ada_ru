@@ -33,6 +33,7 @@ with Forum.Users;
 with Forum.Writers;
 
 with Sessions;
+with Mails;
 
 package body Servlet.Forum is
 
@@ -40,28 +41,15 @@ package body Servlet.Forum is
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
-   package Mails is
-
-      type Mail is tagged record
-         From        : League.Strings.Universal_String;
-         Date        : League.Calendars.Date_Time;
-         In_Reply_To : League.Strings.Universal_String;
-         Message_Id  : League.Strings.Universal_String;
-         Subject     : League.Strings.Universal_String;
-         Text        : League.Strings.Universal_String;
-         Is_Flowed   : Boolean := False;
-      end record;
-
-      package Mail_Lists is new Ada.Containers.Doubly_Linked_Lists
-        (Element_Type => Mail);
-   end Mails;
+   package Mail_Lists is new Ada.Containers.Doubly_Linked_Lists
+     (Element_Type => Mails.Mail, "=" => Mails."=");
 
    protected Storage is
       --  The storage keeps queue of main to be imported
       procedure Put (Value : Mails.Mail);
       entry Get (Value : out Mails.Mail; Last : out Boolean);
    private
-      List : Mails.Mail_Lists.List;
+      List : Mail_Lists.List;
    end Storage;
 
    task DB_Writter is
@@ -85,6 +73,18 @@ package body Servlet.Forum is
 
    function Next_Message_Id
      (Self : in out Forum_Servlet) return League.Strings.Universal_String;
+
+   function Check_Token
+     (Self : Forum_Servlet'Class;
+      Auth : League.String_Vectors.Universal_String_Vector)
+      return Boolean;
+   --  Verify a token value in the "Authorization:" header (provided as Auth)
+
+   function Read_Stream
+     (Stream : not null access Ada.Streams.Root_Stream_Type'Class)
+       return League.Stream_Element_Vectors.Stream_Element_Vector;
+
+   procedure Send_Mail (Mail : Mails.Mail);
 
    -------------
    -- Storage --
@@ -546,13 +546,13 @@ package body Servlet.Forum is
             end loop;
          end;
 
+         Ada.Wide_Wide_Text_IO.Close (Output);
+
          --  Delete extra files
          for J in Map.Iterate loop
             Ada.Directories.Delete_File
               (Root & File_Check_Maps.Key (J).To_UTF_8_String);
          end loop;
-
-         Ada.Wide_Wide_Text_IO.Close (Output);
       end Update_Files;
 
       Option : SQL.Options.SQL_Options;
@@ -577,6 +577,7 @@ package body Servlet.Forum is
          loop
             Storage.Get (Mail, Last);
             Insert_Post (Mail);
+            Send_Mail (Mail);
 
             if Last then
                Update_Files (DB);
@@ -588,6 +589,21 @@ package body Servlet.Forum is
          Ada.Text_IO.Put_Line ("DB_Writter dead:");
          Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Information (E));
    end DB_Writter;
+
+   -----------------
+   -- Check_Token --
+   -----------------
+
+   function Check_Token
+     (Self : Forum_Servlet'Class;
+      Auth : League.String_Vectors.Universal_String_Vector)
+      return Boolean
+   is
+      use type League.Strings.Universal_String;
+   begin
+      return Auth.Length = 1
+        and then Auth.Element (1) = "Token " & Self.Secret;
+   end Check_Token;
 
    -------------
    -- Do_Post --
@@ -604,9 +620,6 @@ package body Servlet.Forum is
         Sessions.HTTP_Session_Access (Request.Get_Session);
 
       Info   : constant Sessions.User_Info := Session.Get_User_Info;
-      Status : AWS.SMTP.Status;
-      From   : AWS.SMTP.E_Mail_Data;
-      Header : League.String_Vectors.Universal_String_Vector;
 
       Topic : constant League.Strings.Universal_String :=
         Request.Get_Parameter (+"topic");
@@ -617,84 +630,38 @@ package body Servlet.Forum is
       Posted : constant League.Strings.Universal_String :=
         Strip_Carriage_Return (Request.Get_Parameter (+"text"));
 
-      Text : League.Strings.Universal_String := Escape (Posted);
-
-      Receiver : constant AWS.SMTP.Receiver :=
-        AWS.SMTP.Initialize ("forge.ada-ru.org");
-
-      Msg_Id : League.Strings.Universal_String;
-      BCC : constant AWS.SMTP.E_Mail_Data :=
-        AWS.SMTP.E_Mail ("", Self.BCC.To_UTF_8_String);
+      Mail : Mails.Mail;
    begin
-      Header.Append ("Bcc: " & Self.BCC);
+      if not Info.User.Is_Empty then
+         Mail :=
+           (From        => Info.Name & " <" & Info.Mails (1) & ">",
+            Date        => League.Calendars.Clock,
+            In_Reply_To => Topic,
+            Message_Id  => Self.Next_Message_Id,
+            Subject     => Subject,
+            Text        => Posted,
+            Is_Flowed   => False);
 
-      if Info.User.Is_Empty then
-         Response.Set_Status (Servlet.HTTP_Responses.Unauthorized);
-         return;
-      end if;
+         Storage.Put (Mail);
 
-      if not Topic.Is_Empty then
-         Header.Append ("In-Reply-To: " & Topic);
-      end if;
-
-      Header.Append
-        ("From: " & Escape_Header (Info.Name) & " <ada_ru@forge.ada-ru.org>");
-
-      From := AWS.SMTP.E_Mail
-        (Escape_Header (Info.Name).To_UTF_8_String,
-         "ada_ru@forge.ada-ru.org");
-
-      Header.Append
-        (+"List-Unsubscribe: <mailto:ada_ru-unsubscribe@forge.ada-ru.org>");
-
-      Header.Append
-        (+"Mailing-List: list ada_ru@forge.ada-ru.org;" &
-           " contact ada_ru-owner@forge.ada-ru.org");
-
-      Msg_Id := Self.Next_Message_Id;
-      Header.Append (+"Message-ID: " & Msg_Id);
-
-      Header.Append (+"List-Id: <ada_ru.forge.ada-ru.org>");
-      Header.Append ("Subject: " & Escape_Header (Subject));
-      Header.Append (+"Content-Type: text/plain; charset=utf-8");
-      Header.Append (+"Content-Transfer-Encoding: base64");
-      Header.Append (League.Strings.Empty_Universal_String);
-      Header.Append (League.Strings.Empty_Universal_String);
-
-      Wrap_Lines (Text);
-
-      Text.Prepend (Header.Join (Ada.Characters.Wide_Wide_Latin_1.LF));
-
-      AWS.SMTP.Client.Send
-        (Server  => Receiver,
-         From    => From,
-         To      => (1 .. 0 => <>),
-         BCC     => (1 => BCC),
-         Source  => Text.To_UTF_8_String,
-         Status  => Status);
-
-      if AWS.SMTP.Is_Ok (Status) then
          Response.Set_Status (Servlet.HTTP_Responses.See_Other);
          Response.Set_Header (+"Location", +"/forum/ok.html");
          Response.Set_Header (+"Cache-Control", +"must-revalidate");
 
-         Storage.Put
-           ((From        => Info.Name & "<" & Info.Mails (1) & ">",
-             Date        => League.Calendars.Clock,
-             In_Reply_To => Topic,
-             Message_Id  => Msg_Id,
-             Subject     => Subject,
-             Text        => Posted,
-             Is_Flowed   => False));
+      elsif Self.Check_Token (Request.Get_Headers (+"Authorization")) then
+         declare
+            Data : constant
+              League.Stream_Element_Vectors.Stream_Element_Vector :=
+                Read_Stream (Request.Get_Input_Stream);
+         begin
+            Mail := Mails.Read_Mail (Data);
+            Mail.Message_Id := Self.Next_Message_Id;
+            Storage.Put (Mail);
+            Response.Set_Status (Servlet.HTTP_Responses.No_Content);
+         end;
 
       else
-         Response.Set_Status (Servlet.HTTP_Responses.Service_Unavailable);
-         Response.Set_Content_Type (+"text/plain");
-         Response.Set_Character_Encoding (+"utf-8");
-
-         Response.Get_Output_Stream.Write
-           (League.Strings.From_UTF_8_String
-              (AWS.SMTP.Status_Message (Status)));
+         Response.Set_Status (Servlet.HTTP_Responses.Unauthorized);
       end if;
    end Do_Post;
 
@@ -760,11 +727,9 @@ package body Servlet.Forum is
    begin
       return Result : Forum_Servlet do
          Result.Secret := Get ("secret");
-         Result.BCC := Get ("bcc");
          Result.Last_Id := 0;
 
          pragma Assert (not Result.Secret.Is_Empty);
-         pragma Assert (not Result.BCC.Is_Empty);
 
          DB_Writter.Start (Error);
          pragma Assert (Error.Is_Empty);
@@ -789,8 +754,134 @@ package body Servlet.Forum is
         League.Calendars.ISO_8601.Image
         (+"yyyyMMddHHmmss", League.Calendars.Clock)
         & Image
-        & "@forge.ada-ru.org>";
+        & "@ada-ru.org>";
    end Next_Message_Id;
+
+   -----------------
+   -- Read_Stream --
+   -----------------
+
+   function Read_Stream
+     (Stream : not null access Ada.Streams.Root_Stream_Type'Class)
+       return League.Stream_Element_Vectors.Stream_Element_Vector
+   is
+      use type Ada.Streams.Stream_Element_Count;
+
+      Data : Ada.Streams.Stream_Element_Array (1 .. 1024);
+      Last : Ada.Streams.Stream_Element_Count;
+   begin
+      return Result : League.Stream_Element_Vectors.Stream_Element_Vector do
+         loop
+            Stream.Read (Data, Last);
+
+            exit when Last = 0;
+
+            Result.Append (Data (1 .. Last));
+         end loop;
+      end return;
+   end Read_Stream;
+
+   ---------------
+   -- Send_Mail --
+   ---------------
+
+   procedure Send_Mail (Mail : Mails.Mail) is
+      use type League.Strings.Universal_String;
+
+      function Get_Name (Addr : League.Strings.Universal_String)
+        return League.Strings.Universal_String;
+      --  Return name part of the EMail addredd ("Name <email@host.net>").
+
+      --------------
+      -- Get_Name --
+      --------------
+
+      function Get_Name (Addr : League.Strings.Universal_String)
+        return League.Strings.Universal_String
+      is
+         function Trim (Text : League.Strings.Universal_String)
+           return League.Strings.Universal_String
+             is (Text.Split (' ', League.Strings.Skip_Empty).Join (" "));
+
+         Pos    : constant Natural := Addr.Index ("<");
+         At_Pos : constant Natural := Addr.Index ("@");
+         Result : League.Strings.Universal_String;
+      begin
+         if Pos > 0 then
+            Result := Trim (Addr.Head_To (Pos - 1));
+         end if;
+
+         if Result.Is_Empty then
+            Result := Addr.Slice (Pos + 1, At_Pos - 1);
+         end if;
+
+         return Result;
+      end Get_Name;
+
+      Sender : constant League.Strings.Universal_String :=
+        Get_Name (Mail.From);
+
+      From : constant AWS.SMTP.E_Mail_Data := AWS.SMTP.E_Mail
+        (Sender.To_UTF_8_String, "ada_ru@ada-ru.org");
+
+      BCC  : constant AWS.SMTP.E_Mail_Data :=
+        AWS.SMTP.E_Mail ("", "ada_ru_list");
+
+      Receiver : constant AWS.SMTP.Receiver :=
+        AWS.SMTP.Initialize ("forge.ada-ru.org");
+
+      Subject  : constant League.Strings.Universal_String :=
+        (if Mail.Subject.Index ("[ada_ru]") > 0 then Mail.Subject
+         else "[ada_ru] " & Mail.Subject);
+
+      Header : League.String_Vectors.Universal_String_Vector;
+      Text   : League.Strings.Universal_String := Escape (Mail.Text);
+      Status : AWS.SMTP.Status;
+
+   begin
+      Header.Append
+        ("From: " & Escape_Header (Sender) & " <ada_ru@ada-ru.org>");
+
+      Header.Append (+"Bcc: ada_ru_list");
+
+      if not Mail.In_Reply_To.Is_Empty then
+         Header.Append ("In-Reply-To: " & Mail.In_Reply_To);
+      end if;
+
+      Header.Append
+        (+"List-Unsubscribe: <mailto:ada_ru-unsubscribe@ada-ru.org>");
+
+      Header.Append
+        (+"Mailing-List: list ada_ru@ada-ru.org;" &
+           " contact ada_ru-owner@ada-ru.org");
+
+      Header.Append (+"Message-ID: " & Mail.Message_Id);
+      Header.Append ("Subject: " & Escape_Header (Subject));
+      Header.Append (+"List-Id: <ada_ru.ada-ru.org>");
+      Header.Append (+"Content-Type: text/plain; charset=utf-8");
+      Header.Append (+"Content-Transfer-Encoding: base64");
+      Header.Append (League.Strings.Empty_Universal_String);
+      Header.Append (League.Strings.Empty_Universal_String);
+
+      Wrap_Lines (Text);
+
+      Text.Prepend (Header.Join (Ada.Characters.Wide_Wide_Latin_1.LF));
+
+      AWS.SMTP.Client.Send
+        (Server  => Receiver,
+         From    => From,
+         To      => (1 .. 0 => <>),
+         BCC     => (1 => BCC),
+         Source  => Text.To_UTF_8_String,
+         Status  => Status);
+
+      if not AWS.SMTP.Is_Ok (Status) then
+         Ada.Wide_Wide_Text_IO.Put ("SMTP send fails: ");
+         Ada.Wide_Wide_Text_IO.Put (Mail.Message_Id.To_Wide_Wide_String);
+         Ada.Wide_Wide_Text_IO.New_Line;
+         Ada.Text_IO.Put_Line (AWS.SMTP.Status_Message (Status));
+      end if;
+   end Send_Mail;
 
    ---------------------------
    -- Strip_Carriage_Return --
