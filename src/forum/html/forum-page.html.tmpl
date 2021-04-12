@@ -62,11 +62,12 @@
           <legend>Новая тема:</legend>
           <input type="hidden" name="topic" value=""/>
           <label>Тема:
-            <input type="text" name="subject" value=""
+            <input type="text" name="subject" value="" required="required"
                    placeholder="Введите название темы"
                    class="pure-input-1"/>
           </label>
-          <textarea name="text" rows="30" cols="80" class="pure-input-1"/>
+          <textarea name="text" rows="30" cols="80" class="pure-input-1"
+            required="required"/>
           <input type="submit" value="Отправить"
                  class="pure-button pure-button-primary"/>
         </fieldset>

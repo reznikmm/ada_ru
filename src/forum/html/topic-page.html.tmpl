@@ -104,9 +104,10 @@
           <input type="hidden" name="topic" value="${topic.starter.id}"/>
           <label>Тема:
             <input type="text" name="subject" value="Re: ${topic.starter.subject}"
-                   class="pure-input-1"/>
+                   required="required" class="pure-input-1"/>
           </label>
-          <textarea name="text" rows="30" cols="80" class="pure-input-1"/>
+          <textarea name="text" rows="30" cols="80" class="pure-input-1"
+            required="required"/>
           <input type="submit" value="Отправить"
                  class="pure-button pure-button-primary"/>
         </fieldset>
