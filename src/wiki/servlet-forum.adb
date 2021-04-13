@@ -12,6 +12,7 @@ with League.Calendars.ISO_8601;
 with League.Characters.Latin;
 with League.Holders;
 with League.Holders.Integers;
+with League.Regexps;
 with League.Settings;
 with League.Stream_Element_Vectors;
 with League.String_Vectors;
@@ -148,6 +149,10 @@ package body Servlet.Forum is
         (Value  : Mails.Mail;
          Result : out Paragraph_Lists.List);
 
+      procedure Parse_Flowed_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List);
+
       procedure Update_Files (DB : in out SQL.Databases.SQL_Database);
 
       SQL_Text : constant League.Strings.Universal_String :=
@@ -227,19 +232,137 @@ package body Servlet.Forum is
          end;
       end Insert_Post;
 
+      --------------------------
+      -- Parse_Flowed_Message --
+      --------------------------
+
+      procedure Parse_Flowed_Message
+        (Value  : Mails.Mail;
+         Result : out Paragraph_Lists.List)
+      is
+         Prev    : Optional_Paragraph;
+         Lines   : constant League.String_Vectors.Universal_String_Vector :=
+           Value.Text.Split
+             (League.Characters.Latin.Line_Feed,
+              League.Strings.Keep_Empty);
+      begin
+         for J in 1 .. Lines.Length loop
+            declare
+               Line  : League.Strings.Universal_String := Lines.Element (J);
+               Quote : Natural := 0;
+            begin
+               for K in 1 .. Line.Length loop
+                  if Line.Element (K).To_Wide_Wide_Character = '>' then
+                     Quote := Quote + 1;
+                  else
+                     exit;
+                  end if;
+               end loop;
+
+               Line := Line.Tail_From (Quote + 1);
+
+               if Line.Starts_With (" ") then
+                  --  line has been space-stuffed
+                  Line := Line.Tail_From (2);
+               end if;
+
+               if Prev.Is_Set then
+                  pragma Assert (Prev.Value.Quote = Quote);
+                  Prev.Value.Text.Append (Line);
+
+                  if not Line.Ends_With (" ") then
+                     Result.Append (Prev.Value);
+                     Prev := (Is_Set => False);
+                  end if;
+               elsif Line.Ends_With (" ") then
+                  Prev := (Is_Set => True,
+                           Value  => (Quote => Quote, Text => Line));
+               else
+                  Result.Append ((Quote => Quote, Text => Line));
+               end if;
+            end;
+         end loop;
+      end Parse_Flowed_Message;
+
       -------------------
       -- Parse_Message --
       -------------------
 
       procedure Parse_Message
         (Value  : Mails.Mail;
-         Result : out Paragraph_Lists.List) is
+         Result : out Paragraph_Lists.List)
+      is
+         use type Ada.Containers.Count_Type;
+
+         procedure Find_Quoted_Message (Index : out Ada.Containers.Count_Type);
+         --  Look for quoted message in Result and return Index of the
+         --  first paragraph of quoted message.
+
+         -------------------------
+         -- Find_Quoted_Message --
+         -------------------------
+
+         procedure Find_Quoted_Message
+           (Index : out Ada.Containers.Count_Type)
+         is
+            Pattern_1 : constant League.Regexps.Regexp_Pattern :=
+              League.Regexps.Compile (+"From\:.*ada_ru\@ada\-ru.org\>?");
+            Pattern_2 : constant League.Regexps.Regexp_Pattern :=
+              League.Regexps.Compile
+                (+"^\-{5}\ ?(Исходное\ сообщение|Original\ Message)");
+            Cursor  : Paragraph_Lists.Cursor := Result.First;
+            Count   : Ada.Containers.Count_Type := 0;
+         begin
+            while Paragraph_Lists.Has_Element (Cursor) loop
+               declare
+                  Item : constant Paragraph :=
+                    Paragraph_Lists.Element (Cursor);
+               begin
+                  Count := Count + 1;
+
+                  if Pattern_1.Find_Match (Item.Text).Is_Matched
+                    or else Pattern_2.Find_Match (Item.Text).Is_Matched
+                  then
+                     Index := Count;
+                     return;
+                  end if;
+
+                  Cursor := Paragraph_Lists.Next (Cursor);
+               end;
+            end loop;
+
+            Index := 0;
+         end Find_Quoted_Message;
+
+         Quoted : Ada.Containers.Count_Type;
       begin
          if Value.Is_Flowed then
-            null;  --  Parse_Flowed_Message (Value, Result);
+            Parse_Flowed_Message (Value, Result);
          else
             Parse_Plain_Message (Value, Result);
          end if;
+
+         Find_Quoted_Message (Quoted);
+
+         --  Quoted paragraphs counting from the end of list:
+         if Quoted > 0 then
+            Quoted := Result.Length - Quoted + 1;
+         end if;
+
+         --  Drop any empty or quoted paragraphs at the end of message
+         while not Result.Is_Empty loop
+            declare
+               Last : constant Paragraph := Result.Last_Element;
+            begin
+               if Quoted > 0 then
+                  Quoted := Quoted - 1;
+               else
+                  exit when Last.Quote = 0 and not Last.Text.Is_Empty;
+               end if;
+
+               Result.Delete_Last;
+            end;
+         end loop;
       end Parse_Message;
 
       -------------------------
