@@ -210,6 +210,7 @@ package body Axe.Bots is
                Bot.Queue.Dequeue (Next_Message);
 
                delay until Time;
+               Time := Ada.Calendar.Clock + 0.5;  --  Avoid to Flood errors
 
                for Origin in Send'Range loop
                   if Next_Message.Origin /= Origin
@@ -219,7 +220,6 @@ package body Axe.Bots is
                   end if;
                end loop;
 
-               Time := Time + 1.5;  --  Avoid to Excess Flood errors
             else
                exit;
             end select;
@@ -463,7 +463,7 @@ package body Axe.Bots is
       if not Self.Bot.IRC_Online then  --  Try to connect IRC
          Self.Bot.IRC_Session.Connect
            (Socket    => Self.Bot.IRC_Socket,
-            Host      => +"irc.odessa.ua",
+            Host      => +"irc.lucky.net",
             Port      => 7777,
             Nick      => +"ada-ru",
             Password  => +"",
