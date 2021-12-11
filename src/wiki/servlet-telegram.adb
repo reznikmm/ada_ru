@@ -447,9 +447,8 @@ package body Servlet.Telegram is
    ----------
 
    function Hash (Value : User_Identifier) return Ada.Containers.Hash_Type is
-      use type User_Identifier;
    begin
-      return Ada.Containers.Hash_Type'Val (abs Value);
+      return Ada.Containers.Hash_Type'Mod (Value);
    end Hash;
 
    ----------------
