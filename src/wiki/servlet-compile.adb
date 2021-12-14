@@ -114,6 +114,7 @@ package body Servlet.Compile is
             end loop;
 
             Object.Insert (+"messages", Messages.To_JSON_Value);
+            Object.Insert (+"text", League.JSON.Values.To_JSON_Value (Text));
             Object.Insert
               (+"completed", League.JSON.Values.To_JSON_Value (True));
 

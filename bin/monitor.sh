@@ -81,6 +81,22 @@ end Mission_Check;
 EOF
 
 
+do_gnatmake()
+{
+    pushd $SBOX/
+    key=$1
+    ln -s $STORE/$key/_source.adb .
+    cat > gnat.adc <<-EOF
+    pragma Warnings (Off, "file name does not match unit name");
+EOF
+    BUILD="gnatmake -o mission_main _source.adb"
+    if $BUILD 2> $STORE/$key/gcc-error.txt_ && [ -f ./mission_main ] ; then
+        timeout -v 5 ./mission_main &> $STORE/$key/run.txt
+    fi
+    mv $STORE/$key/gcc-error.txt_ $STORE/$key/gcc-error.txt
+    popd
+}
+
 do_compile()
 {
     pushd $SBOX/
@@ -160,6 +176,9 @@ $WAIT | while read key ; do
             ;;
         mission_check* )
             do_mission_check $key ${text#mission_check}
+            ;;
+        gnatmake* )
+            do_gnatmake $key
             ;;
     esac
     rm -rf `ls $STORE --sort=time |tail -n +100`
